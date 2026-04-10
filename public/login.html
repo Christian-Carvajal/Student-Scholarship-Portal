@@ -3,6 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Multi-device SVG Favicon Support -->
+    <link rel="icon" type="image/svg+xml" href="uphsd.svg" />
+    <link rel="alternate icon" href="uphsd.svg" />
+    <link rel="apple-touch-icon" href="uphsd.svg" />
+    <link rel="mask-icon" href="uphsd.svg" color="#7a1114" />
+    <meta name="theme-color" content="#7a1114" />
+
     <title>Login | Student Scholarship Portal</title>
     <!-- Sophisticated UPHSD Typography Pairing -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -33,6 +41,12 @@
 
           <h2 id="loginTitle" class="form-title">Student Login</h2>
           <form id="authForm">
+            <!-- Registration Fields (Only visible for students sometimes, but let's implement login/register tabs inside) -->
+            <div class="form-tabs" id="studentTabs">
+              <a href="#" id="tabLogin" class="active">Login</a>
+              <a href="#" id="tabRegister">Register</a>
+            </div>
+
             <div class="form-group" id="groupStudentId">
               <label id="lblUsername">Student ID</label>
               <input
@@ -42,12 +56,6 @@
                 required
                 placeholder="Ex. 12345678"
               />
-            </div>
-
-            <!-- Registration Fields (Only visible for students sometimes, but let's implement login/register tabs inside) -->
-            <div class="form-tabs" id="studentTabs">
-              <a href="#" id="tabLogin" class="active">Login</a>
-              <a href="#" id="tabRegister">Register</a>
             </div>
 
             <div id="registerFields" class="hidden">
