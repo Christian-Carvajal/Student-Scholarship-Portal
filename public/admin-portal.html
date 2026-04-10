@@ -287,19 +287,68 @@
           <h2 class="section-title">Contact Support</h2>
           <form id="contactForm" style="max-width: 600px">
             <div class="form-group">
+              <label>Your Name</label>
+              <input type="text" name="name" id="contactName" class="form-control" required placeholder="e.g. Juan De La Cruz" />
+            </div>
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" name="email" id="contactEmail" class="form-control" required placeholder="Where we will send the auto-reply" />
+            </div>
+            <div class="form-group">
               <label>Subject</label>
-              <input type="text" class="form-control" required />
+              <input type="text" name="title" id="contactSubject" class="form-control" required />
             </div>
             <div class="form-group">
               <label>Message</label>
-              <textarea class="form-control" rows="5" required></textarea>
+              <textarea name="message" id="contactMessage" class="form-control" rows="5" required></textarea>
             </div>
-            <button type="submit" class="btn">Send via Email Support</button>
+            <button type="submit" class="btn" id="btnSubmitContact">Send via Email Support</button>
           </form>
         </section>
       </main>
     </div>
 
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+      (function() {
+          emailjs.init("eSRnEOEJEaoP8a_rj"); // Public Key
+      })();
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const contactForm = document.getElementById('contactForm');
+        const btnSubmitContact = document.getElementById('btnSubmitContact');
+
+        if(contactForm) {
+          contactForm.addEventListener('submit', function(event) {
+              event.preventDefault();
+              
+              const prevText = btnSubmitContact.innerText;
+              btnSubmitContact.innerText = 'Sending...';
+              btnSubmitContact.disabled = true;
+
+              // Send the Admin Notification
+              emailjs.sendForm('service_h0p6jys', 'template_zwmmbp2', this)
+                .then(function() {
+                    // Send the Auto-Reply to User
+                    return emailjs.sendForm('service_h0p6jys', 'template_46i1e8g', contactForm);
+                })
+                .then(function() {
+                    alert('Message sent successfully! An auto-reply has been sent to your email.');
+                    contactForm.reset();
+                })
+                .catch(function(error) {
+                    console.error('FAILED...', error);
+                    alert('Failed to send the message. Please try again later.');
+                })
+                .finally(function() {
+                    btnSubmitContact.innerText = prevText;
+                    btnSubmitContact.disabled = false;
+                });
+          });
+        }
+      });
+    </script>
     <script src="./js/admin.js"></script>
   </body>
 </html>
