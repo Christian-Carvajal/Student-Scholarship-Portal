@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Scholarship Portal | UPHSD</title>
+    <!-- Sophisticated UPHSD Typography Pairing -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Outfit:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <!-- Global Custom Modal -->
+    <div id="customModal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <h3 id="modalTitle">Alert</h3>
+        <div id="modalBody" class="modal-body"></div>
+        <div class="modal-actions">
+          <button
+            id="modalBtnCancel"
+            class="btn hidden"
+            style="background-color: #6c757d"
+          >
+            Cancel
+          </button>
+          <button id="modalBtnOk" class="btn btn-gold">OK</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Force Password Change Modal (Industry Standard) -->
+    <div
+      id="forcePasswordModal"
+      class="modal-overlay hidden"
+      style="backdrop-filter: blur(8px)"
+    >
+      <div
+        class="modal-content"
+        style="max-width: 450px; border-top: 5px solid var(--primary-maroon)"
+      >
+        <h3
+          style="
+            color: var(--primary-maroon);
+            border-bottom: none;
+            margin-bottom: 0.5rem;
+          "
+        >
+          Action Required
+        </h3>
+        <p
+          style="
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+          "
+        >
+          For your security, you must change your auto-generated temporary
+          password before accessing the portal.
+        </p>
+
+        <form id="forcePasswordForm">
+          <div class="form-group">
+            <label>New Password</label>
+            <input
+              type="password"
+              id="newPassword"
+              class="form-control"
+              required
+              placeholder="Enter new password"
+            />
+          </div>
+
+          <!-- Password Strength Meter -->
+          <div class="password-strength">
+            <div class="strength-bar-container">
+              <div id="strengthBar" class="strength-bar"></div>
+            </div>
+            <ul class="pwd-requirements">
+              <li id="reqLength" class="invalid">At least 8 characters</li>
+              <li id="reqUpper" class="invalid">
+                At least one uppercase letter
+              </li>
+              <li id="reqNum" class="invalid">At least one number</li>
+            </ul>
+          </div>
+
+          <div class="form-group" style="margin-top: 1rem">
+            <label>Confirm New Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              class="form-control"
+              required
+              placeholder="Re-enter new password"
+            />
+            <small
+              id="pwdMatchMsg"
+              style="color: #dc3545; display: none; margin-top: 5px"
+              >Passwords do not match.</small
+            >
+          </div>
+
+          <div class="modal-actions" style="margin-top: 2rem">
+            <button
+              type="submit"
+              id="btnSavePassword"
+              class="btn btn-gold"
+              style="width: 100%"
+              disabled
+            >
+              Secure Account & Continue
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header class="app-header">
+      <img src="uphsd.svg" alt="UPHSD Logo" />
+      <h1>Student Scholarship <span>Portal</span></h1>
+    </header>
+
+    <div class="app-container">
+      <!-- Sidebar Navigation -->
+      <aside class="app-sidebar">
+        <nav>
+          <a class="nav-link active" data-target="view-listings"
+            >Browse Scholarships</a
+          >
+          <a class="nav-link" data-target="view-apply">Apply Now</a>
+          <a class="nav-link" data-target="view-tracker">My Tracker</a>
+          <a class="nav-link" data-target="view-docs">Documents</a>
+          <a class="nav-link" data-target="view-notifications"
+            >Notifications (2)</a
+          >
+          <a class="nav-link" data-target="view-faq">FAQ</a>
+          <a class="nav-link" data-target="view-contact">Contact Support</a>
+          <hr
+            style="
+              margin: 1rem 0;
+              border: 0;
+              border-top: 1px solid var(--border-color);
+            "
+          />
+          <a
+            class="nav-link"
+            id="navLogout"
+            style="color: var(--primary-maroon)"
+            >Logout</a
+          >
+        </nav>
+      </aside>
+
+      <!-- Main SPA Content Area -->
+      <main class="app-main">
+        <!-- 2. SCHOLARSHIP LISTINGS -->
+        <section id="view-listings">
+          <h2 class="section-title">Available Scholarships</h2>
+
+          <div
+            style="
+              background: var(--bg-surface);
+              padding: 1.5rem 2rem;
+              border: 1px solid var(--border-color);
+              margin-bottom: 2rem;
+              display: flex;
+              gap: 1.5rem;
+              box-shadow: 4px 4px 0px rgba(122, 17, 20, 0.05);
+            "
+          >
+            <input
+              type="text"
+              placeholder="Search title or description..."
+              class="form-control"
+              style="flex: 2"
+            />
+            <select class="form-control" style="flex: 1">
+              <option value="">Filter GPA</option>
+              <option value="3.5">3.5+</option>
+              <option value="3.0">3.0+</option>
+            </select>
+            <select class="form-control" style="flex: 1">
+              <option value="">Filter Type</option>
+              <option value="merit">Merit-Based</option>
+              <option value="need">Need-Based</option>
+            </select>
+          </div>
+
+          <div class="card-grid" id="scholarshipGrid">
+            <!-- Cards injected by JS -->
+          </div>
+        </section>
+
+        <!-- 3. APPLICATION FORM -->
+        <section id="view-apply" class="hidden">
+          <h2 class="section-title">Submit Application</h2>
+          <form id="applicationForm" style="max-width: 600px">
+            <div class="form-group">
+              <label>Select Scholarship</label>
+              <select id="appScholarship" class="form-control" required>
+                <!-- Populated dynamically -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Current Cumulative GPA</label>
+              <input
+                type="number"
+                step="0.01"
+                max="4.0"
+                id="appGpa"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label>Motivation Essay / Letter of Intent</label>
+              <textarea
+                id="appEssay"
+                class="form-control"
+                rows="5"
+                required
+                placeholder="Why do you deserve this scholarship?"
+              ></textarea>
+            </div>
+
+            <h3
+              style="
+                margin: 1.5rem 0 1rem;
+                font-size: 1.1rem;
+                border-bottom: 1px solid #eee;
+                padding-bottom: 0.5rem;
+              "
+            >
+              File Uploads
+            </h3>
+            <div class="form-group">
+              <label>Official Transcript (PDF)</label>
+              <input type="file" accept=".pdf" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label>Valid UPHSD Student ID (Image/PDF)</label>
+              <input
+                type="file"
+                accept="image/*,.pdf"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label>Recommendation Letter (Optional)</label>
+              <input type="file" accept=".pdf" class="form-control" />
+            </div>
+
+            <button
+              type="submit"
+              class="btn"
+              style="margin-top: 1rem; width: 100%"
+            >
+              Submit Formal Application
+            </button>
+          </form>
+        </section>
+
+        <!-- 4. STUDENT TRACKER -->
+        <section id="view-tracker" class="hidden">
+          <h2 class="section-title">My Application Tracker</h2>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Application ID</th>
+                <th>Scholarship Title</th>
+                <th>Date Applied</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="trackerTableBody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </section>
+
+        <!-- 6. NOTIFICATIONS -->
+        <section id="view-notifications" class="hidden">
+          <h2 class="section-title">Notifications</h2>
+          <div
+            style="
+              background: var(--bg-surface);
+              border: 1px solid var(--border-color);
+              box-shadow: 4px 4px 0px rgba(122, 17, 20, 0.05);
+            "
+          >
+            <div
+              style="
+                padding: 1.5rem 2rem;
+                border-bottom: 1px solid var(--border-color);
+                background: rgba(253, 187, 17, 0.05);
+              "
+            >
+              <strong>System Alert:</strong> General Merit Applications are
+              closing on May 15, 2026. <br /><small
+                style="
+                  color: var(--text-muted);
+                  font-size: 0.85rem;
+                  margin-top: 0.5rem;
+                  display: block;
+                "
+                >2 days ago</small
+              >
+            </div>
+            <div
+              style="
+                padding: 1.5rem 2rem;
+                border-bottom: 1px solid var(--border-color);
+              "
+            >
+              <strong>Application Update:</strong> Your "Engineering Excellence"
+              application is now Under Review. <br /><small
+                style="
+                  color: var(--text-muted);
+                  font-size: 0.85rem;
+                  margin-top: 0.5rem;
+                  display: block;
+                "
+                >5 days ago</small
+              >
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. DOCUMENTS (Standalone) -->
+        <section id="view-docs" class="hidden">
+          <h2 class="section-title">My Documents</h2>
+          <p
+            style="
+              margin-bottom: 2rem;
+              color: var(--text-muted);
+              font-size: 1.1rem;
+            "
+          >
+            Manage your securely uploaded files here. These are verified
+            automatically alongside your application.
+          </p>
+          <div style="display: flex; gap: 2rem">
+            <div
+              class="card"
+              style="
+                box-shadow: 4px 4px 0px rgba(122, 17, 20, 0.05);
+                border-radius: 0;
+              "
+            >
+              <h3 style="font-family: var(--font-sans); font-size: 1.25rem">
+                Transcript_v2.pdf
+              </h3>
+              <p style="font-size: 0.9rem">Uploaded: April 1, 2026</p>
+              <button
+                class="btn btn-gold btn-sm"
+                style="align-self: flex-start; padding: 0.5rem 1.5rem"
+              >
+                Download
+              </button>
+            </div>
+            <div
+              class="card"
+              style="
+                box-shadow: 4px 4px 0px rgba(122, 17, 20, 0.05);
+                border-radius: 0;
+              "
+            >
+              <h3 style="font-family: var(--font-sans); font-size: 1.25rem">
+                Student_ID_Scanned.png
+              </h3>
+              <p style="font-size: 0.9rem">Uploaded: April 1, 2026</p>
+              <button
+                class="btn btn-gold btn-sm"
+                style="align-self: flex-start; padding: 0.5rem 1.5rem"
+              >
+                Download
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 8. FAQ -->
+        <section id="view-faq" class="hidden">
+          <h2 class="section-title">Frequently Asked Questions</h2>
+          <div class="faq-list" id="faqAccordion">
+            <div class="faq-item">
+              <div class="faq-question">
+                How does the automated ranking work? <span>+</span>
+              </div>
+              <div class="faq-answer">
+                Rankings are calculated dynamically based on your cumulative GPA
+                compared against the minimum threshold set by the system
+                administrator.
+              </div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-question">
+                Can I apply for multiple scholarships? <span>+</span>
+              </div>
+              <div class="faq-answer">
+                Yes, as long as you meet the eligibility requirements for each
+                specific fund. Ensure your essays are tailored appropriately.
+              </div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-question">
+                Who is eligible for the UPHSD Gold Tier grant? <span>+</span>
+              </div>
+              <div class="faq-answer">
+                You must have completed at least 2 full semesters as a regular
+                student with no record of disciplinary action.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 9. CONTACT -->
+        <section id="view-contact" class="hidden">
+          <h2 class="section-title">Contact Support</h2>
+          <form id="contactForm" style="max-width: 600px">
+            <div class="form-group">
+              <label>Subject</label>
+              <input type="text" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label>Message</label>
+              <textarea class="form-control" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn">Send via Email Support</button>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <script src="./js/app.js"></script>
+  </body>
+</html>

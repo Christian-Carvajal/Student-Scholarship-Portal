@@ -3,558 +3,805 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Student Scholarship Portal | UPHSD</title>
+    <title>Student Scholarship Portal | UPHSD Molino</title>
     <!-- Sophisticated UPHSD Typography Pairing -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Outfit:wght@300;400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./style.css" />
   </head>
-  <body>
-    <!-- Global Custom Modal -->
-    <div id="customModal" class="modal-overlay hidden">
-      <div class="modal-content">
-        <h3 id="modalTitle">Alert</h3>
-        <div id="modalBody" class="modal-body"></div>
-        <div class="modal-actions">
-          <button
-            id="modalBtnCancel"
-            class="btn hidden"
-            style="background-color: #6c757d"
+  <body class="is-landing">
+    <!-- Action Nav Layer -->
+    <div class="action-nav">
+      <div
+        class="nav-container"
+        style="
+          justify-content: space-between;
+          padding-top: 10px;
+          padding-bottom: 10px;
+        "
+      >
+        <div
+          class="header-brand"
+          style="display: flex; align-items: center; gap: 15px"
+        >
+          <img src="uphsd.svg" alt="UPHSD Logo" style="height: 50px" />
+          <span
+            style="
+              font-family: &quot;Cinzel&quot;, serif;
+              font-size: 1.4rem;
+              font-weight: 700;
+              color: #7a1114;
+            "
+            >STUDENT SCHOLARSHIP PORTAL</span
           >
-            Cancel
-          </button>
-          <button id="modalBtnOk" class="btn btn-gold">OK</button>
         </div>
       </div>
     </div>
 
-    <!-- Force Password Change Modal (Industry Standard) -->
-    <div id="forcePasswordModal" class="modal-overlay hidden" style="backdrop-filter: blur(8px);">
-      <div class="modal-content" style="max-width: 450px; border-top: 5px solid var(--primary-maroon);">
-        <h3 style="color: var(--primary-maroon); border-bottom: none; margin-bottom: 0.5rem;">Action Required</h3>
-        <p style="color: #666; font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.5;">For your security, you must change your auto-generated temporary password before accessing the portal.</p>
-        
-        <form id="forcePasswordForm">
-          <div class="form-group">
-            <label>New Password</label>
-            <input type="password" id="newPassword" class="form-control" required placeholder="Enter new password">
-          </div>
-          
-          <!-- Password Strength Meter -->
-          <div class="password-strength">
-            <div class="strength-bar-container">
-              <div id="strengthBar" class="strength-bar"></div>
-            </div>
-            <ul class="pwd-requirements">
-              <li id="reqLength" class="invalid">At least 8 characters</li>
-              <li id="reqUpper" class="invalid">At least one uppercase letter</li>
-              <li id="reqNum" class="invalid">At least one number</li>
-            </ul>
-          </div>
-
-          <div class="form-group" style="margin-top: 1rem;">
-            <label>Confirm New Password</label>
-            <input type="password" id="confirmPassword" class="form-control" required placeholder="Re-enter new password">
-            <small id="pwdMatchMsg" style="color: #dc3545; display: none; margin-top: 5px;">Passwords do not match.</small>
-          </div>
-          
-          <div class="modal-actions" style="margin-top: 2rem;">
-            <button type="submit" id="btnSavePassword" class="btn btn-gold" style="width: 100%;" disabled>Secure Account & Continue</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- Header -->
-    <header class="app-header">
-      <img src="uphsd.svg" alt="UPHSD Logo" />
-      <h1>Student Scholarship <span>Portal</span></h1>
-    </header>
-
-    <div class="app-container">
-      <!-- Sidebar Navigation -->
-      <aside class="app-sidebar">
-        <nav>
-          <a class="nav-link active" data-target="view-listings"
-            >Browse Scholarships</a
-          >
-          <a class="nav-link" data-target="view-apply">Apply Now</a>
-          <a class="nav-link" data-target="view-tracker">My Tracker</a>
-          <a class="nav-link" data-target="view-docs">Documents</a>
-          <a class="nav-link" data-target="view-notifications"
-            >Notifications (2)</a
-          >
-          <a class="nav-link" data-target="view-faq">FAQ</a>
-          <a class="nav-link" data-target="view-contact">Contact Support</a>
-          <hr
-            style="
-              margin: 1rem 0;
-              border: 0;
-              border-top: 1px solid var(--border-color);
-            "
-          />
-          <a class="nav-link" data-target="view-admin">Admin Dashboard</a>
-          <a class="nav-link" data-target="view-auth" id="navAuth"
-            >Login / Register</a
-          >
-          <a
-            class="nav-link hidden"
-            id="navLogout"
-            style="color: var(--primary-maroon)"
-            >Logout</a
-          >
-        </nav>
-      </aside>
-
-      <!-- Main SPA Content Area -->
-      <main class="app-main">
-        <!-- 1. AUTH VIEW -->
-        <section id="view-auth" class="hidden">
-          <h2 class="section-title">Login or Register</h2>
-          <div
-            id="auth-blocks"
-            style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem"
-          >
-            <div>
-              <h3
-                style="
-                  font-family: var(--font-serif);
-                  color: var(--primary-maroon);
-                  margin-bottom: 1.5rem;
-                  font-size: 1.8rem;
-                "
-              >
-                Student Login
-              </h3>
-              <form id="loginForm">
-                <div class="form-group">
-                  <label>Student ID</label>
-                  <input
-                    type="text"
-                    id="loginStudentId"
-                    class="form-control"
-                    required
-                    placeholder="Ex. 12345678"
-                  />
-                </div>
-                <div class="form-group">
-                  <label>Password</label>
-                  <input
-                    type="password"
-                    id="loginPassword"
-                    class="form-control"
-                    required
-                    placeholder="••••••••"
-                  />
-                </div>
-                <button type="submit" class="btn" style="width: 100%">
-                  Login to Portal
-                </button>
-              </form>
-            </div>
-            <div>
-              <h3
-                style="
-                  font-family: var(--font-serif);
-                  color: var(--primary-maroon);
-                  margin-bottom: 1.5rem;
-                  font-size: 1.8rem;
-                "
-              >
-                New Registration
-              </h3>
-              <form id="registerForm">
-                <div class="form-group">
-                  <label>Student ID</label>
-                  <input
-                    type="text"
-                    id="regStudentId"
-                    class="form-control"
-                    required
-                    placeholder="Ex. 12345678"
-                  />
-                </div>
-                <div class="form-group">
-                  <label>Full Name</label>
-                  <input
-                    type="text"
-                    id="regName"
-                    class="form-control"
-                    required
-                    placeholder="Juan Dela Cruz"
-                  />
-                </div>
-                <div class="form-group">
-                  <label>Program / Major</label>
-                  <input
-                    type="text"
-                    id="regProgram"
-                    class="form-control"
-                    required
-                    placeholder="BS Computer Science"
-                  />
-                </div>
-                <div class="form-group">
-                  <label>Year Level</label>
-                  <select id="regYear" class="form-control" required>
-                    <option>1st Year</option>
-                    <option>2nd Year</option>
-                    <option>3rd Year</option>
-                    <option>4th Year</option>
-                    <option>5th Year</option>
-                  </select>
-                </div>
-                <button type="submit" class="btn btn-gold" style="width: 100%">
-                  Create Account
-                </button>
-              </form>
-            </div>
-          </div>
-        </section>
-
-        <!-- 2. SCHOLARSHIP LISTINGS -->
-        <section id="view-listings">
-          <h2 class="section-title">Available Scholarships</h2>
-
-          <div
-            style="
-              background: var(--bg-surface);
-              padding: 1.5rem 2rem;
-              border: 1px solid var(--border-color);
-              margin-bottom: 2rem;
-              display: flex;
-              gap: 1.5rem;
-              box-shadow: 4px 4px 0px rgba(122, 17, 20, 0.05);
-            "
-          >
-            <input
-              type="text"
-              placeholder="Search title or description..."
-              class="form-control"
-              style="flex: 2"
-            />
-            <select class="form-control" style="flex: 1">
-              <option value="">Filter GPA</option>
-              <option value="3.5">3.5+</option>
-              <option value="3.0">3.0+</option>
-            </select>
-            <select class="form-control" style="flex: 1">
-              <option value="">Filter Type</option>
-              <option value="merit">Merit-Based</option>
-              <option value="need">Need-Based</option>
-            </select>
-          </div>
-
-          <div class="card-grid" id="scholarshipGrid">
-            <!-- Cards injected by JS -->
-          </div>
-        </section>
-
-        <!-- 3. APPLICATION FORM -->
-        <section id="view-apply" class="hidden">
-          <h2 class="section-title">Submit Application</h2>
-          <form id="applicationForm" style="max-width: 600px">
-            <div class="form-group">
-              <label>Select Scholarship</label>
-              <select id="appScholarship" class="form-control" required>
-                <!-- Populated dynamically -->
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Current Cumulative GPA</label>
-              <input
-                type="number"
-                step="0.01"
-                max="4.0"
-                id="appGpa"
-                class="form-control"
-                required
-              />
-            </div>
-            <div class="form-group">
-              <label>Motivation Essay / Letter of Intent</label>
-              <textarea
-                id="appEssay"
-                class="form-control"
-                rows="5"
-                required
-                placeholder="Why do you deserve this scholarship?"
-              ></textarea>
-            </div>
-
-            <h3
-              style="
-                margin: 1.5rem 0 1rem;
-                font-size: 1.1rem;
-                border-bottom: 1px solid #eee;
-                padding-bottom: 0.5rem;
-              "
+    <main class="landing-main">
+      <section class="hero-section">
+        <div class="container hero-grid">
+          <div class="hero-text">
+            <h1 class="hero-title" style="font-size: 2.2rem">
+              Empowering the Next Generation of Perpetualite Leaders.
+            </h1>
+            <p
+              class="hero-desc"
+              style="font-size: 1.15rem; color: #444; max-width: 650px"
             >
-              File Uploads
+              A streamlined, automated scholarship system for the University of
+              Perpetual Help System DALTA – Molino Campus. Apply today and let
+              your academic excellence pave the way for your future.
+            </p>
+            <div class="hero-buttons">
+              <a href="login.html" class="btn-solid btn-gold"
+                >APPLY FOR SCHOLARSHIP</a
+              >
+              <a
+                href="#eligibility"
+                class="btn-solid btn-maroon"
+                style="text-decoration: none"
+                >CHECK MY ELIGIBILITY</a
+              >
+            </div>
+          </div>
+          <div class="hero-image">
+            <img src="uphsd.svg" alt="UPHSD Logo" class="huge-logo" />
+          </div>
+        </div>
+      </section>
+
+      <div class="divider-line"></div>
+
+      <!-- About the Program -->
+      <section id="about" class="page-section">
+        <div class="container section-grid" style="align-items: center">
+          <div class="content-block">
+            <h3 class="section-heading">
+              Character Building is Nation Building.
             </h3>
-            <div class="form-group">
-              <label>Official Transcript (PDF)</label>
-              <input type="file" accept=".pdf" class="form-control" required />
-            </div>
-            <div class="form-group">
-              <label>Valid UPHSD Student ID (Image/PDF)</label>
-              <input
-                type="file"
-                accept="image/*,.pdf"
-                class="form-control"
-                required
-              />
-            </div>
-            <div class="form-group">
-              <label>Recommendation Letter (Optional)</label>
-              <input type="file" accept=".pdf" class="form-control" />
-            </div>
+            <p class="section-paragraph">
+              The Student Scholarship Program at UPHSD Molino is designed to
+              honor the hard work and academic dedication of our students. By
+              automating the ranking and vetting process, we ensure a fair,
+              transparent, and efficient system that prioritizes candidates
+              based on their General Weighted Average (GWA) and specific
+              database criteria. We are committed to nurturing "Helpers of God"
+              who excel in academics and leadership.
+            </p>
+          </div>
+        </div>
+      </section>
 
-            <button
-              type="submit"
-              class="btn"
-              style="margin-top: 1rem; width: 100%"
-            >
-              Submit Formal Application
-            </button>
-          </form>
-        </section>
+      <div class="divider-line"></div>
 
-        <!-- 4. STUDENT TRACKER -->
-        <section id="view-tracker" class="hidden">
-          <h2 class="section-title">My Application Tracker</h2>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Application ID</th>
-                <th>Scholarship Title</th>
-                <th>Date Applied</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="trackerTableBody">
-              <!-- Populated by JS -->
-            </tbody>
-          </table>
-        </section>
-
-        <!-- 5. ADMIN DASHBOARD & DOC MGMT -->
-        <section id="view-admin" class="hidden">
-          <h2 class="section-title">Admin Dashboard</h2>
-
+      <!-- Available Scholarship Programs -->
+      <section
+        id="programs"
+        class="page-section"
+        style="background-color: #fafafa"
+      >
+        <div
+          class="container"
+          style="max-width: 1200px; margin: 0 auto; padding: 0 4rem"
+        >
           <h3
-            style="
-              margin-bottom: 1.5rem;
-              font-family: var(--font-serif);
-              color: var(--primary-maroon);
-            "
+            class="section-heading"
+            style="text-align: center; margin-bottom: 3rem"
           >
-            Auto-Ranked Leaderboard
+            Available Scholarship Programs
           </h3>
-          <table class="data-table" style="margin-bottom: 3rem">
-            <thead>
-              <tr>
-                <th>Applicant</th>
-                <th>Scholarship Fund</th>
-                <th>Submitted GPA</th>
-                <th>Auto-Vet Status</th>
-                <th>Admin Action</th>
-              </tr>
-            </thead>
-            <tbody id="adminTableBody">
-              <!-- Populated by JS -->
-            </tbody>
-          </table>
-
-          <h3
-            style="
-              margin-bottom: 1.5rem;
-              font-family: var(--font-serif);
-              color: var(--primary-maroon);
-            "
-          >
-            Add New Scholarship
-          </h3>
-          <form
-            id="addScholarshipForm"
-            style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem"
-          >
-            <div class="form-group">
-              <label>Title</label>
-              <input type="text" class="form-control" required />
-            </div>
-            <div class="form-group">
-              <label>Fund Amount</label>
-              <input type="number" class="form-control" required />
-            </div>
-            <div class="form-group" style="grid-column: span 2">
-              <label>Validation Description</label>
-              <textarea class="form-control" rows="2"></textarea>
-            </div>
-            <button type="submit" class="btn" style="grid-column: span 2">
-              Publish Scholarship
-            </button>
-          </form>
-        </section>
-
-        <!-- 6. NOTIFICATIONS -->
-        <section id="view-notifications" class="hidden">
-          <h2 class="section-title">Notifications</h2>
           <div
             style="
-              background: var(--bg-surface);
-              border: 1px solid var(--border-color);
-              box-shadow: 4px 4px 0px rgba(122, 17, 20, 0.05);
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+              gap: 2rem;
             "
           >
             <div
               style="
-                padding: 1.5rem 2rem;
-                border-bottom: 1px solid var(--border-color);
-                background: rgba(253, 187, 17, 0.05);
+                background: #fff;
+                padding: 2rem;
+                border-top: 4px solid #7a1114;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
               "
             >
-              <strong>System Alert:</strong> General Merit Applications are
-              closing on May 15, 2026. <br /><small
+              <h4
                 style="
-                  color: var(--text-muted);
-                  font-size: 0.85rem;
-                  margin-top: 0.5rem;
-                  display: block;
+                  font-family: &quot;Cinzel&quot;, serif;
+                  font-size: 1.3rem;
+                  color: #7a1114;
+                  margin-bottom: 1rem;
                 "
-                >2 days ago</small
               >
+                Entrance Scholarship
+              </h4>
+              <p
+                style="
+                  font-family: &quot;Inter&quot;, sans-serif;
+                  color: #555;
+                  line-height: 1.6;
+                "
+              >
+                Exclusive to incoming freshmen who graduated as Top 1 to 10 of
+                their Senior High School batch.
+              </p>
             </div>
+
             <div
               style="
-                padding: 1.5rem 2rem;
-                border-bottom: 1px solid var(--border-color);
+                background: #fff;
+                padding: 2rem;
+                border-top: 4px solid #fdbb11;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
               "
             >
-              <strong>Application Update:</strong> Your "Engineering Excellence"
-              application is now Under Review. <br /><small
+              <h4
                 style="
-                  color: var(--text-muted);
-                  font-size: 0.85rem;
-                  margin-top: 0.5rem;
-                  display: block;
+                  font-family: &quot;Cinzel&quot;, serif;
+                  font-size: 1.3rem;
+                  color: #7a1114;
+                  margin-bottom: 1rem;
                 "
-                >5 days ago</small
               >
+                Academic Scholarship
+              </h4>
+              <p
+                style="
+                  font-family: &quot;Inter&quot;, sans-serif;
+                  color: #555;
+                  line-height: 1.6;
+                "
+              >
+                Awarded to currently enrolled students who maintain a superior
+                GWA in the preceding semester.
+              </p>
+            </div>
+
+            <div
+              style="
+                background: #fff;
+                padding: 2rem;
+                border-top: 4px solid #7a1114;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+              "
+            >
+              <h4
+                style="
+                  font-family: &quot;Cinzel&quot;, serif;
+                  font-size: 1.3rem;
+                  color: #7a1114;
+                  margin-bottom: 1rem;
+                "
+              >
+                Tamayo Grants
+              </h4>
+              <p
+                style="
+                  font-family: &quot;Inter&quot;, sans-serif;
+                  color: #555;
+                  line-height: 1.6;
+                "
+              >
+                Special financial assistance for students who demonstrate both
+                academic potential and financial need.
+              </p>
+            </div>
+
+            <div
+              style="
+                background: #fff;
+                padding: 2rem;
+                border-top: 4px solid #fdbb11;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+              "
+            >
+              <h4
+                style="
+                  font-family: &quot;Cinzel&quot;, serif;
+                  font-size: 1.3rem;
+                  color: #7a1114;
+                  margin-bottom: 1rem;
+                "
+              >
+                Performing Arts & Athletics
+              </h4>
+              <p
+                style="
+                  font-family: &quot;Inter&quot;, sans-serif;
+                  color: #555;
+                  line-height: 1.6;
+                "
+              >
+                Grants for students who represent the university in cultural and
+                sporting excellence.
+              </p>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <!-- 7. DOCUMENTS (Standalone) -->
-        <section id="view-docs" class="hidden">
-          <h2 class="section-title">My Documents</h2>
-          <p
+      <div class="divider-line"></div>
+
+      <!-- Automated Eligibility Criteria -->
+      <section id="eligibility" class="page-section">
+        <div class="container section-grid">
+          <div class="content-block" style="flex: 1">
+            <h3 class="section-heading">Automated Eligibility Criteria</h3>
+            <p class="section-paragraph" style="margin-bottom: 1.5rem">
+              To ensure a factual and merit-based ranking, our system utilizes
+              the following GWA tiers for Academic Scholarships:
+            </p>
+            <ul
+              style="
+                font-family: &quot;Inter&quot;, sans-serif;
+                font-size: 1.05rem;
+                color: #444;
+                line-height: 1.8;
+                list-style: none;
+                padding-left: 0;
+                margin-bottom: 2rem;
+              "
+            >
+              <li style="margin-bottom: 10px">
+                <strong>Platinum Scholar (100% Tuition Discount):</strong> GWA
+                of 1.00 – 1.20
+              </li>
+              <li style="margin-bottom: 10px">
+                <strong>Gold Scholar (50% Tuition Discount):</strong> GWA of
+                1.21 – 1.50
+              </li>
+              <li style="margin-bottom: 10px">
+                <strong>Silver Scholar (25% Tuition Discount):</strong> GWA of
+                1.51 – 1.75
+              </li>
+            </ul>
+            <div
+              style="
+                background-color: #fff8e6;
+                border-left: 4px solid #fdbb11;
+                padding: 15px 20px;
+              "
+            >
+              <p
+                style="
+                  font-family: &quot;Inter&quot;, sans-serif;
+                  font-size: 0.95rem;
+                  color: #666;
+                  margin: 0;
+                "
+              >
+                <strong>Note:</strong> Applicants must have no grade lower than
+                85% in any subject and must carry a regular load as per the
+                curriculum checklist.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="divider-line"></div>
+
+      <!-- How the System Works -->
+      <section
+        id="guide"
+        class="page-section"
+        style="background-color: #fafafa"
+      >
+        <div
+          class="container"
+          style="max-width: 1200px; margin: 0 auto; padding: 0 4rem"
+        >
+          <h3
+            class="section-heading"
+            style="text-align: center; margin-bottom: 3rem"
+          >
+            How the System Works
+          </h3>
+          <div style="display: grid; gap: 4rem; margin-top: 3rem">
+            <div
+              class="how-step scroll-fade"
+              style="
+                display: flex;
+                align-items: center;
+                gap: 3rem;
+                flex-wrap: wrap;
+              "
+            >
+              <div style="flex: 1; min-width: 300px; text-align: right">
+                <div
+                  style="
+                    color: #7a1114;
+                    font-family: &quot;Cinzel&quot;, serif;
+                    font-size: 2rem;
+                    font-weight: bold;
+                    margin-bottom: 0.5rem;
+                  "
+                >
+                  01
+                </div>
+                <h4
+                  style="
+                    font-family: &quot;Cinzel&quot;, serif;
+                    font-size: 1.4rem;
+                    color: #000;
+                    margin-bottom: 1rem;
+                  "
+                >
+                  Register
+                </h4>
+                <p
+                  style="
+                    font-family: &quot;Inter&quot;, sans-serif;
+                    color: #666;
+                    line-height: 1.6;
+                    font-size: 1rem;
+                  "
+                >
+                  Create your account using your Perpetualite Student ID. Our
+                  secure portal ensures your data is protected.
+                </p>
+              </div>
+              <div style="flex: 1; min-width: 300px; text-align: left">
+                <img
+                  src="uphsd.svg"
+                  alt="Step 1 Image Placeholder"
+                  style="max-width: 180px; opacity: 0.9"
+                />
+              </div>
+            </div>
+
+            <div
+              class="how-step scroll-fade"
+              style="
+                display: flex;
+                align-items: center;
+                gap: 3rem;
+                flex-wrap: wrap;
+                flex-direction: row-reverse;
+              "
+            >
+              <div style="flex: 1; min-width: 300px; text-align: left">
+                <div
+                  style="
+                    color: #fdbb11;
+                    font-family: &quot;Cinzel&quot;, serif;
+                    font-size: 2rem;
+                    font-weight: bold;
+                    margin-bottom: 0.5rem;
+                  "
+                >
+                  02
+                </div>
+                <h4
+                  style="
+                    font-family: &quot;Cinzel&quot;, serif;
+                    font-size: 1.4rem;
+                    color: #000;
+                    margin-bottom: 1rem;
+                  "
+                >
+                  Apply
+                </h4>
+                <p
+                  style="
+                    font-family: &quot;Inter&quot;, sans-serif;
+                    color: #666;
+                    line-height: 1.6;
+                    font-size: 1rem;
+                  "
+                >
+                  Submit your digital Form 138 or Transcript of Records (TOR).
+                  Easily upload and manage your requirements.
+                </p>
+              </div>
+              <div style="flex: 1; min-width: 300px; text-align: right">
+                <img
+                  src="uphsd.svg"
+                  alt="Step 2 Image Placeholder"
+                  style="max-width: 180px; opacity: 0.9"
+                />
+              </div>
+            </div>
+
+            <div
+              class="how-step scroll-fade"
+              style="
+                display: flex;
+                align-items: center;
+                gap: 3rem;
+                flex-wrap: wrap;
+              "
+            >
+              <div style="flex: 1; min-width: 300px; text-align: right">
+                <div
+                  style="
+                    color: #7a1114;
+                    font-family: &quot;Cinzel&quot;, serif;
+                    font-size: 2rem;
+                    font-weight: bold;
+                    margin-bottom: 0.5rem;
+                  "
+                >
+                  03
+                </div>
+                <h4
+                  style="
+                    font-family: &quot;Cinzel&quot;, serif;
+                    font-size: 1.4rem;
+                    color: #000;
+                    margin-bottom: 1rem;
+                  "
+                >
+                  Vetting
+                </h4>
+                <p
+                  style="
+                    font-family: &quot;Inter&quot;, sans-serif;
+                    color: #666;
+                    line-height: 1.6;
+                    font-size: 1rem;
+                  "
+                >
+                  Our system automatically calculates your ranking based on the
+                  department’s database criteria for an unbiased result.
+                </p>
+              </div>
+              <div style="flex: 1; min-width: 300px; text-align: left">
+                <img
+                  src="uphsd.svg"
+                  alt="Step 3 Image Placeholder"
+                  style="max-width: 180px; opacity: 0.9"
+                />
+              </div>
+            </div>
+
+            <div
+              class="how-step scroll-fade"
+              style="
+                display: flex;
+                align-items: center;
+                gap: 3rem;
+                flex-wrap: wrap;
+                flex-direction: row-reverse;
+              "
+            >
+              <div style="flex: 1; min-width: 300px; text-align: left">
+                <div
+                  style="
+                    color: #fdbb11;
+                    font-family: &quot;Cinzel&quot;, serif;
+                    font-size: 2rem;
+                    font-weight: bold;
+                    margin-bottom: 0.5rem;
+                  "
+                >
+                  04
+                </div>
+                <h4
+                  style="
+                    font-family: &quot;Cinzel&quot;, serif;
+                    font-size: 1.4rem;
+                    color: #000;
+                    margin-bottom: 1rem;
+                  "
+                >
+                  Notification
+                </h4>
+                <p
+                  style="
+                    font-family: &quot;Inter&quot;, sans-serif;
+                    color: #666;
+                    line-height: 1.6;
+                    font-size: 1rem;
+                  "
+                >
+                  Receive an automated status update once your application is
+                  processed and ranked by the scholarship committee.
+                </p>
+              </div>
+              <div style="flex: 1; min-width: 300px; text-align: right">
+                <img
+                  src="uphsd.svg"
+                  alt="Step 4 Image Placeholder"
+                  style="max-width: 180px; opacity: 0.9"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="divider-line"></div>
+
+      <!-- Institutional Identity -->
+      <section id="identity" class="page-section">
+        <div class="container section-grid">
+          <div class="content-block">
+            <h3 class="section-heading">Institutional Identity</h3>
+            <div style="margin-bottom: 1.5rem">
+              <h4
+                style="
+                  font-family: &quot;Cinzel&quot;, serif;
+                  font-size: 1.2rem;
+                  color: #7a1114;
+                  margin-bottom: 0.5rem;
+                "
+              >
+                Our Vision
+              </h4>
+              <p
+                style="
+                  font-family: &quot;Inter&quot;, sans-serif;
+                  color: #555;
+                  line-height: 1.6;
+                "
+              >
+                To emerge as a premier university in the Philippines, providing
+                a venue for the pursuit of excellence in academics, technology,
+                and research.
+              </p>
+            </div>
+            <div style="margin-bottom: 1.5rem">
+              <h4
+                style="
+                  font-family: &quot;Cinzel&quot;, serif;
+                  font-size: 1.2rem;
+                  color: #7a1114;
+                  margin-bottom: 0.5rem;
+                "
+              >
+                Our Mission
+              </h4>
+              <p
+                style="
+                  font-family: &quot;Inter&quot;, sans-serif;
+                  color: #555;
+                  line-height: 1.6;
+                "
+              >
+                Dedicated to the development of the Filipino as a leader;
+                graduating dynamic students committed to the highest quality of
+                life.
+              </p>
+            </div>
+            <div>
+              <h4
+                style="
+                  font-family: &quot;Cinzel&quot;, serif;
+                  font-size: 1.2rem;
+                  color: #7a1114;
+                  margin-bottom: 0.5rem;
+                "
+              >
+                Core Values
+              </h4>
+              <p
+                style="
+                  font-family: &quot;Inter&quot;, sans-serif;
+                  color: #555;
+                  line-height: 1.6;
+                "
+              >
+                Love of God, Academic Excellence, and Filipino Christian
+                Leadership.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer
+      id="contact"
+      class="site-footer"
+      style="
+        background: linear-gradient(135deg, #4a080a 0%, #7a1114 100%);
+        color: #f9e5b8;
+        padding: 4rem 0 2rem;
+        position: relative;
+        overflow: hidden;
+        border-top: 5px solid #fdbb11;
+        box-shadow: 0 -10px 30px rgba(122, 17, 20, 0.15);
+      "
+    >
+      <!-- Decorative flare element: subtle glowing orb -->
+      <div
+        style="
+          position: absolute;
+          top: -50px;
+          right: 10%;
+          width: 200px;
+          height: 200px;
+          background: radial-gradient(
+            circle,
+            rgba(253, 187, 17, 0.15) 0%,
+            transparent 70%
+          );
+          border-radius: 50%;
+          pointer-events: none;
+        "
+      ></div>
+
+      <div
+        class="container footer-container"
+        style="
+          display: flex;
+          justify-content: space-between;
+          text-align: left;
+          flex-wrap: wrap;
+          gap: 3rem;
+          position: relative;
+          z-index: 1;
+        "
+      >
+        <div style="flex: 1; min-width: 300px">
+          <h4
             style="
-              margin-bottom: 2rem;
-              color: var(--text-muted);
-              font-size: 1.1rem;
+              color: #fdbb11;
+              font-family: &quot;Cinzel&quot;, serif;
+              font-size: 1.5rem;
+              margin-bottom: 1.5rem;
+              text-transform: uppercase;
+              letter-spacing: 2px;
+              text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
             "
           >
-            Manage your securely uploaded files here. These are verified
-            automatically alongside your application.
-          </p>
-          <div style="display: flex; gap: 2rem">
-            <div
-              class="card"
+            Contact Us
+          </h4>
+          <div
+            style="display: flex; align-items: flex-start; margin-bottom: 1rem"
+          >
+            <svg
               style="
-                box-shadow: 4px 4px 0px rgba(122, 17, 20, 0.05);
-                border-radius: 0;
+                width: 20px;
+                height: 20px;
+                fill: none;
+                stroke: #fdbb11;
+                stroke-width: 2;
+                margin-right: 12px;
+                margin-top: 2px;
               "
+              viewBox="0 0 24 24"
             >
-              <h3 style="font-family: var(--font-sans); font-size: 1.25rem">
-                Transcript_v2.pdf
-              </h3>
-              <p style="font-size: 0.9rem">Uploaded: April 1, 2026</p>
-              <button
-                class="btn btn-gold btn-sm"
-                style="align-self: flex-start; padding: 0.5rem 1.5rem"
-              >
-                Download
-              </button>
-            </div>
-            <div
-              class="card"
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <p style="margin: 0; line-height: 1.5; font-size: 0.95rem">
+              <strong>Address:</strong><br />Salawag-Zapote Road, Molino III,<br />Bacoor
+              City, Cavite, Philippines.
+            </p>
+          </div>
+          <div style="display: flex; align-items: center; margin-bottom: 1rem">
+            <svg
               style="
-                box-shadow: 4px 4px 0px rgba(122, 17, 20, 0.05);
-                border-radius: 0;
+                width: 20px;
+                height: 20px;
+                fill: none;
+                stroke: #fdbb11;
+                stroke-width: 2;
+                margin-right: 12px;
               "
+              viewBox="0 0 24 24"
             >
-              <h3 style="font-family: var(--font-sans); font-size: 1.25rem">
-                Student_ID_Scanned.png
-              </h3>
-              <p style="font-size: 0.9rem">Uploaded: April 1, 2026</p>
-              <button
-                class="btn btn-gold btn-sm"
-                style="align-self: flex-start; padding: 0.5rem 1.5rem"
-              >
-                Download
-              </button>
-            </div>
+              <path
+                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
+              ></path>
+            </svg>
+            <p style="margin: 0; font-size: 0.95rem">
+              <strong>Phone:</strong> (046) 477-0602
+            </p>
           </div>
-        </section>
-
-        <!-- 8. FAQ -->
-        <section id="view-faq" class="hidden">
-          <h2 class="section-title">Frequently Asked Questions</h2>
-          <div class="faq-list" id="faqAccordion">
-            <div class="faq-item">
-              <div class="faq-question">
-                How does the automated ranking work? <span>+</span>
-              </div>
-              <div class="faq-answer">
-                Rankings are calculated dynamically based on your cumulative GPA
-                compared against the minimum threshold set by the system
-                administrator.
-              </div>
-            </div>
-            <div class="faq-item">
-              <div class="faq-question">
-                Can I apply for multiple scholarships? <span>+</span>
-              </div>
-              <div class="faq-answer">
-                Yes, as long as you meet the eligibility requirements for each
-                specific fund. Ensure your essays are tailored appropriately.
-              </div>
-            </div>
-            <div class="faq-item">
-              <div class="faq-question">
-                Who is eligible for the UPHSD Gold Tier grant? <span>+</span>
-              </div>
-              <div class="faq-answer">
-                You must have completed at least 2 full semesters as a regular
-                student with no record of disciplinary action.
-              </div>
-            </div>
+          <div style="display: flex; align-items: center">
+            <svg
+              style="
+                width: 20px;
+                height: 20px;
+                fill: none;
+                stroke: #fdbb11;
+                stroke-width: 2;
+                margin-right: 12px;
+              "
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+              ></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            <p style="margin: 0; font-size: 0.95rem">
+              <strong>Email:</strong> admission.molino@perpetualdalta.edu.ph
+            </p>
           </div>
-        </section>
+        </div>
+        <div
+          style="
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            position: relative;
+          "
+        >
+          <!-- Enhanced Full Color Logo with Gold Glow Drop Shadow Flare -->
+          <img
+            src="uphsd.svg"
+            alt="UPHSD Logo"
+            style="
+              height: 140px;
+              transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+              cursor: pointer;
+            "
+            onmouseover="this.style.transform = 'scale(1.08) rotate(-2deg)'"
+            onmouseout="this.style.transform = 'scale(1) rotate(0deg)'"
+          />
+        </div>
+      </div>
+      <div
+        style="
+          border-top: 1px solid rgba(253, 187, 17, 0.2);
+          margin-top: 3rem;
+          padding-top: 2rem;
+          text-align: center;
+          font-size: 0.85rem;
+          color: #dcb689;
+          letter-spacing: 0.5px;
+        "
+      >
+        <p>
+          &copy; 2026 Student Scholarship Program |
+          <strong>UPHSD Molino Campus</strong>.
+        </p>
+      </div>
+    </footer>
 
-        <!-- 9. CONTACT -->
-        <section id="view-contact" class="hidden">
-          <h2 class="section-title">Contact Support</h2>
-          <form id="contactForm" style="max-width: 600px">
-            <div class="form-group">
-              <label>Subject</label>
-              <input type="text" class="form-control" required />
-            </div>
-            <div class="form-group">
-              <label>Message</label>
-              <textarea class="form-control" rows="5" required></textarea>
-            </div>
-            <button type="submit" class="btn">Send via Email Support</button>
-          </form>
-        </section>
-      </main>
-    </div>
+    <!-- Intersection Observer Script for Scroll Animations -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const observerOptions = {
+          root: null,
+          rootMargin: "0px",
+          threshold: 0.15,
+        };
 
-    <script src="./js/app.js"></script>
+        const observer = new IntersectionObserver((entries, observer) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              observer.unobserve(entry.target);
+            }
+          });
+        }, observerOptions);
+
+        document.querySelectorAll(".scroll-fade").forEach((el) => {
+          observer.observe(el);
+        });
+      });
+    </script>
   </body>
 </html>

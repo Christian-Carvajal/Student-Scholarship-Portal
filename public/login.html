@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login | Student Scholarship Portal</title>
+    <!-- Sophisticated UPHSD Typography Pairing -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Outfit:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body class="login-page">
+    <div class="login-container">
+      <!-- Left Side -->
+      <div class="login-left bg-maroon">
+        <img src="uphsd.svg" alt="UPHSD Logo" class="login-logo" />
+        <h1 class="login-headline">Student Scholarship<br />Portal</h1>
+      </div>
+
+      <!-- Right Side -->
+      <div class="login-right">
+        <div class="login-panel">
+          <div class="login-toggle">
+            <button id="btnStudentRole" class="toggle-btn active">
+              Student
+            </button>
+            <button id="btnAdminRole" class="toggle-btn">Admin</button>
+          </div>
+
+          <h2 id="loginTitle" class="form-title">Student Login</h2>
+          <form id="authForm">
+            <div class="form-group" id="groupStudentId">
+              <label id="lblUsername">Student ID</label>
+              <input
+                type="text"
+                id="username"
+                class="form-control"
+                required
+                placeholder="Ex. 12345678"
+              />
+            </div>
+
+            <!-- Registration Fields (Only visible for students sometimes, but let's implement login/register tabs inside) -->
+            <div class="form-tabs" id="studentTabs">
+              <a href="#" id="tabLogin" class="active">Login</a>
+              <a href="#" id="tabRegister">Register</a>
+            </div>
+
+            <div id="registerFields" class="hidden">
+              <div class="form-group">
+                <label>Full Name</label>
+                <input
+                  type="text"
+                  id="regName"
+                  class="form-control"
+                  placeholder="Juan Dela Cruz"
+                />
+              </div>
+              <div class="form-group">
+                <label>Program / Major</label>
+                <input
+                  type="text"
+                  id="regProgram"
+                  class="form-control"
+                  placeholder="BS Computer Science"
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Password</label>
+              <input
+                type="password"
+                id="password"
+                class="form-control"
+                required
+                placeholder="••••••••"
+              />
+              <a href="#" class="forgot-pass">Forgot Password?</a>
+            </div>
+
+            <button
+              type="submit"
+              id="btnSubmitAuth"
+              class="btn btn-gold btn-full"
+            >
+              Login
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="customModal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <h3 id="modalTitle">Alert</h3>
+        <div id="modalBody" class="modal-body"></div>
+        <div class="modal-actions">
+          <button id="modalBtnOk" class="btn btn-gold">OK</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Force Password Change Modal (Industry Standard) -->
+    <div
+      id="forcePasswordModal"
+      class="modal-overlay hidden"
+      style="backdrop-filter: blur(8px)"
+    >
+      <div
+        class="modal-content"
+        style="max-width: 450px; border-top: 5px solid var(--primary-maroon)"
+      >
+        <h3
+          style="
+            color: var(--primary-maroon);
+            border-bottom: none;
+            margin-bottom: 0.5rem;
+          "
+        >
+          Action Required
+        </h3>
+        <p
+          style="
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+          "
+        >
+          For your security, you must change your auto-generated temporary
+          password before accessing the portal.
+        </p>
+
+        <form id="forcePasswordForm">
+          <div class="form-group">
+            <label>New Password</label>
+            <input
+              type="password"
+              id="newPassword"
+              class="form-control"
+              required
+              placeholder="Enter new password"
+            />
+          </div>
+
+          <!-- Password Strength Meter -->
+          <div class="password-strength">
+            <div class="strength-bar-container">
+              <div id="strengthBar" class="strength-bar"></div>
+            </div>
+            <ul class="pwd-requirements">
+              <li id="reqLength" class="invalid">At least 8 characters</li>
+              <li id="reqUpper" class="invalid">
+                At least one uppercase letter
+              </li>
+              <li id="reqNum" class="invalid">At least one number</li>
+            </ul>
+          </div>
+
+          <div class="form-group" style="margin-top: 1rem">
+            <label>Confirm New Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              class="form-control"
+              required
+              placeholder="Re-enter new password"
+            />
+            <small
+              id="pwdMatchMsg"
+              style="color: #dc3545; display: none; margin-top: 5px"
+              >Passwords do not match.</small
+            >
+          </div>
+
+          <div class="modal-actions" style="margin-top: 2rem">
+            <button
+              type="submit"
+              id="btnSavePassword"
+              class="btn btn-gold"
+              style="width: 100%"
+              disabled
+            >
+              Secure Account & Continue
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="./js/auth.js"></script>
+  </body>
+</html>
