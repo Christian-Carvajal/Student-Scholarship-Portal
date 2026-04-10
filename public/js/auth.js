@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Remove any fake student admins just in case
         mockUsers = mockUsers.filter(u => !(u.studentId === 'admin' && u.role === 'student'));
         
-        mockUsers.push({ studentId: 'admin', password: 'admin', role: 'admin', name: 'Admin User' });
+        mockUsers.push({ studentId: 'admin', password: 'admin', role: 'admin', name: 'Admin User', email: 'admission.molino.perpetualdalta@proton.me' });
         localStorage.setItem('mockUsers', JSON.stringify(mockUsers));
     }
 
@@ -38,9 +38,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalBody = document.getElementById('modalBody');
     const modalBtnOk = document.getElementById('modalBtnOk');
 
-    function showModal(title, messageHtml) {
+    function showModal(title, messageHtml, hideOkBtn = false) {
         modalTitle.textContent = title;
         modalBody.innerHTML = messageHtml; 
+        if(modalBtnOk) {
+            modalBtnOk.style.display = hideOkBtn ? 'none' : 'block';
+        }
         modalOverlay.classList.remove('hidden');
     }
 
@@ -158,16 +161,23 @@ document.addEventListener('DOMContentLoaded', () => {
             // REGISTER LOGIC (Student only)
             const name = document.getElementById('regName').value.trim();
             const program = document.getElementById('regProgram').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
             
             if (mockUsers.find(u => u.studentId === username)) {
                 showModal('Registration Error', 'Student ID already registered!');
                 return;
             }
 
+            if (mockUsers.find(u => u.email === email)) {
+                showModal('Registration Error', 'This email is already in use.');
+                return;
+            }
+
             // Using the real password they entered for simplicity in this refactor, instead of generated one
             const newUser = { 
                 studentId: username, 
-                name: name || 'Student Visitor', 
+                name: name || 'Student Visitor',
+                email: email, 
                 program: program, 
                 password: password, 
                 role: 'student'
@@ -184,6 +194,157 @@ document.addEventListener('DOMContentLoaded', () => {
             updateModeUI();
         }
     });
+
+    // --- FORGOT PASSWORD LOGIC ---
+    const forgotPassLink = document.querySelector('.forgot-pass');
+    const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+    const btnCancelForgot = document.getElementById('btnCancelForgot');
+    const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+    const btnSubmitForgot = document.getElementById('btnSubmitForgot');
+
+    if (forgotPassLink && forgotPasswordModal) {
+        // Open Modal
+        forgotPassLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            forgotPasswordModal.classList.remove('hidden');
+        });
+
+        // Cancel
+        btnCancelForgot.addEventListener('click', () => {
+            forgotPasswordModal.classList.add('hidden');
+            forgotPasswordForm.reset();
+        });
+
+        // Submit EmailJS Reset Request
+        forgotPasswordForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const resetEmail = document.getElementById('forgotEmail').value.trim();
+            const userAccount = mockUsers.find(u => u.email === resetEmail);
+
+            if (!userAccount) {
+                // For security, show same generic message whether email exists or not, but don't send Email
+                showModal('Request Sent', 'If an account is associated with this email, a reset link has been sent.');
+                forgotPasswordModal.classList.add('hidden');
+                forgotPasswordForm.reset();
+                return;
+            }
+
+            btnSubmitForgot.textContent = 'Sending...';
+            btnSubmitForgot.disabled = true;
+
+            // Generate Reset Token and update mockUsers
+            const resetToken = Math.random().toString(36).substring(2) + Date.now().toString(36);
+            userAccount.resetToken = resetToken;
+            localStorage.setItem('mockUsers', JSON.stringify(mockUsers));
+
+            // Generate Magic Link
+            const currentUrl = window.location.href.split('?')[0]; // Clean URL
+            const magicLink = `${currentUrl}?reset=true&email=${encodeURIComponent(resetEmail)}&token=${resetToken}`;
+
+            // Send via EmailJS
+            const templateParams = {
+                name: userAccount.name || 'Student',
+                email: resetEmail,
+                link: magicLink
+            };
+
+            emailjs.send('service_3crm71j', 'template_1jougji', templateParams)
+                .then(function() {
+                    showModal('Email Sent', 'Please check your inbox (and spam folder) for the password reset link.');
+                    forgotPasswordModal.classList.add('hidden');
+                    forgotPasswordForm.reset();
+                })
+                .catch(function(error) {
+                    console.error('EmailJS Error:', error);
+                    showModal('Error', 'There was an error sending the reset email. Please try again later.');
+                })
+                .finally(function() {
+                    btnSubmitForgot.textContent = 'Send Link';
+                    btnSubmitForgot.disabled = false;
+                });
+        });
+    }
+
+    // --- HANDLE MAGIC LINK CREATION OF NEW PASSWORD ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const isReset = urlParams.get('reset');
+    const resetEmailParam = urlParams.get('email');
+    const resetTokenParam = urlParams.get('token');
+    const createNewPasswordModal = document.getElementById('createNewPasswordModal');
+    const createNewPasswordForm = document.getElementById('createNewPasswordForm');
+    const btnUpdatePassword = createNewPasswordForm ? createNewPasswordForm.querySelector('button[type="submit"]') : null;
+
+    if (isReset && resetEmailParam && createNewPasswordModal) {
+        // Validate token exists and matches the one assigned to the user
+        const requestedUser = mockUsers.find(u => u.email === resetEmailParam);
+        if (!requestedUser || !requestedUser.resetToken || requestedUser.resetToken !== resetTokenParam) {
+            showModal('Invalid Link', `
+                <div style="text-align: center; margin-top: 10px;">
+                    <p style="margin-bottom: 20px;">This password reset link is invalid or has already been used.</p>
+                    <button class="btn btn-gold" onclick="window.location.href='${window.location.href.split('?')[0]}'" style="padding: 10px 15px;">Return to Login</button>
+                </div>
+            `, true);
+            return;
+        }
+
+        createNewPasswordModal.classList.remove('hidden');
+
+        createNewPasswordForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Add interaction: change button state while "processing"
+            btnUpdatePassword.textContent = 'Updating...';
+            btnUpdatePassword.disabled = true;
+            
+            const newPass = document.getElementById('resetNewPassword').value.trim();
+            
+            // Find user and update their mock password
+            let updated = false;
+            let targetRole = 'student';
+            let targetUser = null;
+
+            for (let i = 0; i < mockUsers.length; i++) {
+                if (mockUsers[i].email === resetEmailParam) {
+                    mockUsers[i].password = newPass;
+                    delete mockUsers[i].resetToken; // Invalidate token after setting new password
+                    targetUser = mockUsers[i];
+                    targetRole = mockUsers[i].role || 'student';
+                    updated = true;
+                    break;
+                }
+            }
+
+            if (updated) {
+                localStorage.setItem('mockUsers', JSON.stringify(mockUsers));
+                // Automatically log them in for a smooth experience
+                localStorage.setItem('currentUser', JSON.stringify(targetUser));
+                
+                // Delay slightly to show the Success Modal with interactive buttons
+                setTimeout(() => {
+                    if (createNewPasswordModal) createNewPasswordModal.classList.add('hidden');
+                    
+                    const dashboardUrl = targetRole === 'admin' ? 'admin-portal.html' : 'student-portal.html';
+                    const loginUrl = window.location.href.split('?')[0];
+                    
+                    showModal('Password Reset Complete', `
+                        <div style="text-align: center; margin-top: 10px;">
+                            <p style="margin-bottom: 20px; font-size: 1.1rem;">Your password has been successfully updated!</p>
+                            <p style="margin-bottom: 20px; color: var(--text-color, #666);">Choose an action to proceed:</p>
+                            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                                <button class="btn btn-gold" onclick="window.location.href='${dashboardUrl}'" style="padding: 10px 15px;">Continue to Dashboard</button>
+                                <button class="btn" onclick="localStorage.removeItem('currentUser'); window.location.href='${loginUrl}'" style="padding: 10px 15px; background: #eee; color: #333;">Go to Login</button>
+                            </div>
+                        </div>
+                    `, true);
+                }, 500); // Small initial delay so button state update implies "work" is happening
+
+            } else {
+                showModal('Error', 'We could not find an account matching that email address.');
+                btnUpdatePassword.textContent = 'Update Password';
+                btnUpdatePassword.disabled = false;
+            }
+        });
+    }
 
     // Check if currently logged in, and redirect
     const current = JSON.parse(localStorage.getItem('currentUser'));
