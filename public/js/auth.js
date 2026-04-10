@@ -4,10 +4,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let isLoginMode = true;
 
     // Mock Users inside auth context
-    let mockUsers = JSON.parse(localStorage.getItem('mockUsers')) || [
-        // default admin
-        { studentId: 'admin', password: 'admin', role: 'admin', name: 'Admin User' }
-    ];
+    let mockUsers = JSON.parse(localStorage.getItem('mockUsers')) || [];
+    
+    // Ensure admin always exists WITH THE ADMIN ROLE in mockUsers
+    let adminIndex = mockUsers.findIndex(u => u.studentId === 'admin' && u.role === 'admin');
+    if (adminIndex === -1) {
+        // Remove any fake student admins just in case
+        mockUsers = mockUsers.filter(u => !(u.studentId === 'admin' && u.role === 'student'));
+        
+        mockUsers.push({ studentId: 'admin', password: 'admin', role: 'admin', name: 'Admin User' });
+        localStorage.setItem('mockUsers', JSON.stringify(mockUsers));
+    }
 
     // Elements
     const btnStudentRole = document.getElementById('btnStudentRole');
@@ -111,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const expectedRole = isStudentLayout ? 'student' : 'admin';
             
             const user = mockUsers.find(u => 
-                u.studentId === username && 
+                u.studentId.toLowerCase() === username.toLowerCase() && 
                 u.password === password && 
                 (u.role === expectedRole || (!u.role && expectedRole === 'student')) // Assume old mock users without role are students
             );
