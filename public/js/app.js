@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const genPassword = Math.random().toString(36).slice(-8);
-            const newUser = { studentId, name, program, year, password: genPassword };
+            const newUser = { studentId, name, program, year, password: genPassword, isTemporary: true };
             
             mockUsers.push(newUser);
             localStorage.setItem('mockUsers', JSON.stringify(mockUsers));
@@ -156,16 +156,81 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const user = mockUsers.find(u => u.studentId === id && u.password === pw);
             if (user) {
-                currentUser = user;
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                updateAuthUI();
-                loginForm.reset();
-                window.showModal('Welcome Back', `Welcome to the Portal, ${user.name}`);
-                navigateTo('view-listings');
+                if (user.isTemporary) {
+                    // Force Password Change flow
+                    document.getElementById('forcePasswordModal').classList.remove('hidden');
+                    setupPasswordStrength(user);
+                } else {
+                    currentUser = user;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    updateAuthUI();
+                    loginForm.reset();
+                    window.showModal('Welcome Back', `Welcome to the Portal, ${user.name}`);
+                    navigateTo('view-listings');
+                }
             } else {
                 window.showModal('Login Failed', 'Invalid Student ID or Password.');
             }
         });
+    }
+
+    // Force Password Logic
+    function setupPasswordStrength(user) {
+        const newPw = document.getElementById('newPassword');
+        const confirmPw = document.getElementById('confirmPassword');
+        const btnSave = document.getElementById('btnSavePassword');
+        const sBar = document.getElementById('strengthBar');
+        
+        let validLen = false, validUpper = false, validNum = false, passwordsMatch = false;
+
+        const checkStrength = () => {
+            const val = newPw.value;
+            validLen = val.length >= 8;
+            validUpper = /[A-Z]/.test(val);
+            validNum = /[0-9]/.test(val);
+            
+            document.getElementById('reqLength').className = validLen ? 'valid' : 'invalid';
+            document.getElementById('reqUpper').className = validUpper ? 'valid' : 'invalid';
+            document.getElementById('reqNum').className = validNum ? 'valid' : 'invalid';
+            
+            const score = (validLen ? 33 : 0) + (validUpper ? 33 : 0) + (validNum ? 34 : 0);
+            sBar.style.width = score + '%';
+            sBar.style.backgroundColor = score < 66 ? '#dc3545' : (score < 100 ? '#ffc107' : '#28a745');
+            
+            checkMatch();
+        };
+
+        const checkMatch = () => {
+            passwordsMatch = (newPw.value === confirmPw.value && newPw.value !== '');
+            document.getElementById('pwdMatchMsg').style.display = (confirmPw.value && !passwordsMatch) ? 'block' : 'none';
+            btnSave.disabled = !(validLen && validUpper && validNum && passwordsMatch);
+        };
+
+        newPw.addEventListener('input', checkStrength);
+        confirmPw.addEventListener('input', checkMatch);
+
+        document.getElementById('forcePasswordForm').onsubmit = (e) => {
+            e.preventDefault();
+            // Update user password, remove temporary flag
+            user.password = newPw.value;
+            user.isTemporary = false;
+            
+            // Sync with local Mock DB
+            const userIndex = mockUsers.findIndex(u => u.studentId === user.studentId);
+            if(userIndex > -1) mockUsers[userIndex] = user;
+            localStorage.setItem('mockUsers', JSON.stringify(mockUsers));
+            
+            // Complete Login!
+            document.getElementById('forcePasswordModal').classList.add('hidden');
+            currentUser = user;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            updateAuthUI();
+            loginForm.reset();
+            document.getElementById('forcePasswordForm').reset();
+            
+            window.showModal('Security Check Completed', `Your password was successfully updated, ${user.name}`);
+            navigateTo('view-listings');
+        };
     }
 
     // --- 3. FETCHING REAL DATA FROM NODE.JS BACKEND ---

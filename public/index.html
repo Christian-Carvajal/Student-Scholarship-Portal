@@ -32,6 +32,43 @@
       </div>
     </div>
 
+    <!-- Force Password Change Modal (Industry Standard) -->
+    <div id="forcePasswordModal" class="modal-overlay hidden" style="backdrop-filter: blur(8px);">
+      <div class="modal-content" style="max-width: 450px; border-top: 5px solid var(--primary-maroon);">
+        <h3 style="color: var(--primary-maroon); border-bottom: none; margin-bottom: 0.5rem;">Action Required</h3>
+        <p style="color: #666; font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.5;">For your security, you must change your auto-generated temporary password before accessing the portal.</p>
+        
+        <form id="forcePasswordForm">
+          <div class="form-group">
+            <label>New Password</label>
+            <input type="password" id="newPassword" class="form-control" required placeholder="Enter new password">
+          </div>
+          
+          <!-- Password Strength Meter -->
+          <div class="password-strength">
+            <div class="strength-bar-container">
+              <div id="strengthBar" class="strength-bar"></div>
+            </div>
+            <ul class="pwd-requirements">
+              <li id="reqLength" class="invalid">At least 8 characters</li>
+              <li id="reqUpper" class="invalid">At least one uppercase letter</li>
+              <li id="reqNum" class="invalid">At least one number</li>
+            </ul>
+          </div>
+
+          <div class="form-group" style="margin-top: 1rem;">
+            <label>Confirm New Password</label>
+            <input type="password" id="confirmPassword" class="form-control" required placeholder="Re-enter new password">
+            <small id="pwdMatchMsg" style="color: #dc3545; display: none; margin-top: 5px;">Passwords do not match.</small>
+          </div>
+          
+          <div class="modal-actions" style="margin-top: 2rem;">
+            <button type="submit" id="btnSavePassword" class="btn btn-gold" style="width: 100%;" disabled>Secure Account & Continue</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <!-- Header -->
     <header class="app-header">
       <img src="uphsd.svg" alt="UPHSD Logo" />
