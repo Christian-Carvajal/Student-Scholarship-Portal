@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('mockUsers', JSON.stringify(mockUsers));
 
             // Generate Magic Link
-            const currentUrl = window.location.href.split('?')[0]; // Clean URL
+            const currentUrl = window.location.origin + window.location.pathname; // Clean URL
             const magicLink = `${currentUrl}?reset=true&email=${encodeURIComponent(resetEmail)}&token=${resetToken}`;
 
             // Send via EmailJS
@@ -281,7 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
             showModal('Invalid Link', `
                 <div style="text-align: center; margin-top: 10px;">
                     <p style="margin-bottom: 20px;">This password reset link is invalid or has already been used.</p>
-                    <button class="btn btn-gold" onclick="window.location.href='${window.location.href.split('?')[0]}'" style="padding: 10px 15px;">Return to Login</button>
+                    <button class="btn btn-gold" onclick="window.location.href='${window.location.origin + window.location.pathname}'" style="padding: 10px 15px;">Return to Login</button>
                 </div>
             `, true);
             return;
@@ -324,7 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (createNewPasswordModal) createNewPasswordModal.classList.add('hidden');
                     
                     const dashboardUrl = targetRole === 'admin' ? 'admin-portal.html' : 'student-portal.html';
-                    const loginUrl = window.location.href.split('?')[0];
+                    const loginUrl = window.location.origin + window.location.pathname;
                     
                     showModal('Password Reset Complete', `
                         <div style="text-align: center; margin-top: 10px;">
