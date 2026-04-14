@@ -41,17 +41,48 @@
     </div>
 
     <!-- Force Password Change Modal (Industry Standard) -->
-    <div id="forcePasswordModal" class="modal-overlay hidden" style="backdrop-filter: blur(8px);">
-      <div class="modal-content" style="max-width: 450px; border-top: 5px solid var(--primary-maroon);">
-        <h3 style="color: var(--primary-maroon); border-bottom: none; margin-bottom: 0.5rem;">Action Required</h3>
-        <p style="color: #666; font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.5;">For your security, you must change your auto-generated temporary password before accessing the portal.</p>
-        
+    <div
+      id="forcePasswordModal"
+      class="modal-overlay hidden"
+      style="backdrop-filter: blur(8px)"
+    >
+      <div
+        class="modal-content"
+        style="max-width: 450px; border-top: 5px solid var(--primary-maroon)"
+      >
+        <h3
+          style="
+            color: var(--primary-maroon);
+            border-bottom: none;
+            margin-bottom: 0.5rem;
+          "
+        >
+          Action Required
+        </h3>
+        <p
+          style="
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+          "
+        >
+          For your security, you must change your auto-generated temporary
+          password before accessing the portal.
+        </p>
+
         <form id="forcePasswordForm">
           <div class="form-group">
             <label>New Password</label>
-            <input type="password" id="newPassword" class="form-control" required placeholder="Enter new password">
+            <input
+              type="password"
+              id="newPassword"
+              class="form-control"
+              required
+              placeholder="Enter new password"
+            />
           </div>
-          
+
           <!-- Password Strength Meter -->
           <div class="password-strength">
             <div class="strength-bar-container">
@@ -59,19 +90,39 @@
             </div>
             <ul class="pwd-requirements">
               <li id="reqLength" class="invalid">At least 8 characters</li>
-              <li id="reqUpper" class="invalid">At least one uppercase letter</li>
+              <li id="reqUpper" class="invalid">
+                At least one uppercase letter
+              </li>
               <li id="reqNum" class="invalid">At least one number</li>
             </ul>
           </div>
 
-          <div class="form-group" style="margin-top: 1rem;">
+          <div class="form-group" style="margin-top: 1rem">
             <label>Confirm New Password</label>
-            <input type="password" id="confirmPassword" class="form-control" required placeholder="Re-enter new password">
-            <small id="pwdMatchMsg" style="color: #dc3545; display: none; margin-top: 5px;">Passwords do not match.</small>
+            <input
+              type="password"
+              id="confirmPassword"
+              class="form-control"
+              required
+              placeholder="Re-enter new password"
+            />
+            <small
+              id="pwdMatchMsg"
+              style="color: #dc3545; display: none; margin-top: 5px"
+              >Passwords do not match.</small
+            >
           </div>
-          
-          <div class="modal-actions" style="margin-top: 2rem;">
-            <button type="submit" id="btnSavePassword" class="btn btn-gold" style="width: 100%;" disabled>Secure Account & Continue</button>
+
+          <div class="modal-actions" style="margin-top: 2rem">
+            <button
+              type="submit"
+              id="btnSavePassword"
+              class="btn btn-gold"
+              style="width: 100%"
+              disabled
+            >
+              Secure Account & Continue
+            </button>
           </div>
         </form>
       </div>
@@ -87,11 +138,20 @@
       <!-- Sidebar Navigation -->
       <aside class="app-sidebar">
         <nav>
-          <a class="nav-link active" data-target="view-admin">Admin Dashboard</a>
-          <a class="nav-link" data-target="view-review">Review</a>
-          <a class="nav-link" data-target="view-add-scholarship">Add Scholarship</a>
+          <a class="nav-link active" data-target="view-admin"
+            >Admin Dashboard</a
+          >
+          <a class="nav-link" data-target="view-review">Review Applications</a>
+          <a class="nav-link" data-target="view-add-scholarship"
+            >Add Scholarship</a
+          >
           <a class="nav-link" data-target="view-notifications">Notifications</a>
-          <a class="nav-link" id="navLogout" style="color: var(--primary-maroon);">Logout</a>
+          <a
+            class="nav-link"
+            id="navLogout"
+            style="color: var(--primary-maroon)"
+            >Logout</a
+          >
         </nav>
       </aside>
 
@@ -105,13 +165,17 @@
         <!-- REVIEW LIST (formerly Auto-Ranked Leaderboard) -->
         <section id="view-review" class="hidden">
           <h2 class="section-title">Review Applications</h2>
-          <table class="data-table data-table--justified" style="margin-bottom: 2rem">
+          <table
+            class="data-table data-table--justified"
+            style="margin-bottom: 2rem"
+          >
             <thead>
               <tr>
                 <th>Applicant</th>
                 <th>Scholarship Fund</th>
                 <th>Submitted GPA</th>
                 <th>Auto-Vet Status</th>
+                <th>Review Progress</th>
                 <th>Admin Action</th>
               </tr>
             </thead>
@@ -123,25 +187,58 @@
 
         <!-- REVIEW DETAILS (placeholder until SQL is wired) -->
         <section id="view-review-detail" class="hidden">
-          <div style="display:flex; justify-content: space-between; align-items: flex-end; gap: 1rem; flex-wrap: wrap;">
-            <h2 class="section-title" style="margin-bottom: 0;">Application Review</h2>
-            <button class="btn btn-sm" type="button" id="btnBackToReview">Back to Review</button>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-end;
+              gap: 1rem;
+              flex-wrap: wrap;
+            "
+          >
+            <h2 class="section-title" style="margin-bottom: 0">
+              Application Review
+            </h2>
+            <button class="btn btn-sm" type="button" id="btnBackToReview">
+              Back to Review
+            </button>
           </div>
 
-          <div class="view-grid" style="margin-top: 2rem;">
+          <div class="view-grid" style="margin-top: 2rem">
             <div class="view-primary">
-              <div class="aside-card" style="margin-bottom: 1.5rem;">
+              <div class="aside-card" style="margin-bottom: 1.5rem">
                 <div class="aside-title">Applicant Information</div>
-                <div class="kv"><div class="kv-k">Applicant</div><div class="kv-v" id="reviewApplicantName">—</div></div>
-                <div class="kv"><div class="kv-k">Student ID</div><div class="kv-v" id="reviewStudentId">—</div></div>
-                <div class="kv"><div class="kv-k">Scholarship</div><div class="kv-v" id="reviewScholarship">—</div></div>
-                <div class="kv"><div class="kv-k">Submitted GPA</div><div class="kv-v" id="reviewGpa">—</div></div>
-                <div class="kv"><div class="kv-k">Submitted</div><div class="kv-v" id="reviewSubmittedAt">—</div></div>
+                <div class="kv">
+                  <div class="kv-k">Applicant</div>
+                  <div class="kv-v" id="reviewApplicantName">—</div>
+                </div>
+                <div class="kv">
+                  <div class="kv-k">Student ID</div>
+                  <div class="kv-v" id="reviewStudentId">—</div>
+                </div>
+                <div class="kv">
+                  <div class="kv-k">Scholarship</div>
+                  <div class="kv-v" id="reviewScholarship">—</div>
+                </div>
+                <div class="kv">
+                  <div class="kv-k">Submitted GPA</div>
+                  <div class="kv-v" id="reviewGpa">—</div>
+                </div>
+                <div class="kv">
+                  <div class="kv-k">Submitted</div>
+                  <div class="kv-v" id="reviewSubmittedAt">—</div>
+                </div>
               </div>
 
               <div class="aside-card">
                 <div class="aside-title">Essay / Letter of Intent</div>
-                <div class="aside-text" id="reviewEssay" style="white-space: pre-wrap;">—</div>
+                <div
+                  class="aside-text"
+                  id="reviewEssay"
+                  style="white-space: pre-wrap"
+                >
+                  —
+                </div>
               </div>
             </div>
 
@@ -155,10 +252,25 @@
 
               <div class="aside-card aside-highlight">
                 <div class="aside-title">Admin Decision</div>
-                <div class="aside-text" style="margin-bottom: 1rem;">Approve or reject after verifying the GPA and documents. (Placeholder actions — will be connected to SQL later.)</div>
-                <div style="display:flex; gap: 0.75rem; flex-wrap: wrap;">
-                  <button class="btn btn-gold btn-sm" type="button" id="btnApproveApplication">Approve</button>
-                  <button class="btn btn-sm" type="button" id="btnRejectApplication">Reject</button>
+                <div class="aside-text" style="margin-bottom: 1rem">
+                  Approve or reject after verifying the GPA and documents.
+                  (Placeholder actions — will be connected to SQL later.)
+                </div>
+                <div style="display: flex; gap: 0.75rem; flex-wrap: wrap">
+                  <button
+                    class="btn btn-gold btn-sm"
+                    type="button"
+                    id="btnApproveApplication"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    class="btn btn-sm"
+                    type="button"
+                    id="btnRejectApplication"
+                  >
+                    Reject
+                  </button>
                 </div>
               </div>
             </aside>
@@ -168,7 +280,10 @@
         <!-- ADD SCHOLARSHIP (separate window) -->
         <section id="view-add-scholarship" class="hidden">
           <h2 class="section-title">Add Scholarship</h2>
-          <form id="addScholarshipForm" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem">
+          <form
+            id="addScholarshipForm"
+            style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem"
+          >
             <div class="form-group">
               <label>Title</label>
               <input type="text" class="form-control" required />
@@ -329,63 +444,101 @@
           <form id="contactForm" style="max-width: 600px">
             <div class="form-group">
               <label>Your Name</label>
-              <input type="text" name="name" id="contactName" class="form-control" required placeholder="e.g. Juan De La Cruz" />
+              <input
+                type="text"
+                name="name"
+                id="contactName"
+                class="form-control"
+                required
+                placeholder="e.g. Juan De La Cruz"
+              />
             </div>
             <div class="form-group">
               <label>Email Address</label>
-              <input type="email" name="email" id="contactEmail" class="form-control" required placeholder="Where we will send the auto-reply" />
+              <input
+                type="email"
+                name="email"
+                id="contactEmail"
+                class="form-control"
+                required
+                placeholder="Where we will send the auto-reply"
+              />
             </div>
             <div class="form-group">
               <label>Subject</label>
-              <input type="text" name="title" id="contactSubject" class="form-control" required />
+              <input
+                type="text"
+                name="title"
+                id="contactSubject"
+                class="form-control"
+                required
+              />
             </div>
             <div class="form-group">
               <label>Message</label>
-              <textarea name="message" id="contactMessage" class="form-control" rows="5" required></textarea>
+              <textarea
+                name="message"
+                id="contactMessage"
+                class="form-control"
+                rows="5"
+                required
+              ></textarea>
             </div>
-            <button type="submit" class="btn" id="btnSubmitContact">Send via Email Support</button>
+            <button type="submit" class="btn" id="btnSubmitContact">
+              Send via Email Support
+            </button>
           </form>
         </section>
       </main>
     </div>
 
     <!-- EmailJS SDK -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"
+    ></script>
     <script type="text/javascript">
-      (function() {
-          emailjs.init("eSRnEOEJEaoP8a_rj"); // Public Key
+      (function () {
+        emailjs.init("eSRnEOEJEaoP8a_rj"); // Public Key
       })();
 
-      document.addEventListener('DOMContentLoaded', () => {
-        const contactForm = document.getElementById('contactForm');
-        const btnSubmitContact = document.getElementById('btnSubmitContact');
+      document.addEventListener("DOMContentLoaded", () => {
+        const contactForm = document.getElementById("contactForm");
+        const btnSubmitContact = document.getElementById("btnSubmitContact");
 
-        if(contactForm) {
-          contactForm.addEventListener('submit', function(event) {
-              event.preventDefault();
-              
-              const prevText = btnSubmitContact.innerText;
-              btnSubmitContact.innerText = 'Sending...';
-              btnSubmitContact.disabled = true;
+        if (contactForm) {
+          contactForm.addEventListener("submit", function (event) {
+            event.preventDefault();
 
-              // Send the Admin Notification
-              emailjs.sendForm('service_h0p6jys', 'template_zwmmbp2', this)
-                .then(function() {
-                    // Send the Auto-Reply to User
-                    return emailjs.sendForm('service_h0p6jys', 'template_46i1e8g', contactForm);
-                })
-                .then(function() {
-                    alert('Message sent successfully! An auto-reply has been sent to your email.');
-                    contactForm.reset();
-                })
-                .catch(function(error) {
-                    console.error('FAILED...', error);
-                    alert('Failed to send the message. Please try again later.');
-                })
-                .finally(function() {
-                    btnSubmitContact.innerText = prevText;
-                    btnSubmitContact.disabled = false;
-                });
+            const prevText = btnSubmitContact.innerText;
+            btnSubmitContact.innerText = "Sending...";
+            btnSubmitContact.disabled = true;
+
+            // Send the Admin Notification
+            emailjs
+              .sendForm("service_h0p6jys", "template_zwmmbp2", this)
+              .then(function () {
+                // Send the Auto-Reply to User
+                return emailjs.sendForm(
+                  "service_h0p6jys",
+                  "template_46i1e8g",
+                  contactForm,
+                );
+              })
+              .then(function () {
+                alert(
+                  "Message sent successfully! An auto-reply has been sent to your email.",
+                );
+                contactForm.reset();
+              })
+              .catch(function (error) {
+                console.error("FAILED...", error);
+                alert("Failed to send the message. Please try again later.");
+              })
+              .finally(function () {
+                btnSubmitContact.innerText = prevText;
+                btnSubmitContact.disabled = false;
+              });
           });
         }
       });
@@ -393,5 +546,3 @@
     <script src="./js/admin.js"></script>
   </body>
 </html>
-
-

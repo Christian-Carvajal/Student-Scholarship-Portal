@@ -78,6 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
             gpa: "3.86",
             submittedAt: "2026-04-10",
             autoVetStatus: "Verified",
+            reviewProgress: 0,
             essay:
                 "I am applying for the STEM Excellence Fund to support my final year capstone project and reduce financial burden while maintaining academic performance.",
             documents: ["Transcript.pdf", "Recommendation_Letter.pdf", "ID_Verification.png"],
@@ -90,6 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
             gpa: "3.61",
             submittedAt: "2026-04-11",
             autoVetStatus: "Pending",
+            reviewProgress: 0,
             essay:
                 "Leadership has shaped my academic path. This scholarship would help me continue community tutoring and mentoring programs while balancing coursework.",
             documents: ["Transcript.pdf", "Volunteer_Hours.pdf"],
@@ -111,20 +113,34 @@ document.addEventListener("DOMContentLoaded", () => {
                             ? "status-pending"
                             : "status-rejected";
 
+                let buttonText = "Review Application";
+                if (row.reviewProgress === 100) buttonText = "Review Completed";
+                else if (row.reviewProgress > 0) buttonText = "Continue Reviewing";
+                
+                const progressDisplay = `
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                        <progress value="${row.reviewProgress}" max="100" style="width: 60px;"></progress>
+                        <span style="font-size: 0.85rem; color: #666;">${row.reviewProgress}%</span>
+                    </div>
+                `;
+
                 return `
                     <tr>
                         <td>${row.applicant}</td>
                         <td>${row.scholarship}</td>
                         <td>${row.gpa}</td>
                         <td><span class="status-badge ${statusClass}">${row.autoVetStatus}</span></td>
+                        <td>${progressDisplay}</td>
                         <td>
-                            <button class="btn btn-sm" type="button" data-action="review" data-id="${row.id}">Review Application</button>
+                            <button class="btn btn-sm" type="button" data-action="review" data-id="${row.id}" ${row.reviewProgress === 100 ? 'disabled style="background-color: #e9ecef; cursor: not-allowed; color: #6c757d; border: 1px solid #ced4da;"' : ''}>${buttonText}</button>
                         </td>
                     </tr>
                 `;
             })
             .join("");
     }
+
+    let reviewScrollListener = null;
 
     function navigateToDetail(applicationId) {
         selectedApplicationId = applicationId;
@@ -157,6 +173,54 @@ document.addEventListener("DOMContentLoaded", () => {
             if (n.getAttribute("data-target") === "view-review") n.classList.add("active");
             else n.classList.remove("active");
         });
+
+        // Detach any previous scroll listener
+        if (reviewScrollListener) {
+            window.removeEventListener("scroll", reviewScrollListener);
+            window.removeEventListener("resize", reviewScrollListener);
+            reviewScrollListener = null;
+        }
+
+        // Calculate progress based on scroll
+        const calculateProgress = () => {
+            if (row.reviewProgress === 100) {
+                if (reviewScrollListener) {
+                    window.removeEventListener("scroll", reviewScrollListener);
+                    window.removeEventListener("resize", reviewScrollListener);
+                    reviewScrollListener = null;
+                }
+                return;
+            }
+
+            const docHeight = document.documentElement.scrollHeight;
+            const winHeight = window.innerHeight;
+            const scrollTop = window.scrollY;
+
+            // If the document isn't taller than the window, everything is visible
+            if (docHeight <= winHeight) {
+                row.reviewProgress = 100;
+                return;
+            }
+
+            const scrollPercent = (scrollTop / (docHeight - winHeight)) * 100;
+            const newProgress = Math.min(100, Math.round(scrollPercent));
+            
+            if (newProgress > row.reviewProgress) {
+                row.reviewProgress = newProgress;
+            }
+        };
+
+        // If it was 0, initialize at least to 1% to show they opened it
+        if (row.reviewProgress === 0) row.reviewProgress = 1;
+
+        // Start listening
+        reviewScrollListener = calculateProgress;
+        window.addEventListener("scroll", reviewScrollListener);
+        window.addEventListener("resize", reviewScrollListener);
+
+        // Run once to catch tiny placeholder data pages
+        // Wait a tick for CSS to render to get accurate docHeight
+        setTimeout(calculateProgress, 50);
     }
 
     document.addEventListener("click", (e) => {
@@ -184,6 +248,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 "Approve",
                 `Approve application <b>${selectedApplicationId}</b>?`,
                 () => {
+                    const row = reviewRows.find(r => r.id === selectedApplicationId);
+                    if (row) row.reviewProgress = 100;
                     alert(`Approved application ${selectedApplicationId} (placeholder).`);
                     navigateTo("view-review");
                 }
@@ -199,6 +265,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 "Reject",
                 `Reject application <b>${selectedApplicationId}</b>?`,
                 () => {
+                    const row = reviewRows.find(r => r.id === selectedApplicationId);
+                    if (row) row.reviewProgress = 100;
                     alert(`Rejected application ${selectedApplicationId} (placeholder).`);
                     navigateTo("view-review");
                 }
