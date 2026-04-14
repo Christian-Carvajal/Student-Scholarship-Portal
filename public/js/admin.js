@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             : "status-rejected";
 
                 let buttonText = "Review Application";
-                if (row.reviewProgress === 100) buttonText = "Review Completed";
+                if (row.isDecided) buttonText = "Review Completed";
                 else if (row.reviewProgress > 0) buttonText = "Continue Reviewing";
                 
                 const progressDisplay = `
@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <td><span class="status-badge ${statusClass}">${row.autoVetStatus}</span></td>
                         <td>${progressDisplay}</td>
                         <td>
-                            <button class="btn btn-sm" type="button" data-action="review" data-id="${row.id}" ${row.reviewProgress === 100 ? 'disabled style="background-color: #e9ecef; cursor: not-allowed; color: #6c757d; border: 1px solid #ced4da;"' : ''}>${buttonText}</button>
+                            <button class="btn btn-sm" type="button" data-action="review" data-id="${row.id}" ${row.isDecided ? 'disabled style="background-color: #e9ecef; cursor: not-allowed; color: #6c757d; border: 1px solid #ced4da;"' : ''}>${buttonText}</button>
                         </td>
                     </tr>
                 `;
@@ -249,7 +249,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 `Approve application <b>${selectedApplicationId}</b>?`,
                 () => {
                     const row = reviewRows.find(r => r.id === selectedApplicationId);
-                    if (row) row.reviewProgress = 100;
+                    if (row) {
+                        row.reviewProgress = 100;
+                        row.isDecided = true;
+                        row.autoVetStatus = "Approved"; // Update the visible status label
+                    }
                     alert(`Approved application ${selectedApplicationId} (placeholder).`);
                     navigateTo("view-review");
                 }
@@ -266,7 +270,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 `Reject application <b>${selectedApplicationId}</b>?`,
                 () => {
                     const row = reviewRows.find(r => r.id === selectedApplicationId);
-                    if (row) row.reviewProgress = 100;
+                    if (row) {
+                        row.reviewProgress = 100;
+                        row.isDecided = true;
+                        row.autoVetStatus = "Rejected"; // Update the visible status label
+                    }
                     alert(`Rejected application ${selectedApplicationId} (placeholder).`);
                     navigateTo("view-review");
                 }
