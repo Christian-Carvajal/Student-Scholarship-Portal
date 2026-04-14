@@ -75,6 +75,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
     fetchScholarships(); // Init
 
+    // FAQ Accordion (Student Portal)
+    const faqAccordion = document.getElementById("faqAccordion");
+    if (faqAccordion) {
+        faqAccordion.addEventListener("click", (event) => {
+            const questionEl = event.target.closest(".faq-question");
+            if (!questionEl) return;
+
+            const itemEl = questionEl.closest(".faq-item");
+            if (!itemEl) return;
+
+            const willOpen = !itemEl.classList.contains("active");
+
+            // Close others for a cleaner experience
+            faqAccordion.querySelectorAll(".faq-item.active").forEach((activeItem) => {
+                activeItem.classList.remove("active");
+                const plus = activeItem.querySelector(".faq-question span");
+                if (plus) plus.textContent = "+";
+            });
+
+            if (willOpen) {
+                itemEl.classList.add("active");
+                const plus = itemEl.querySelector(".faq-question span");
+                if (plus) plus.textContent = "−";
+            }
+        });
+    }
+
     // Placeholder data fetching
     function fetchScholarships() {
         // Typically a fetch to API would go here
@@ -94,7 +121,14 @@ document.addEventListener("DOMContentLoaded", () => {
         // Tracker logic placeholder
         const tbody = document.getElementById("trackerTableBody");
         if (tbody) {
-            tbody.innerHTML = `<tr><td>S-2026-001</td><td>Academic Excellence Grant</td><td><span class=\"status-pending\">Pending Review</span></td></tr>`;
+                        tbody.innerHTML = `
+                            <tr>
+                                <td>S-2026-001</td>
+                                <td>Academic Excellence Grant</td>
+                                <td>Apr 01, 2026</td>
+                                <td><span class=\"status-badge status-pending\">Pending</span></td>
+                            </tr>
+                        `;
         }
     }
 });

@@ -21,8 +21,10 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     if(modalBtnOk) modalBtnOk.addEventListener("click", () => {
-        if (modalConfirmCallback) modalConfirmCallback();
         modalOverlay.classList.add("hidden");
+        const cb = modalConfirmCallback;
+        modalConfirmCallback = null;
+        if (cb) cb();
     });
 
     // Logout
@@ -46,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (sec.id === targetId) sec.classList.remove("hidden");
             else sec.classList.add("hidden");
         });
-        if (targetId === "view-admin") fetchAdminLeaderboard();
+        if (targetId === "view-review") renderReviewTable();
     }
 
     navLinks.forEach(link => {
@@ -56,21 +58,154 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    fetchAdminLeaderboard(); // Init
-
-    function fetchAdminLeaderboard() {
-        const tbody = document.getElementById("adminTableBody");
-        if (tbody) {
-            tbody.innerHTML = `<tr>
-                <td>Juan Dela Cruz</td>
-                <td>Academic Excellence Grant</td>
-                <td>3.85 / 4.0</td>
-                <td><span class=\"status-verified\">Verified</span></td>
-                <td>
-                    <button class=\"btn btn-gold btn-sm\" onclick=\"window.showModal(\'Approve\', \'Approve Application?\')\">Approve</button>
-                    <button class=\"btn btn-sm\" style=\"background-color:#dc3545; color:white;\">Reject</button>
-                </td>
-            </tr>`;
-        }
+    // Add scholarship form handler
+    const addScholarshipForm = document.getElementById("addScholarshipForm");
+    if (addScholarshipForm) {
+        addScholarshipForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            window.showModal("Published", "Scholarship published (placeholder).<br/><br/>Connect to DB later.");
+            e.target.reset();
+        });
     }
+
+    // Review workflow (placeholder data)
+    const reviewRows = [
+        {
+            id: "APP-1007",
+            applicant: "Jane Doe",
+            studentId: "S-220145",
+            scholarship: "STEM Excellence Fund",
+            gpa: "3.86",
+            submittedAt: "2026-04-10",
+            autoVetStatus: "Verified",
+            essay:
+                "I am applying for the STEM Excellence Fund to support my final year capstone project and reduce financial burden while maintaining academic performance.",
+            documents: ["Transcript.pdf", "Recommendation_Letter.pdf", "ID_Verification.png"],
+        },
+        {
+            id: "APP-1011",
+            applicant: "Michael Smith",
+            studentId: "S-219882",
+            scholarship: "Community Leadership Award",
+            gpa: "3.61",
+            submittedAt: "2026-04-11",
+            autoVetStatus: "Pending",
+            essay:
+                "Leadership has shaped my academic path. This scholarship would help me continue community tutoring and mentoring programs while balancing coursework.",
+            documents: ["Transcript.pdf", "Volunteer_Hours.pdf"],
+        },
+    ];
+
+    let selectedApplicationId = null;
+
+    function renderReviewTable() {
+        const tbody = document.getElementById("adminReviewTableBody");
+        if (!tbody) return;
+
+        tbody.innerHTML = reviewRows
+            .map((row) => {
+                const statusClass =
+                    row.autoVetStatus === "Verified"
+                        ? "status-approved"
+                        : row.autoVetStatus === "Pending"
+                            ? "status-pending"
+                            : "status-rejected";
+
+                return `
+                    <tr>
+                        <td>${row.applicant}</td>
+                        <td>${row.scholarship}</td>
+                        <td>${row.gpa}</td>
+                        <td><span class="status-badge ${statusClass}">${row.autoVetStatus}</span></td>
+                        <td>
+                            <button class="btn btn-sm" type="button" data-action="review" data-id="${row.id}">Review Application</button>
+                        </td>
+                    </tr>
+                `;
+            })
+            .join("");
+    }
+
+    function navigateToDetail(applicationId) {
+        selectedApplicationId = applicationId;
+        const row = reviewRows.find((r) => r.id === applicationId);
+        if (!row) return;
+
+        const setText = (id, value) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = value;
+        };
+
+        setText("reviewApplicantName", row.applicant);
+        setText("reviewStudentId", row.studentId);
+        setText("reviewScholarship", row.scholarship);
+        setText("reviewGpa", row.gpa);
+        setText("reviewSubmittedAt", row.submittedAt);
+        setText("reviewEssay", row.essay);
+
+        const docsEl = document.getElementById("reviewDocs");
+        if (docsEl) {
+            docsEl.innerHTML = row.documents.map((d) => `<li>${d}</li>`).join("");
+        }
+
+        // Show detail section but keep Review nav highlighted
+        sections.forEach(sec => {
+            if (sec.id === "view-review-detail") sec.classList.remove("hidden");
+            else sec.classList.add("hidden");
+        });
+        navLinks.forEach(n => {
+            if (n.getAttribute("data-target") === "view-review") n.classList.add("active");
+            else n.classList.remove("active");
+        });
+    }
+
+    document.addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-action]");
+        if (!btn) return;
+        if (btn.getAttribute("data-action") !== "review") return;
+
+        const id = btn.getAttribute("data-id");
+        if (!id) return;
+        navigateToDetail(id);
+    });
+
+    const backBtn = document.getElementById("btnBackToReview");
+    if (backBtn) {
+        backBtn.addEventListener("click", () => {
+            navigateTo("view-review");
+        });
+    }
+
+    const approveBtn = document.getElementById("btnApproveApplication");
+    if (approveBtn) {
+        approveBtn.addEventListener("click", () => {
+            if (!selectedApplicationId) return;
+            window.showModal(
+                "Approve",
+                `Approve application <b>${selectedApplicationId}</b>?`,
+                () => {
+                    alert(`Approved application ${selectedApplicationId} (placeholder).`);
+                    navigateTo("view-review");
+                }
+            );
+        });
+    }
+
+    const rejectBtn = document.getElementById("btnRejectApplication");
+    if (rejectBtn) {
+        rejectBtn.addEventListener("click", () => {
+            if (!selectedApplicationId) return;
+            window.showModal(
+                "Reject",
+                `Reject application <b>${selectedApplicationId}</b>?`,
+                () => {
+                    alert(`Rejected application ${selectedApplicationId} (placeholder).`);
+                    navigateTo("view-review");
+                }
+            );
+        });
+    }
+
+    // Init
+    // Keep Admin Dashboard as the default view; render review table on demand.
 });

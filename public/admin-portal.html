@@ -88,6 +88,8 @@
       <aside class="app-sidebar">
         <nav>
           <a class="nav-link active" data-target="view-admin">Admin Dashboard</a>
+          <a class="nav-link" data-target="view-review">Review</a>
+          <a class="nav-link" data-target="view-add-scholarship">Add Scholarship</a>
           <a class="nav-link" data-target="view-notifications">Notifications</a>
           <a class="nav-link" id="navLogout" style="color: var(--primary-maroon);">Logout</a>
         </nav>
@@ -98,17 +100,12 @@
         <!-- 5. ADMIN DASHBOARD & DOC MGMT -->
         <section id="view-admin">
           <h2 class="section-title">Admin Dashboard</h2>
+        </section>
 
-          <h3
-            style="
-              margin-bottom: 1.5rem;
-              font-family: var(--font-serif);
-              color: var(--primary-maroon);
-            "
-          >
-            Auto-Ranked Leaderboard
-          </h3>
-          <table class="data-table" style="margin-bottom: 3rem">
+        <!-- REVIEW LIST (formerly Auto-Ranked Leaderboard) -->
+        <section id="view-review" class="hidden">
+          <h2 class="section-title">Review Applications</h2>
+          <table class="data-table data-table--justified" style="margin-bottom: 2rem">
             <thead>
               <tr>
                 <th>Applicant</th>
@@ -118,24 +115,60 @@
                 <th>Admin Action</th>
               </tr>
             </thead>
-            <tbody id="adminTableBody">
+            <tbody id="adminReviewTableBody">
               <!-- Populated by JS -->
             </tbody>
           </table>
+        </section>
 
-          <h3
-            style="
-              margin-bottom: 1.5rem;
-              font-family: var(--font-serif);
-              color: var(--primary-maroon);
-            "
-          >
-            Add New Scholarship
-          </h3>
-          <form
-            id="addScholarshipForm"
-            style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem"
-          >
+        <!-- REVIEW DETAILS (placeholder until SQL is wired) -->
+        <section id="view-review-detail" class="hidden">
+          <div style="display:flex; justify-content: space-between; align-items: flex-end; gap: 1rem; flex-wrap: wrap;">
+            <h2 class="section-title" style="margin-bottom: 0;">Application Review</h2>
+            <button class="btn btn-sm" type="button" id="btnBackToReview">Back to Review</button>
+          </div>
+
+          <div class="view-grid" style="margin-top: 2rem;">
+            <div class="view-primary">
+              <div class="aside-card" style="margin-bottom: 1.5rem;">
+                <div class="aside-title">Applicant Information</div>
+                <div class="kv"><div class="kv-k">Applicant</div><div class="kv-v" id="reviewApplicantName">—</div></div>
+                <div class="kv"><div class="kv-k">Student ID</div><div class="kv-v" id="reviewStudentId">—</div></div>
+                <div class="kv"><div class="kv-k">Scholarship</div><div class="kv-v" id="reviewScholarship">—</div></div>
+                <div class="kv"><div class="kv-k">Submitted GPA</div><div class="kv-v" id="reviewGpa">—</div></div>
+                <div class="kv"><div class="kv-k">Submitted</div><div class="kv-v" id="reviewSubmittedAt">—</div></div>
+              </div>
+
+              <div class="aside-card">
+                <div class="aside-title">Essay / Letter of Intent</div>
+                <div class="aside-text" id="reviewEssay" style="white-space: pre-wrap;">—</div>
+              </div>
+            </div>
+
+            <aside class="view-aside">
+              <div class="aside-card">
+                <div class="aside-title">Submitted Documents</div>
+                <ul class="bullet-list" id="reviewDocs">
+                  <li>—</li>
+                </ul>
+              </div>
+
+              <div class="aside-card aside-highlight">
+                <div class="aside-title">Admin Decision</div>
+                <div class="aside-text" style="margin-bottom: 1rem;">Approve or reject after verifying the GPA and documents. (Placeholder actions — will be connected to SQL later.)</div>
+                <div style="display:flex; gap: 0.75rem; flex-wrap: wrap;">
+                  <button class="btn btn-gold btn-sm" type="button" id="btnApproveApplication">Approve</button>
+                  <button class="btn btn-sm" type="button" id="btnRejectApplication">Reject</button>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <!-- ADD SCHOLARSHIP (separate window) -->
+        <section id="view-add-scholarship" class="hidden">
+          <h2 class="section-title">Add Scholarship</h2>
+          <form id="addScholarshipForm" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem">
             <div class="form-group">
               <label>Title</label>
               <input type="text" class="form-control" required />

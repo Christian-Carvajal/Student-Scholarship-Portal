@@ -144,9 +144,10 @@
           <a class="nav-link" data-target="view-apply">Apply Now</a>
           <a class="nav-link" data-target="view-tracker">My Tracker</a>
           <a class="nav-link" data-target="view-docs">Documents</a>
-          <a class="nav-link" data-target="view-notifications"
-            >Notifications (2)</a
-          >
+          <a class="nav-link" data-target="view-notifications">
+            <span>Notifications</span>
+            <span class="nav-badge" aria-label="2 unread notifications">2</span>
+          </a>
           <a class="nav-link" data-target="view-faq">FAQ</a>
           <a class="nav-link" data-target="view-contact">Contact Support</a>
           <hr
@@ -208,76 +209,136 @@
         <!-- 3. APPLICATION FORM -->
         <section id="view-apply" class="hidden">
           <h2 class="section-title">Submit Application</h2>
-          <form id="applicationForm" style="max-width: 600px">
-            <div class="form-group">
-              <label>Select Scholarship</label>
-              <select id="appScholarship" class="form-control" required>
-                <!-- Populated dynamically -->
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Current Cumulative GPA</label>
-              <input
-                type="number"
-                step="0.01"
-                max="4.0"
-                id="appGpa"
-                class="form-control"
-                required
-              />
-            </div>
-            <div class="form-group">
-              <label>Motivation Essay / Letter of Intent</label>
-              <textarea
-                id="appEssay"
-                class="form-control"
-                rows="5"
-                required
-                placeholder="Why do you deserve this scholarship?"
-              ></textarea>
+          <div class="view-grid">
+            <div class="view-primary">
+              <p class="section-lead">
+                Complete the form, attach your requirements, and submit. You can track your status anytime under <strong>My Tracker</strong>.
+              </p>
+
+              <div class="stepper" aria-label="Application steps">
+                <div class="stepper-item is-active">
+                  <div class="stepper-dot"></div>
+                  <div class="stepper-text">Fill out details</div>
+                </div>
+                <div class="stepper-item">
+                  <div class="stepper-dot"></div>
+                  <div class="stepper-text">Upload documents</div>
+                </div>
+                <div class="stepper-item">
+                  <div class="stepper-dot"></div>
+                  <div class="stepper-text">Submit & wait for review</div>
+                </div>
+              </div>
+
+              <form id="applicationForm">
+                <div class="form-group">
+                  <label>Select Scholarship</label>
+                  <select id="appScholarship" class="form-control" required>
+                    <!-- Populated dynamically -->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Current Cumulative GPA</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    max="4.0"
+                    id="appGpa"
+                    class="form-control"
+                    required
+                    placeholder="e.g. 3.75"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Motivation Essay / Letter of Intent</label>
+                  <textarea
+                    id="appEssay"
+                    class="form-control"
+                    rows="6"
+                    required
+                    placeholder="In 150–300 words, explain your academic goals and why you qualify."
+                  ></textarea>
+                </div>
+
+                <h3 class="subsection-title">File Uploads</h3>
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label>Official Transcript (PDF)</label>
+                    <input type="file" accept=".pdf" class="form-control" required />
+                    <small class="help-text">PDF only. Clear scan preferred.</small>
+                  </div>
+                  <div class="form-group">
+                    <label>Valid UPHSD Student ID (Image/PDF)</label>
+                    <input type="file" accept="image/*,.pdf" class="form-control" required />
+                    <small class="help-text">JPG/PNG/PDF accepted.</small>
+                  </div>
+                  <div class="form-group">
+                    <label>Recommendation Letter (Optional)</label>
+                    <input type="file" accept=".pdf" class="form-control" />
+                    <small class="help-text">If available, upload as PDF.</small>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn" style="margin-top: 1rem; width: 100%">
+                  Submit Formal Application
+                </button>
+              </form>
             </div>
 
-            <h3
-              style="
-                margin: 1.5rem 0 1rem;
-                font-size: 1.1rem;
-                border-bottom: 1px solid #eee;
-                padding-bottom: 0.5rem;
-              "
-            >
-              File Uploads
-            </h3>
-            <div class="form-group">
-              <label>Official Transcript (PDF)</label>
-              <input type="file" accept=".pdf" class="form-control" required />
-            </div>
-            <div class="form-group">
-              <label>Valid UPHSD Student ID (Image/PDF)</label>
-              <input
-                type="file"
-                accept="image/*,.pdf"
-                class="form-control"
-                required
-              />
-            </div>
-            <div class="form-group">
-              <label>Recommendation Letter (Optional)</label>
-              <input type="file" accept=".pdf" class="form-control" />
-            </div>
+            <aside class="view-aside">
+              <div class="aside-card">
+                <div class="aside-title">Application Checklist</div>
+                <ul class="checklist">
+                  <li>Choose the correct scholarship type</li>
+                  <li>Enter an accurate GPA (2 decimals)</li>
+                  <li>Transcript is readable and complete</li>
+                  <li>ID scan shows name and student number</li>
+                </ul>
+              </div>
 
-            <button
-              type="submit"
-              class="btn"
-              style="margin-top: 1rem; width: 100%"
-            >
-              Submit Formal Application
-            </button>
-          </form>
+              <div class="aside-card">
+                <div class="aside-title">Common Reasons for Delay</div>
+                <ul class="bullet-list">
+                  <li>Blurry uploads or missing pages</li>
+                  <li>GPA does not match transcript</li>
+                  <li>Incorrect file format (non-PDF)</li>
+                </ul>
+              </div>
+
+              <div class="aside-card aside-highlight">
+                <div class="aside-title">Need help?</div>
+                <div class="aside-text">Use <strong>Contact Support</strong> for document issues, eligibility questions, or status clarification.</div>
+              </div>
+            </aside>
+          </div>
         </section>
 
         <!-- 4. STUDENT TRACKER -->
         <section id="view-tracker" class="hidden">
           <h2 class="section-title">My Application Tracker</h2>
+          <div class="summary-grid">
+            <div class="summary-card">
+              <div class="summary-label">Total Applications</div>
+              <div class="summary-value">1</div>
+              <div class="summary-sub">This academic year</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-label">Under Review</div>
+              <div class="summary-value">1</div>
+              <div class="summary-sub">Latest submission</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-label">Approved</div>
+              <div class="summary-value">0</div>
+              <div class="summary-sub">No final decisions yet</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-label">Last Update</div>
+              <div class="summary-value summary-value--small">5 days ago</div>
+              <div class="summary-sub">Status moved to review</div>
+            </div>
+          </div>
+
           <table class="data-table">
             <thead>
               <tr>
@@ -296,161 +357,236 @@
         <!-- 6. NOTIFICATIONS -->
         <section id="view-notifications" class="hidden">
           <h2 class="section-title">Notifications</h2>
-          <div
-            style="
-              background: var(--bg-surface);
-              border: 1px solid var(--border-color);
-              box-shadow: 4px 4px 0px rgba(122, 17, 20, 0.05);
-            "
-          >
-            <div
-              style="
-                padding: 1.5rem 2rem;
-                border-bottom: 1px solid var(--border-color);
-                background: rgba(253, 187, 17, 0.05);
-              "
-            >
-              <strong>System Alert:</strong> General Merit Applications are
-              closing on May 15, 2026. <br /><small
-                style="
-                  color: var(--text-muted);
-                  font-size: 0.85rem;
-                  margin-top: 0.5rem;
-                  display: block;
-                "
-                >2 days ago</small
-              >
+          <div class="view-grid">
+            <div class="view-primary">
+              <div class="toolbar">
+                <input type="text" class="form-control" placeholder="Search notifications..." style="flex: 2; min-width: 240px" />
+                <select class="form-control" style="flex: 1; min-width: 180px">
+                  <option value="">All</option>
+                  <option value="system">System</option>
+                  <option value="updates">Application updates</option>
+                </select>
+                <button class="btn btn-sm" type="button">Mark all as read</button>
+              </div>
+
+              <div class="notification-list">
+                <div class="notification-item is-unread">
+                  <div class="notification-top">
+                    <div class="notification-title">System Alert</div>
+                    <div class="notification-time">2 days ago</div>
+                  </div>
+                  <div class="notification-body">General Merit Applications are closing on May 15, 2026.</div>
+                </div>
+
+                <div class="notification-item">
+                  <div class="notification-top">
+                    <div class="notification-title">Application Update</div>
+                    <div class="notification-time">5 days ago</div>
+                  </div>
+                  <div class="notification-body">Your “Engineering Excellence” application is now <strong>Under Review</strong>.</div>
+                </div>
+              </div>
             </div>
-            <div
-              style="
-                padding: 1.5rem 2rem;
-                border-bottom: 1px solid var(--border-color);
-              "
-            >
-              <strong>Application Update:</strong> Your "Engineering Excellence"
-              application is now Under Review. <br /><small
-                style="
-                  color: var(--text-muted);
-                  font-size: 0.85rem;
-                  margin-top: 0.5rem;
-                  display: block;
-                "
-                >5 days ago</small
-              >
-            </div>
+
+            <aside class="view-aside">
+              <div class="aside-card">
+                <div class="aside-title">Notification preferences</div>
+                <div class="pref-row"><input type="checkbox" checked disabled /><label>Email updates for status changes</label></div>
+                <div class="pref-row"><input type="checkbox" checked disabled /><label>System deadline reminders</label></div>
+                <div class="pref-row"><input type="checkbox" disabled /><label>Weekly digest</label></div>
+                <div class="aside-text" style="margin-top: 0.75rem;">(UI-only preview — settings can be wired to your backend later.)</div>
+              </div>
+
+              <div class="aside-card aside-highlight">
+                <div class="aside-title">Tip</div>
+                <div class="aside-text">If you’re waiting for updates, check <strong>My Tracker</strong> for the most accurate status.</div>
+              </div>
+            </aside>
           </div>
         </section>
 
         <!-- 7. DOCUMENTS (Standalone) -->
         <section id="view-docs" class="hidden">
           <h2 class="section-title">My Documents</h2>
-          <p
-            style="
-              margin-bottom: 2rem;
-              color: var(--text-muted);
-              font-size: 1.1rem;
-            "
-          >
-            Manage your securely uploaded files here. These are verified
-            automatically alongside your application.
-          </p>
-          <div style="display: flex; gap: 2rem">
-            <div
-              class="card"
-              style="
-                box-shadow: 4px 4px 0px rgba(122, 17, 20, 0.05);
-                border-radius: 0;
-              "
-            >
-              <h3 style="font-family: var(--font-sans); font-size: 1.25rem">
-                Transcript_v2.pdf
-              </h3>
-              <p style="font-size: 0.9rem">Uploaded: April 1, 2026</p>
-              <button
-                class="btn btn-gold btn-sm"
-                style="align-self: flex-start; padding: 0.5rem 1.5rem"
-              >
-                Download
-              </button>
+          <div class="view-grid view-grid--with-header">
+            <div class="view-header">
+              <p class="section-lead">
+                Manage your uploaded requirements. Files are checked alongside your application for completeness.
+              </p>
+
+              <div class="toolbar">
+                <input type="text" class="form-control" placeholder="Search documents (filename)..." style="flex: 2; min-width: 240px" />
+                <select class="form-control" style="flex: 1; min-width: 180px">
+                  <option value="">All types</option>
+                  <option value="pdf">PDF</option>
+                  <option value="image">Images</option>
+                </select>
+                <button class="btn btn-gold btn-sm" type="button">Upload New</button>
+              </div>
             </div>
-            <div
-              class="card"
-              style="
-                box-shadow: 4px 4px 0px rgba(122, 17, 20, 0.05);
-                border-radius: 0;
-              "
-            >
-              <h3 style="font-family: var(--font-sans); font-size: 1.25rem">
-                Student_ID_Scanned.png
-              </h3>
-              <p style="font-size: 0.9rem">Uploaded: April 1, 2026</p>
-              <button
-                class="btn btn-gold btn-sm"
-                style="align-self: flex-start; padding: 0.5rem 1.5rem"
-              >
-                Download
-              </button>
+
+            <div class="view-primary">
+              <div class="doc-grid">
+                <div class="doc-card">
+                  <div class="doc-title">Transcript_v2.pdf</div>
+                  <div class="doc-meta">Uploaded: April 1, 2026</div>
+                  <div class="doc-meta">Type: PDF</div>
+                  <div class="doc-actions">
+                    <button class="btn btn-gold btn-sm" type="button">Download</button>
+                    <button class="btn btn-sm" type="button">Replace</button>
+                  </div>
+                </div>
+                <div class="doc-card">
+                  <div class="doc-title">Student_ID_Scanned.png</div>
+                  <div class="doc-meta">Uploaded: April 1, 2026</div>
+                  <div class="doc-meta">Type: Image</div>
+                  <div class="doc-actions">
+                    <button class="btn btn-gold btn-sm" type="button">Download</button>
+                    <button class="btn btn-sm" type="button">Replace</button>
+                  </div>
+                </div>
+                <div class="doc-card doc-card--hint">
+                  <div class="doc-title">Add another requirement</div>
+                  <div class="doc-meta">Recommendation letter, certificate, etc.</div>
+                  <div class="doc-actions">
+                    <button class="btn btn-sm" type="button">Choose File</button>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            <aside class="view-aside">
+              <div class="aside-card">
+                <div class="aside-title">Recommended uploads</div>
+                <ul class="bullet-list">
+                  <li>Transcript / TOR (PDF)</li>
+                  <li>Student ID (Image/PDF)</li>
+                  <li>Recommendation letter (optional)</li>
+                </ul>
+              </div>
+
+              <div class="aside-card aside-highlight">
+                <div class="aside-title">Quality check</div>
+                <div class="aside-text">If text is unreadable when zoomed in, re-scan before submitting to avoid delays.</div>
+              </div>
+            </aside>
           </div>
         </section>
 
         <!-- 8. FAQ -->
         <section id="view-faq" class="hidden">
           <h2 class="section-title">Frequently Asked Questions</h2>
-          <div class="faq-list" id="faqAccordion">
-            <div class="faq-item">
-              <div class="faq-question">
-                How does the automated ranking work? <span>+</span>
+          <div class="view-grid">
+            <div class="view-primary">
+              <div class="toolbar">
+                <input type="text" class="form-control" placeholder="Search FAQs (keyword)..." style="flex: 2; min-width: 240px" />
+                <button class="btn btn-gold btn-sm" type="button">Search</button>
               </div>
-              <div class="faq-answer">
-                Rankings are calculated dynamically based on your cumulative GPA
-                compared against the minimum threshold set by the system
-                administrator.
+
+              <div class="faq-list" id="faqAccordion">
+                <div class="faq-item">
+                  <div class="faq-question">
+                    How does the automated ranking work? <span>+</span>
+                  </div>
+                  <div class="faq-answer">
+                    Rankings are calculated dynamically based on your cumulative GPA compared against the minimum threshold set by the system administrator.
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    Can I apply for multiple scholarships? <span>+</span>
+                  </div>
+                  <div class="faq-answer">
+                    Yes, as long as you meet the eligibility requirements for each specific fund. Ensure your essays are tailored appropriately.
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    Who is eligible for the UPHSD Gold Tier grant? <span>+</span>
+                  </div>
+                  <div class="faq-answer">
+                    You must have completed at least 2 full semesters as a regular student with no record of disciplinary action.
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">
+                    What file types are accepted for requirements? <span>+</span>
+                  </div>
+                  <div class="faq-answer">
+                    Transcripts and letters should be uploaded as PDF. Student ID may be uploaded as JPG/PNG or PDF.
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="faq-item">
-              <div class="faq-question">
-                Can I apply for multiple scholarships? <span>+</span>
+
+            <aside class="view-aside">
+              <div class="aside-card">
+                <div class="aside-title">Top topics</div>
+                <ul class="bullet-list">
+                  <li>Eligibility requirements</li>
+                  <li>Accepted document formats</li>
+                  <li>Application review timeline</li>
+                  <li>How to update/replace uploads</li>
+                </ul>
               </div>
-              <div class="faq-answer">
-                Yes, as long as you meet the eligibility requirements for each
-                specific fund. Ensure your essays are tailored appropriately.
+
+              <div class="aside-card aside-highlight">
+                <div class="aside-title">Still need help?</div>
+                <div class="aside-text">Open <strong>Contact Support</strong> and provide your Student ID + Application ID for faster assistance.</div>
               </div>
-            </div>
-            <div class="faq-item">
-              <div class="faq-question">
-                Who is eligible for the UPHSD Gold Tier grant? <span>+</span>
-              </div>
-              <div class="faq-answer">
-                You must have completed at least 2 full semesters as a regular
-                student with no record of disciplinary action.
-              </div>
-            </div>
+            </aside>
           </div>
         </section>
 
         <!-- 9. CONTACT -->
         <section id="view-contact" class="hidden">
           <h2 class="section-title">Contact Support</h2>
-          <form id="contactForm" style="max-width: 600px">
-            <div class="form-group">
-              <label>Your Name</label>
-              <input type="text" name="name" id="contactName" class="form-control" required placeholder="e.g. Juan De La Cruz" />
+          <div class="view-grid">
+            <div class="view-primary">
+              <p class="section-lead">For faster resolution, include your <strong>Student ID</strong> and (if applicable) your <strong>Application ID</strong>.</p>
+
+              <form id="contactForm">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label>Your Name</label>
+                    <input type="text" name="name" id="contactName" class="form-control" required placeholder="e.g. Juan De La Cruz" />
+                  </div>
+                  <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" name="email" id="contactEmail" class="form-control" required placeholder="Where we will send the auto-reply" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Subject</label>
+                  <input type="text" name="title" id="contactSubject" class="form-control" required placeholder="e.g. Document upload issue / Eligibility question" />
+                </div>
+                <div class="form-group">
+                  <label>Message</label>
+                  <textarea name="message" id="contactMessage" class="form-control" rows="6" required placeholder="Describe the issue and any relevant details..."></textarea>
+                  <small class="help-text">Avoid sending passwords. Support will never ask for your password.</small>
+                </div>
+                <button type="submit" class="btn" id="btnSubmitContact">Send via Email Support</button>
+              </form>
             </div>
-            <div class="form-group">
-              <label>Email Address</label>
-              <input type="email" name="email" id="contactEmail" class="form-control" required placeholder="Where we will send the auto-reply" />
-            </div>
-            <div class="form-group">
-              <label>Subject</label>
-              <input type="text" name="title" id="contactSubject" class="form-control" required />
-            </div>
-            <div class="form-group">
-              <label>Message</label>
-              <textarea name="message" id="contactMessage" class="form-control" rows="5" required></textarea>
-            </div>
-            <button type="submit" class="btn" id="btnSubmitContact">Send via Email Support</button>
-          </form>
+
+            <aside class="view-aside">
+              <div class="aside-card">
+                <div class="aside-title">Support details</div>
+                <div class="kv"><div class="kv-k">Response time</div><div class="kv-v">Within 1–3 business days</div></div>
+                <div class="kv"><div class="kv-k">Best time to contact</div><div class="kv-v">Weekdays, 8:00 AM – 5:00 PM</div></div>
+                <div class="kv"><div class="kv-k">What to include</div><div class="kv-v">Student ID, screenshot (if needed), steps to reproduce</div></div>
+              </div>
+
+              <div class="aside-card aside-highlight">
+                <div class="aside-title">Before you send</div>
+                <ul class="bullet-list">
+                  <li>Check FAQ for common questions</li>
+                  <li>Verify your document format (PDF/PNG/JPG)</li>
+                  <li>Review your status in My Tracker</li>
+                </ul>
+              </div>
+            </aside>
+          </div>
         </section>
       </main>
     </div>
