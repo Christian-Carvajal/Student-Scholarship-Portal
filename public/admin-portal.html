@@ -23,15 +23,14 @@
   </head>
   <body>
     <!-- Global Custom Modal -->
-    <div id="customModal" class="modal-overlay hidden">
+    <div id="customModal" class="modal-overlay modal-overlay--pop">
       <div class="modal-content">
         <h3 id="modalTitle">Alert</h3>
         <div id="modalBody" class="modal-body"></div>
         <div class="modal-actions">
           <button
             id="modalBtnCancel"
-            class="btn hidden"
-            style="background-color: #6c757d"
+            class="btn btn-ghost hidden"
           >
             Cancel
           </button>
@@ -132,6 +131,25 @@
     <header class="app-header">
       <img src="uphsd.svg" alt="UPHSD Logo" />
       <h1>Student Scholarship <span>Portal</span></h1>
+
+      <div class="app-header-actions">
+        <button id="navLogout" class="btn btn-ghost" type="button">
+          <svg
+            class="header-logout-icon"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path
+              fill="currentColor"
+              d="M16 13v-2H7V8l-5 4 5 4v-3zM20 3H11c-1.1 0-2 .9-2 2v4h2V5h9v14h-9v-4H9v4c0 1.1.9 2 2 2h9c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+            />
+          </svg>
+          Logout
+        </button>
+      </div>
     </header>
 
     <div class="app-container">
@@ -146,12 +164,6 @@
             >Add Scholarship</a
           >
           <a class="nav-link" data-target="view-notifications">Notifications</a>
-          <a
-            class="nav-link"
-            id="navLogout"
-            style="color: var(--primary-maroon)"
-            >Logout</a
-          >
         </nav>
       </aside>
 
@@ -160,6 +172,105 @@
         <!-- 5. ADMIN DASHBOARD & DOC MGMT -->
         <section id="view-admin">
           <h2 class="section-title">Admin Dashboard</h2>
+
+          <div class="admin-dash">
+            <div class="dash-top">
+              <div class="dash-card dash-card--welcome">
+                <div class="dash-welcome">
+                  <div>
+                    <div class="dash-kicker">Cycle Overview</div>
+                    <div class="dash-title">Scholarship Review Dashboard</div>
+                    <div class="dash-subtitle">
+                      Track applicant volume, pending checks, and final outcomes.
+                    </div>
+                  </div>
+                  <div class="dash-now">
+                    <div class="dash-now-label">Today</div>
+                    <div id="metricNow" class="dash-now-value">—</div>
+                  </div>
+                </div>
+                <div id="dashboardDataNote" class="dash-note">Loading data…</div>
+              </div>
+
+              <div class="dash-card">
+                <div class="dash-card-header">
+                  <div>
+                    <div class="dash-card-title">Application Status</div>
+                    <div class="dash-card-sub">Pending review vs final outcomes</div>
+                  </div>
+                </div>
+
+                <div class="dash-status">
+                  <div class="dash-donut" aria-label="Status breakdown chart">
+                    <svg
+                      id="statusDonutSvg"
+                      viewBox="0 0 140 140"
+                      width="140"
+                      height="140"
+                      role="img"
+                      aria-label="Application status donut chart"
+                    ></svg>
+                    <div class="dash-donut-center">
+                      <div id="statusDonutTotal" class="dash-donut-total">—</div>
+                      <div class="dash-donut-caption">Applications</div>
+                    </div>
+                  </div>
+
+                  <div class="dash-legend" aria-label="Status legend">
+                    <div class="dash-legend-row">
+                      <span class="dash-dot dash-dot--pending"></span>
+                      <span class="dash-legend-label">Pending Review</span>
+                      <span id="legendPending" class="dash-legend-value">—</span>
+                    </div>
+                    <div class="dash-legend-row">
+                      <span class="dash-dot dash-dot--approved"></span>
+                      <span class="dash-legend-label">Approved</span>
+                      <span id="legendApproved" class="dash-legend-value">—</span>
+                    </div>
+                    <div class="dash-legend-row">
+                      <span class="dash-dot dash-dot--rejected"></span>
+                      <span class="dash-legend-label">Rejected</span>
+                      <span id="legendRejected" class="dash-legend-value">—</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="dash-main">
+              <div class="dash-metrics dash-metrics--row" aria-label="Key metrics">
+                <div class="dash-metric">
+                  <div class="dash-metric-label">Total Applicants</div>
+                  <div id="metricTotalApplicants" class="dash-metric-value">—</div>
+                  <div class="dash-metric-sub">Unique student IDs</div>
+                </div>
+
+                <div class="dash-metric">
+                  <div class="dash-metric-label">Scholarships</div>
+                  <div id="metricTotalScholarships" class="dash-metric-value">—</div>
+                  <div class="dash-metric-sub">Available programs</div>
+                </div>
+
+                <div class="dash-metric dash-metric--highlight">
+                  <div class="dash-metric-label">Pending Review</div>
+                  <div id="metricPendingReview" class="dash-metric-value">—</div>
+                  <div class="dash-metric-sub">New submissions for initial check</div>
+                </div>
+
+                <div class="dash-metric">
+                  <div class="dash-metric-label">Approved</div>
+                  <div id="metricApproved" class="dash-metric-value">—</div>
+                  <div class="dash-metric-sub">Final count this cycle</div>
+                </div>
+
+                <div class="dash-metric">
+                  <div class="dash-metric-label">Rejected</div>
+                  <div id="metricRejected" class="dash-metric-value">—</div>
+                  <div class="dash-metric-sub">Final count this cycle</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
 
         <!-- REVIEW LIST (formerly Auto-Ranked Leaderboard) -->

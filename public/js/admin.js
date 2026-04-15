@@ -11,32 +11,346 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalTitle = document.getElementById("modalTitle");
     const modalBody = document.getElementById("modalBody");
     const modalBtnOk = document.getElementById("modalBtnOk");
+    const modalBtnCancel = document.getElementById("modalBtnCancel");
     let modalConfirmCallback = null;
+    let modalCancelCallback = null;
 
-    window.showModal = function(title, messageHtml, onConfirm = null) {
+    const MODAL_TRANSITION_MS = 220;
+
+    function closeModal() {
+        if (!modalOverlay) return;
+
+        // Smooth close (matches login modal behavior)
+        if (modalOverlay.classList.contains("is-open")) {
+            modalOverlay.classList.remove("is-open");
+            modalOverlay.classList.add("is-closing");
+            window.setTimeout(() => {
+                modalOverlay.classList.remove("is-closing");
+            }, MODAL_TRANSITION_MS);
+        } else {
+            modalOverlay.classList.remove("is-closing");
+            modalOverlay.classList.remove("is-open");
+        }
+
+        modalConfirmCallback = null;
+        modalCancelCallback = null;
+        if (modalBtnOk) modalBtnOk.textContent = "OK";
+        if (modalBtnCancel) {
+            modalBtnCancel.textContent = "Cancel";
+            modalBtnCancel.classList.add("hidden");
+        }
+    }
+
+    window.showModal = function(title, messageHtml, onConfirm = null, options = {}) {
         modalTitle.textContent = title;
-        modalBody.innerHTML = messageHtml; 
-        modalConfirmCallback = onConfirm;
-        modalOverlay.classList.remove("hidden");
+        modalBody.innerHTML = messageHtml;
+
+        modalConfirmCallback = typeof onConfirm === "function" ? onConfirm : null;
+        modalCancelCallback = typeof options.onCancel === "function" ? options.onCancel : null;
+
+        if (modalBtnOk) modalBtnOk.textContent = options.okText || "OK";
+        if (modalBtnCancel) {
+            modalBtnCancel.textContent = options.cancelText || "Cancel";
+            if (modalConfirmCallback || options.showCancel) modalBtnCancel.classList.remove("hidden");
+            else modalBtnCancel.classList.add("hidden");
+        }
+
+        if (modalOverlay) {
+            modalOverlay.classList.remove("is-closing");
+            // Trigger open transition
+            window.requestAnimationFrame(() => {
+                modalOverlay.classList.add("is-open");
+            });
+        }
     };
 
-    if(modalBtnOk) modalBtnOk.addEventListener("click", () => {
-        modalOverlay.classList.add("hidden");
+    if (modalBtnOk) modalBtnOk.addEventListener("click", () => {
         const cb = modalConfirmCallback;
-        modalConfirmCallback = null;
+        closeModal();
+        if (cb) cb();
+    });
+
+    if (modalBtnCancel) modalBtnCancel.addEventListener("click", () => {
+        const cb = modalCancelCallback;
+        closeModal();
         if (cb) cb();
     });
 
     // Logout
     const navLogout = document.getElementById("navLogout");
     if(navLogout) navLogout.addEventListener("click", () => {
-        localStorage.removeItem("currentUser");
-        window.location.href = "login.html";
+        window.showModal(
+            "Log Out",
+            "Are you sure you want to log out?",
+            () => {
+                localStorage.removeItem("currentUser");
+                window.location.href = "login.html";
+            },
+            { okText: "Log Out", cancelText: "Cancel", showCancel: true }
+        );
     });
+
+    // Dashboard Metrics + Live Clock
+    const metricTotalApplicants = document.getElementById("metricTotalApplicants");
+    const metricTotalScholarships = document.getElementById("metricTotalScholarships");
+    const metricPendingReview = document.getElementById("metricPendingReview");
+    const metricApproved = document.getElementById("metricApproved");
+    const metricRejected = document.getElementById("metricRejected");
+    const metricNow = document.getElementById("metricNow");
+
+    // New dashboard layout elements (optional)
+    const dashboardDataNote = document.getElementById("dashboardDataNote");
+    const statusDonutSvg = document.getElementById("statusDonutSvg");
+    const statusDonutTotal = document.getElementById("statusDonutTotal");
+    const legendPending = document.getElementById("legendPending");
+    const legendApproved = document.getElementById("legendApproved");
+    const legendRejected = document.getElementById("legendRejected");
+
+    const formatInt = (n) => {
+        try {
+            return new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 }).format(n);
+        } catch {
+            return String(n);
+        }
+    };
+
+    const setMetricText = (el, value) => {
+        if (!el) return;
+        el.textContent = value;
+    };
+
+    const formatNow = () => {
+        try {
+            return new Intl.DateTimeFormat(undefined, {
+                weekday: "short",
+                year: "numeric",
+                month: "short",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+            }).format(new Date());
+        } catch {
+            return new Date().toLocaleString();
+        }
+    };
+
+    let clockIntervalId = null;
+    function startClock() {
+        if (!metricNow) return;
+        setMetricText(metricNow, formatNow());
+        if (clockIntervalId) return;
+        clockIntervalId = window.setInterval(() => {
+            setMetricText(metricNow, formatNow());
+        }, 1000);
+    }
+
+    function computeMetricsFromRows(rows, scholarshipRows) {
+        const ids = new Set();
+        const scholarships = new Set();
+        let pending = 0;
+        let approved = 0;
+        let rejected = 0;
+
+        for (const row of rows || []) {
+            const studentId = row.student_id || row.studentId;
+            if (studentId) ids.add(String(studentId));
+
+            const scholarshipTitle = row.scholarship_title || row.scholarship;
+            if (scholarshipTitle) scholarships.add(String(scholarshipTitle));
+
+            const statusRaw = (row.status || row.application_status || row.autoVetStatus || "")
+                .toString()
+                .trim()
+                .toLowerCase();
+
+            // Treat anything not explicitly approved/rejected as pending review.
+            if (statusRaw.includes("approve")) approved += 1;
+            else if (statusRaw.includes("reject")) rejected += 1;
+            else if (
+                statusRaw.includes("pending") ||
+                statusRaw.includes("review") ||
+                statusRaw.includes("eligible") ||
+                statusRaw.includes("verified")
+            )
+                pending += 1;
+            else pending += 1;
+        }
+
+        const scholarshipCount = Array.isArray(scholarshipRows)
+            ? scholarshipRows.length
+            : scholarships.size;
+
+        const totalApplicants = ids.size > 0 ? ids.size : (rows || []).length;
+
+        return {
+            totalApplicants,
+            totalScholarships: scholarshipCount,
+            pendingReview: pending,
+            approved,
+            rejected,
+        };
+    }
+
+    function setDashboardNote(isLive) {
+        if (!dashboardDataNote) return;
+        dashboardDataNote.textContent = isLive
+            ? "Showing live data from the API."
+            : "Showing demo data — database/API not connected yet.";
+    }
+
+    function svgClear(el) {
+        if (!el) return;
+        while (el.firstChild) el.removeChild(el.firstChild);
+    }
+
+    function svgEl(tag, attrs = {}) {
+        const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+        for (const [k, v] of Object.entries(attrs)) {
+            el.setAttribute(k, String(v));
+        }
+        return el;
+    }
+
+    function renderStatusDonut(metrics) {
+        if (!statusDonutSvg) return;
+
+        const pending = Math.max(0, Number(metrics?.pendingReview || 0));
+        const approved = Math.max(0, Number(metrics?.approved || 0));
+        const rejected = Math.max(0, Number(metrics?.rejected || 0));
+        const total = pending + approved + rejected;
+
+        if (statusDonutTotal) statusDonutTotal.textContent = formatInt(total);
+        if (legendPending) legendPending.textContent = formatInt(pending);
+        if (legendApproved) legendApproved.textContent = formatInt(approved);
+        if (legendRejected) legendRejected.textContent = formatInt(rejected);
+
+        const size = 180;
+        const cx = size / 2;
+        const cy = size / 2;
+        const r = 72;
+        const stroke = 18;
+        const circumference = 2 * Math.PI * r;
+
+        svgClear(statusDonutSvg);
+        statusDonutSvg.setAttribute("viewBox", `0 0 ${size} ${size}`);
+
+        // Background ring
+        statusDonutSvg.appendChild(
+            svgEl("circle", {
+                cx,
+                cy,
+                r,
+                fill: "none",
+                stroke: "rgba(122, 17, 20, 0.10)",
+                "stroke-width": stroke,
+            })
+        );
+
+        if (total === 0) return;
+
+        const segments = [
+            { value: pending, color: "rgba(122, 17, 20, 0.22)" },
+            { value: approved, color: "rgba(253, 187, 17, 0.80)" },
+            { value: rejected, color: "rgba(122, 17, 20, 0.92)" },
+        ];
+
+        let offset = 0;
+        for (const seg of segments) {
+            if (!seg.value) continue;
+            const segLen = (seg.value / total) * circumference;
+            statusDonutSvg.appendChild(
+                svgEl("circle", {
+                    cx,
+                    cy,
+                    r,
+                    fill: "none",
+                    stroke: seg.color,
+                    "stroke-width": stroke,
+                    "stroke-linecap": "butt",
+                    "stroke-dasharray": `${segLen} ${circumference - segLen}`,
+                    "stroke-dashoffset": -offset,
+                    transform: `rotate(-90 ${cx} ${cy})`,
+                })
+            );
+            offset += segLen;
+        }
+    }
+
+
+    async function refreshDashboardMetrics() {
+        startClock();
+
+        // Default placeholders while loading
+        setMetricText(metricTotalApplicants, "—");
+        setMetricText(metricTotalScholarships, "—");
+        setMetricText(metricPendingReview, "—");
+        setMetricText(metricApproved, "—");
+        setMetricText(metricRejected, "—");
+
+        try {
+            const [appsRes, scholarshipsRes] = await Promise.all([
+                fetch("/api/applications"),
+                fetch("/api/applications/scholarships"),
+            ]);
+
+            if (!appsRes.ok) throw new Error("Failed to load applications");
+            if (!scholarshipsRes.ok) throw new Error("Failed to load scholarships");
+
+            const apps = await appsRes.json();
+            const scholarships = await scholarshipsRes.json();
+
+            const metrics = computeMetricsFromRows(apps, scholarships);
+
+            setMetricText(metricTotalApplicants, formatInt(metrics.totalApplicants));
+            setMetricText(metricTotalScholarships, formatInt(metrics.totalScholarships));
+            setMetricText(metricPendingReview, formatInt(metrics.pendingReview));
+            setMetricText(metricApproved, formatInt(metrics.approved));
+            setMetricText(metricRejected, formatInt(metrics.rejected));
+
+            setDashboardNote(true);
+            renderStatusDonut(metrics);
+        } catch (err) {
+            // Fallback to placeholder rows (demo mode) if API/DB isn't available.
+            const metrics = computeMetricsFromRows(reviewRows);
+            setMetricText(metricTotalApplicants, formatInt(metrics.totalApplicants));
+            setMetricText(metricTotalScholarships, formatInt(metrics.totalScholarships));
+            setMetricText(metricPendingReview, formatInt(metrics.pendingReview));
+            setMetricText(metricApproved, formatInt(metrics.approved));
+            setMetricText(metricRejected, formatInt(metrics.rejected));
+
+            setDashboardNote(false);
+            renderStatusDonut(metrics);
+            console.warn("Dashboard metrics fallback (API unavailable):", err);
+        }
+    }
 
     // SPA Navigation Logic
     const navLinks = document.querySelectorAll(".nav-link");
     const sections = document.querySelectorAll(".app-main section");
+
+    const VIEW_TRANSITION_MS = 220;
+    sections.forEach((sec) => sec.classList.add("view-transition"));
+    let activeSection = Array.from(sections).find((sec) => !sec.classList.contains("hidden")) || null;
+    let navTransitionToken = 0;
+
+    function hideSectionWithTransition(sec) {
+        if (!sec || sec.classList.contains("hidden")) return;
+        sec.classList.add("view-transition--pre");
+        window.setTimeout(() => {
+            sec.classList.add("hidden");
+        }, VIEW_TRANSITION_MS);
+    }
+
+    function showSectionWithTransition(sec) {
+        if (!sec) return;
+        sec.classList.remove("hidden");
+        // Start hidden state, then animate in
+        sec.classList.add("view-transition--pre");
+        window.requestAnimationFrame(() => {
+            sec.classList.remove("view-transition--pre");
+        });
+    }
 
     function navigateTo(targetId) {
         if(targetId === "navLogout") return;
@@ -44,11 +358,32 @@ document.addEventListener("DOMContentLoaded", () => {
             if (n.getAttribute("data-target") === targetId) n.classList.add("active");
             else n.classList.remove("active");
         });
-        sections.forEach(sec => {
-            if (sec.id === targetId) sec.classList.remove("hidden");
-            else sec.classList.add("hidden");
-        });
-        if (targetId === "view-review") renderReviewTable();
+
+        const nextSection = Array.from(sections).find((sec) => sec.id === targetId) || null;
+        if (!nextSection) return;
+        if (activeSection && activeSection.id === targetId) return;
+
+        const token = ++navTransitionToken;
+
+        // Do not reveal next view until current view finishes transitioning out.
+        if (activeSection) {
+            hideSectionWithTransition(activeSection);
+            window.setTimeout(() => {
+                if (token !== navTransitionToken) return;
+
+                showSectionWithTransition(nextSection);
+                activeSection = nextSection;
+
+                if (targetId === "view-review") renderReviewTable();
+                if (targetId === "view-admin") refreshDashboardMetrics();
+            }, VIEW_TRANSITION_MS);
+        } else {
+            showSectionWithTransition(nextSection);
+            activeSection = nextSection;
+
+            if (targetId === "view-review") renderReviewTable();
+            if (targetId === "view-admin") refreshDashboardMetrics();
+        }
     }
 
     navLinks.forEach(link => {
@@ -99,6 +434,9 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
     let selectedApplicationId = null;
+
+    // Initial dashboard paint
+    refreshDashboardMetrics();
 
     function renderReviewTable() {
         const tbody = document.getElementById("adminReviewTableBody");

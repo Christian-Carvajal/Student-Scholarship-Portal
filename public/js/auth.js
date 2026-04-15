@@ -25,12 +25,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const studentTabs = document.getElementById('studentTabs');
     const tabLogin = document.getElementById('tabLogin');
     const tabRegister = document.getElementById('tabRegister');
-    const registerFields = document.getElementById('registerFields');
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
     const togglePassword = document.getElementById('togglePassword');
     const authForm = document.getElementById('authForm');
     const btnSubmitAuth = document.getElementById('btnSubmitAuth');
+    const authPanelBody = document.getElementById('authPanelBody');
+
+    // Register Modal Elements
+    const registerModal = document.getElementById('registerModal');
+    const registerForm = document.getElementById('registerForm');
+    const btnCancelRegister = document.getElementById('btnCancelRegister');
+    const btnSubmitRegister = document.getElementById('btnSubmitRegister');
+    const regStudentIdInput = document.getElementById('regStudentId');
+    const regPasswordInput = document.getElementById('regPassword');
+    const regNameInput = document.getElementById('regName');
+    const regEmailInput = document.getElementById('regEmail');
+    const regProgramInput = document.getElementById('regProgram');
     
     // Modal Elements
     const modalOverlay = document.getElementById('customModal');
@@ -53,63 +64,195 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function clearAuthInputs() {
+        if (authForm) authForm.reset();
+
+        // Ensure password is masked again if it was toggled
+        if (passwordInput && passwordInput.getAttribute('type') !== 'password') {
+            passwordInput.setAttribute('type', 'password');
+            if (togglePassword) {
+                togglePassword.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+            }
+        }
+    }
+
+    function setAuthInteractionDisabled(disabled) {
+        if (btnStudentRole) btnStudentRole.disabled = disabled;
+        if (btnAdminRole) btnAdminRole.disabled = disabled;
+
+        const pe = disabled ? 'none' : '';
+        if (tabLogin) tabLogin.style.pointerEvents = pe;
+        if (tabRegister) tabRegister.style.pointerEvents = pe;
+    }
+
+    let registerModalCloseTimer = null;
+    let registerModalFinalizeCloseTimer = null;
+
+    function closeRegisterModal() {
+        if (!registerModal) return;
+
+        if (registerModalCloseTimer) {
+            window.clearTimeout(registerModalCloseTimer);
+            registerModalCloseTimer = null;
+        }
+        if (registerModalFinalizeCloseTimer) {
+            window.clearTimeout(registerModalFinalizeCloseTimer);
+            registerModalFinalizeCloseTimer = null;
+        }
+
+        // Trigger close animation
+        registerModal.classList.add('is-closing');
+
+        // Finalize hide after transition (slightly > CSS duration)
+        registerModalFinalizeCloseTimer = window.setTimeout(() => {
+            registerModal.classList.remove('is-open');
+            registerModal.classList.remove('is-closing');
+            registerModal.setAttribute('aria-hidden', 'true');
+        }, 420);
+
+        // Reset after fade-out so the user doesn't see fields clearing during the close animation.
+        if (registerForm) {
+            registerModalCloseTimer = window.setTimeout(() => {
+                // If reopened quickly, don't wipe the new session
+                if (registerModal.classList.contains('is-open') && !registerModal.classList.contains('is-closing')) return;
+                registerForm.reset();
+            }, 380);
+        }
+    }
+
+    function openRegisterModal() {
+        if (!registerModal) return;
+
+        if (registerModalCloseTimer) {
+            window.clearTimeout(registerModalCloseTimer);
+            registerModalCloseTimer = null;
+        }
+        if (registerModalFinalizeCloseTimer) {
+            window.clearTimeout(registerModalFinalizeCloseTimer);
+            registerModalFinalizeCloseTimer = null;
+        }
+
+        registerModal.classList.remove('is-closing');
+        registerModal.setAttribute('aria-hidden', 'false');
+
+        // Ensure transition plays even if opened twice quickly
+        window.requestAnimationFrame(() => {
+            registerModal.classList.add('is-open');
+        });
+
+        if (registerForm) registerForm.reset();
+        if (regStudentIdInput) regStudentIdInput.focus();
+    }
+
+    function applyAuthUI(options = {}) {
+        const { clearInputs = false } = options;
+
+        // Main auth form is always login-only (registration happens in modal)
+        isLoginMode = true;
+
+        if (btnStudentRole) btnStudentRole.classList.toggle('active', isStudentLayout);
+        if (btnAdminRole) btnAdminRole.classList.toggle('active', !isStudentLayout);
+
+        if (studentTabs) studentTabs.classList.toggle('hidden', !isStudentLayout);
+
+        if (lblUsername) lblUsername.textContent = isStudentLayout ? 'Student ID' : 'Admin Username';
+        if (usernameInput) usernameInput.placeholder = isStudentLayout ? 'Ex. 12345678' : 'Enter username';
+
+        if (tabLogin) tabLogin.classList.add('active');
+        if (tabRegister) tabRegister.classList.remove('active');
+
+        if (loginTitle) {
+            loginTitle.textContent = isStudentLayout
+                ? 'Student Login'
+                : 'Admin Login';
+        }
+
+        if (btnSubmitAuth) btnSubmitAuth.textContent = 'Login';
+
+        // If user switches away from Student, close the register modal
+        if (!isStudentLayout) closeRegisterModal();
+
+        if (clearInputs) clearAuthInputs();
+    }
+
+    let authUiToken = 0;
+    let authPanelTransitionTimer = null;
+    function withAuthPanelTransition(updateStateFn, options = {}) {
+        const { clearInputs = false } = options;
+        const token = ++authUiToken;
+
+        setAuthInteractionDisabled(true);
+
+        if (!authPanelBody) {
+            updateStateFn();
+            applyAuthUI({ clearInputs });
+            setAuthInteractionDisabled(false);
+            return;
+        }
+
+        authPanelBody.classList.add('is-fading');
+        if (authPanelTransitionTimer) window.clearTimeout(authPanelTransitionTimer);
+
+        authPanelTransitionTimer = window.setTimeout(() => {
+            // Ignore stale transitions if user clicked again
+            if (token !== authUiToken) return;
+
+            updateStateFn();
+            applyAuthUI({ clearInputs });
+
+            window.requestAnimationFrame(() => {
+                if (token !== authUiToken) return;
+                authPanelBody.classList.remove('is-fading');
+                window.setTimeout(() => {
+                    if (token !== authUiToken) return;
+                    setAuthInteractionDisabled(false);
+                }, 180);
+            });
+        }, 170);
+    }
+
     // Role Toggle (Student / Admin)
     btnStudentRole.addEventListener('click', (e) => {
         e.preventDefault();
-        isStudentLayout = true;
-        btnStudentRole.classList.add('active');
-        btnAdminRole.classList.remove('active');
-        
-        loginTitle.textContent = isLoginMode ? 'Student Login' : 'Student Registration';
-        lblUsername.textContent = 'Student ID';
-        usernameInput.placeholder = 'Ex. 12345678';
-        studentTabs.classList.remove('hidden');
+        withAuthPanelTransition(() => {
+            isStudentLayout = true;
+            // Keep current mode (login/register) for student, but re-render will enforce rules.
+        }, { clearInputs: true });
     });
 
     btnAdminRole.addEventListener('click', (e) => {
         e.preventDefault();
-        isStudentLayout = false;
-        btnAdminRole.classList.add('active');
-        btnStudentRole.classList.remove('active');
-        
-        loginTitle.textContent = 'Admin Login';
-        lblUsername.textContent = 'Admin Username';
-        usernameInput.placeholder = 'Enter username';
-        studentTabs.classList.add('hidden');
-        
-        // Force back to login mode if they were registering
-        isLoginMode = true;
-        updateModeUI();
+        withAuthPanelTransition(() => {
+            isStudentLayout = false;
+            isLoginMode = true;
+        }, { clearInputs: true });
     });
 
     // Login/Register Tabs
     tabLogin.addEventListener('click', (e) => {
         e.preventDefault();
-        isLoginMode = true;
-        updateModeUI();
+        withAuthPanelTransition(() => {
+            isLoginMode = true;
+            closeRegisterModal();
+        }, { clearInputs: true });
     });
 
     tabRegister.addEventListener('click', (e) => {
         e.preventDefault();
-        isLoginMode = false;
-        updateModeUI();
+        // Register is a modal popup instead of inline tab content
+        if (!isStudentLayout) return;
+        withAuthPanelTransition(() => {
+            isLoginMode = true;
+            openRegisterModal();
+        }, { clearInputs: true });
     });
 
     function updateModeUI() {
-        if(isLoginMode) {
-            tabLogin.classList.add('active');
-            tabRegister.classList.remove('active');
-            registerFields.classList.add('hidden');
-            loginTitle.textContent = isStudentLayout ? 'Student Login' : 'Admin Login';
-            btnSubmitAuth.textContent = 'Login';
-        } else {
-            tabRegister.classList.add('active');
-            tabLogin.classList.remove('active');
-            registerFields.classList.remove('hidden');
-            loginTitle.textContent = 'Student Registration';
-            btnSubmitAuth.textContent = 'Register Now';
-        }
+        applyAuthUI();
     }
+
+    // Initial render (ensures classes/aria are correct)
+    applyAuthUI();
 
     // Toggle Password Visibility
     if (togglePassword) {
@@ -132,68 +275,93 @@ document.addEventListener('DOMContentLoaded', () => {
         const username = usernameInput.value.trim();
         const password = passwordInput.value.trim();
         
-        if (isLoginMode) {
-            // LOGIN LOGIC
-            const expectedRole = isStudentLayout ? 'student' : 'admin';
+        // LOGIN LOGIC
+        const expectedRole = isStudentLayout ? 'student' : 'admin';
+        
+        const user = mockUsers.find(u => 
+            u.studentId.toLowerCase() === username.toLowerCase() && 
+            u.password === password && 
+            (u.role === expectedRole || (!u.role && expectedRole === 'student')) // Assume old mock users without role are students
+        );
+        
+        if (user) {
+            if (user.isTemporary) {
+                showModal('Notice', 'Force password change not implemented in auth.js mockup yet. Granting access.');
+            } 
+            localStorage.setItem('currentUser', JSON.stringify(user));
             
-            const user = mockUsers.find(u => 
-                u.studentId.toLowerCase() === username.toLowerCase() && 
-                u.password === password && 
-                (u.role === expectedRole || (!u.role && expectedRole === 'student')) // Assume old mock users without role are students
-            );
-            
-            if (user) {
-                if (user.isTemporary) {
-                    showModal('Notice', 'Force password change not implemented in auth.js mockup yet. Granting access.');
-                } 
-                localStorage.setItem('currentUser', JSON.stringify(user));
-                
-                // Redirect based on role
-                if(expectedRole === 'admin') {
-                    window.location.href = 'admin-portal.html';
-                } else {
-                    window.location.href = 'student-portal.html';
-                }
+            // Redirect based on role
+            if(expectedRole === 'admin') {
+                window.location.href = 'admin-portal.html';
             } else {
-                showModal('Login Failed', 'Invalid credentials or wrong role selected.');
+                window.location.href = 'student-portal.html';
             }
         } else {
-            // REGISTER LOGIC (Student only)
-            const name = document.getElementById('regName').value.trim();
-            const program = document.getElementById('regProgram').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            
-            if (mockUsers.find(u => u.studentId === username)) {
+            showModal('Login Failed', 'Invalid credentials or wrong role selected.');
+        }
+    });
+
+    // Register Modal handlers
+    if (btnCancelRegister) {
+        btnCancelRegister.addEventListener('click', () => {
+            closeRegisterModal();
+        });
+    }
+
+    if (registerForm) {
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (!isStudentLayout) return;
+
+            const studentId = (regStudentIdInput?.value || '').trim();
+            const password = (regPasswordInput?.value || '').trim();
+            const name = (regNameInput?.value || '').trim();
+            const email = (regEmailInput?.value || '').trim();
+            const program = (regProgramInput?.value || '').trim();
+
+            if (!studentId || !password || !email) {
+                showModal('Registration Error', 'Please complete Student ID, Email, and Password.');
+                return;
+            }
+
+            if (mockUsers.find(u => (u.studentId || '').toLowerCase() === studentId.toLowerCase())) {
                 showModal('Registration Error', 'Student ID already registered!');
                 return;
             }
 
-            if (mockUsers.find(u => u.email === email)) {
+            if (mockUsers.find(u => (u.email || '').toLowerCase() === email.toLowerCase())) {
                 showModal('Registration Error', 'This email is already in use.');
                 return;
             }
 
-            // Using the real password they entered for simplicity in this refactor, instead of generated one
-            const newUser = { 
-                studentId: username, 
+            if (btnSubmitRegister) {
+                btnSubmitRegister.disabled = true;
+                btnSubmitRegister.textContent = 'Creating...';
+            }
+
+            const newUser = {
+                studentId,
                 name: name || 'Student Visitor',
-                email: email, 
-                program: program, 
-                password: password, 
-                role: 'student'
+                email,
+                program,
+                password,
+                role: 'student',
             };
-            
+
             mockUsers.push(newUser);
             localStorage.setItem('mockUsers', JSON.stringify(mockUsers));
-            
-            showModal('Registration Successful', `<p>Your account has been successfully created. You can now login.</p>`);
-            
-            // Switch back to login mode
-            authForm.reset();
-            isLoginMode = true;
-            updateModeUI();
-        }
-    });
+
+            closeRegisterModal();
+            showModal('Registration Successful', '<p>Your account has been successfully created. You can now login.</p>');
+            clearAuthInputs();
+            applyAuthUI();
+
+            if (btnSubmitRegister) {
+                btnSubmitRegister.disabled = false;
+                btnSubmitRegister.textContent = 'Create Account';
+            }
+        });
+    }
 
     // --- FORGOT PASSWORD LOGIC ---
     const forgotPassLink = document.querySelector('.forgot-pass');
@@ -202,17 +370,66 @@ document.addEventListener('DOMContentLoaded', () => {
     const forgotPasswordForm = document.getElementById('forgotPasswordForm');
     const btnSubmitForgot = document.getElementById('btnSubmitForgot');
 
+    let forgotModalResetTimer = null;
+    let forgotModalFinalizeCloseTimer = null;
+
+    function openForgotModal() {
+        if (!forgotPasswordModal) return;
+        if (forgotModalResetTimer) {
+            window.clearTimeout(forgotModalResetTimer);
+            forgotModalResetTimer = null;
+        }
+        if (forgotModalFinalizeCloseTimer) {
+            window.clearTimeout(forgotModalFinalizeCloseTimer);
+            forgotModalFinalizeCloseTimer = null;
+        }
+
+        forgotPasswordModal.classList.remove('is-closing');
+        forgotPasswordModal.setAttribute('aria-hidden', 'false');
+        window.requestAnimationFrame(() => {
+            forgotPasswordModal.classList.add('is-open');
+        });
+        if (forgotPasswordForm) forgotPasswordForm.reset();
+        const emailEl = document.getElementById('forgotEmail');
+        if (emailEl) emailEl.focus();
+    }
+
+    function closeForgotModal() {
+        if (!forgotPasswordModal) return;
+        if (forgotModalResetTimer) {
+            window.clearTimeout(forgotModalResetTimer);
+            forgotModalResetTimer = null;
+        }
+        if (forgotModalFinalizeCloseTimer) {
+            window.clearTimeout(forgotModalFinalizeCloseTimer);
+            forgotModalFinalizeCloseTimer = null;
+        }
+
+        forgotPasswordModal.classList.add('is-closing');
+        forgotModalFinalizeCloseTimer = window.setTimeout(() => {
+            forgotPasswordModal.classList.remove('is-open');
+            forgotPasswordModal.classList.remove('is-closing');
+            forgotPasswordModal.setAttribute('aria-hidden', 'true');
+        }, 420);
+
+        if (forgotPasswordForm) {
+            forgotModalResetTimer = window.setTimeout(() => {
+                if (forgotPasswordModal.classList.contains('is-open') && !forgotPasswordModal.classList.contains('is-closing')) return;
+                forgotPasswordForm.reset();
+            }, 380);
+        }
+    }
+
     if (forgotPassLink && forgotPasswordModal) {
         // Open Modal
         forgotPassLink.addEventListener('click', (e) => {
             e.preventDefault();
-            forgotPasswordModal.classList.remove('hidden');
+            openForgotModal();
         });
 
         // Cancel
         btnCancelForgot.addEventListener('click', () => {
-            forgotPasswordModal.classList.add('hidden');
-            forgotPasswordForm.reset();
+            closeForgotModal();
         });
 
         // Submit EmailJS Reset Request
@@ -224,8 +441,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!userAccount) {
                 // For security, show same generic message whether email exists or not, but don't send Email
                 showModal('Request Sent', 'If an account is associated with this email, a reset link has been sent.');
-                forgotPasswordModal.classList.add('hidden');
-                forgotPasswordForm.reset();
+                closeForgotModal();
                 return;
             }
 
@@ -251,8 +467,7 @@ document.addEventListener('DOMContentLoaded', () => {
             emailjs.send('service_3crm71j', 'template_1jougji', templateParams)
                 .then(function() {
                     showModal('Email Sent', 'Please check your inbox (and spam folder) for the password reset link.');
-                    forgotPasswordModal.classList.add('hidden');
-                    forgotPasswordForm.reset();
+                    closeForgotModal();
                 })
                 .catch(function(error) {
                     console.error('EmailJS Error:', error);
