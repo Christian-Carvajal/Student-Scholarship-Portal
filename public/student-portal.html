@@ -23,15 +23,14 @@
   </head>
   <body>
     <!-- Global Custom Modal -->
-    <div id="customModal" class="modal-overlay hidden">
+    <div id="customModal" class="modal-overlay modal-overlay--pop">
       <div class="modal-content">
         <h3 id="modalTitle">Alert</h3>
         <div id="modalBody" class="modal-body"></div>
         <div class="modal-actions">
           <button
             id="modalBtnCancel"
-            class="btn hidden"
-            style="background-color: #6c757d"
+            class="btn btn-ghost hidden"
           >
             Cancel
           </button>
@@ -132,6 +131,25 @@
     <header class="app-header">
       <img src="uphsd.svg" alt="UPHSD Logo" />
       <h1>Student Scholarship <span>Portal</span></h1>
+
+      <div class="app-header-actions">
+        <button id="navLogout" class="btn btn-ghost" type="button">
+          <svg
+            class="header-logout-icon"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path
+              fill="currentColor"
+              d="M16 13v-2H7V8l-5 4 5 4v-3zM20 3H11c-1.1 0-2 .9-2 2v4h2V5h9v14h-9v-4H9v4c0 1.1.9 2 2 2h9c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+            />
+          </svg>
+          Logout
+        </button>
+      </div>
     </header>
 
     <div class="app-container">
@@ -157,12 +175,6 @@
               border-top: 1px solid var(--border-color);
             "
           />
-          <a
-            class="nav-link"
-            id="navLogout"
-            style="color: var(--primary-maroon)"
-            >Logout</a
-          >
         </nav>
       </aside>
 
@@ -217,15 +229,15 @@
 
               <div class="stepper" aria-label="Application steps">
                 <div class="stepper-item is-active">
-                  <div class="stepper-dot"></div>
+                  <div class="stepper-dot" aria-hidden="true">1</div>
                   <div class="stepper-text">Fill out details</div>
                 </div>
                 <div class="stepper-item">
-                  <div class="stepper-dot"></div>
+                  <div class="stepper-dot" aria-hidden="true">2</div>
                   <div class="stepper-text">Upload documents</div>
                 </div>
                 <div class="stepper-item">
-                  <div class="stepper-dot"></div>
+                  <div class="stepper-dot" aria-hidden="true">3</div>
                   <div class="stepper-text">Submit & wait for review</div>
                 </div>
               </div>

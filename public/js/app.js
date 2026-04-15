@@ -13,63 +13,162 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalBtnOk = document.getElementById("modalBtnOk");
     const modalBtnCancel = document.getElementById("modalBtnCancel");
     let modalConfirmCallback = null;
+    let modalCancelCallback = null;
 
-    window.showModal = function(title, messageHtml, isConfirm = false, onConfirm = null) {
-        modalTitle.textContent = title;
-        modalBody.innerHTML = messageHtml; 
-        modalConfirmCallback = onConfirm;
-        
-        if (isConfirm) {
-            modalBtnCancel.classList.remove("hidden");
-            modalBtnOk.textContent = "Confirm";
-        } else {
-            modalBtnCancel.classList.add("hidden");
-            modalBtnOk.textContent = "OK";
-        }
-        modalOverlay.classList.remove("hidden");
-    };
+    const MODAL_TRANSITION_MS = 220;
 
     function closeModal() {
-        modalOverlay.classList.add("hidden");
+        if (!modalOverlay) return;
+
+        if (modalOverlay.classList.contains("is-open")) {
+            modalOverlay.classList.remove("is-open");
+            modalOverlay.classList.add("is-closing");
+            window.setTimeout(() => {
+                modalOverlay.classList.remove("is-closing");
+            }, MODAL_TRANSITION_MS);
+        } else {
+            modalOverlay.classList.remove("is-closing");
+            modalOverlay.classList.remove("is-open");
+        }
+
         modalConfirmCallback = null;
+        modalCancelCallback = null;
+        if (modalBtnOk) modalBtnOk.textContent = "OK";
+        if (modalBtnCancel) {
+            modalBtnCancel.textContent = "Cancel";
+            modalBtnCancel.classList.add("hidden");
+        }
     }
 
+    // Supports BOTH signatures:
+    // 1) showModal(title, html)
+    // 2) showModal(title, html, isConfirmBoolean, onConfirmFn)  (legacy)
+    // 3) showModal(title, html, onConfirmFn, { okText, cancelText, showCancel, onCancel })
+    window.showModal = function(title, messageHtml, third = null, fourth = null) {
+        modalTitle.textContent = title;
+        modalBody.innerHTML = messageHtml;
+
+        let onConfirm = null;
+        let options = {};
+
+        if (typeof third === "boolean") {
+            // Legacy
+            const isConfirm = third;
+            onConfirm = typeof fourth === "function" ? fourth : null;
+            options = {
+                okText: isConfirm ? "Confirm" : "OK",
+                cancelText: "Cancel",
+                showCancel: Boolean(isConfirm),
+            };
+        } else {
+            onConfirm = typeof third === "function" ? third : null;
+            options = fourth && typeof fourth === "object" ? fourth : {};
+        }
+
+        modalConfirmCallback = onConfirm;
+        modalCancelCallback = typeof options.onCancel === "function" ? options.onCancel : null;
+
+        if (modalBtnOk) modalBtnOk.textContent = options.okText || "OK";
+        if (modalBtnCancel) {
+            modalBtnCancel.textContent = options.cancelText || "Cancel";
+            if (modalConfirmCallback || options.showCancel) modalBtnCancel.classList.remove("hidden");
+            else modalBtnCancel.classList.add("hidden");
+        }
+
+        if (modalOverlay) {
+            modalOverlay.classList.remove("is-closing");
+            window.requestAnimationFrame(() => {
+                modalOverlay.classList.add("is-open");
+            });
+        }
+    };
+
     if(modalBtnOk) modalBtnOk.addEventListener("click", () => {
-        if (modalConfirmCallback) modalConfirmCallback();
+        const cb = modalConfirmCallback;
         closeModal();
+        if (cb) cb();
     });
     if(modalBtnCancel) modalBtnCancel.addEventListener("click", () => {
+        const cb = modalCancelCallback;
         closeModal();
+        if (cb) cb();
     });
 
     // Logout
     const navLogout = document.getElementById("navLogout");
     if(navLogout) navLogout.addEventListener("click", () => {
-        localStorage.removeItem("currentUser");
-        window.location.href = "login.html";
+        window.showModal(
+            "Log Out",
+            "Are you sure you want to log out?",
+            () => {
+                localStorage.removeItem("currentUser");
+                window.location.href = "login.html";
+            },
+            { okText: "Log Out", cancelText: "Cancel", showCancel: true }
+        );
     });
 
     // SPA Navigation Logic
     const navLinks = document.querySelectorAll(".nav-link");
     const sections = document.querySelectorAll(".app-main section");
 
+    const VIEW_TRANSITION_MS = 220;
+    sections.forEach((sec) => sec.classList.add("view-transition"));
+    let activeSection = Array.from(sections).find((sec) => !sec.classList.contains("hidden")) || null;
+    let navTransitionToken = 0;
+
+    function hideSectionWithTransition(sec) {
+        if (!sec || sec.classList.contains("hidden")) return;
+        sec.classList.add("view-transition--pre");
+        window.setTimeout(() => {
+            sec.classList.add("hidden");
+        }, VIEW_TRANSITION_MS);
+    }
+
+    function showSectionWithTransition(sec) {
+        if (!sec) return;
+        sec.classList.remove("hidden");
+        sec.classList.add("view-transition--pre");
+        window.requestAnimationFrame(() => {
+            sec.classList.remove("view-transition--pre");
+        });
+    }
+
     function navigateTo(targetId) {
+        if (!targetId) return;
         navLinks.forEach(n => {
             if (n.getAttribute("data-target") === targetId) n.classList.add("active");
             else n.classList.remove("active");
         });
-        sections.forEach(sec => {
-            if (sec.id === targetId) sec.classList.remove("hidden");
-            else sec.classList.add("hidden");
-        });
-        if (targetId === "view-tracker") fetchStudentApplications();
-        else if (targetId === "view-listings") fetchScholarships();
+
+        const nextSection = Array.from(sections).find((sec) => sec.id === targetId) || null;
+        if (!nextSection) return;
+        if (activeSection && activeSection.id === targetId) return;
+
+        const token = ++navTransitionToken;
+        if (activeSection) {
+            hideSectionWithTransition(activeSection);
+            window.setTimeout(() => {
+                if (token !== navTransitionToken) return;
+                showSectionWithTransition(nextSection);
+                activeSection = nextSection;
+                if (targetId === "view-tracker") fetchStudentApplications();
+                else if (targetId === "view-listings") fetchScholarships();
+            }, VIEW_TRANSITION_MS);
+        } else {
+            showSectionWithTransition(nextSection);
+            activeSection = nextSection;
+            if (targetId === "view-tracker") fetchStudentApplications();
+            else if (targetId === "view-listings") fetchScholarships();
+        }
     }
 
     navLinks.forEach(link => {
         link.addEventListener("click", (e) => {
-            const targetId = e.target.getAttribute("data-target");
-            if(targetId) navigateTo(targetId);
+            const anchor = e.target.closest(".nav-link");
+            if (!anchor) return;
+            const targetId = anchor.getAttribute("data-target");
+            if (targetId) navigateTo(targetId);
         });
     });
 

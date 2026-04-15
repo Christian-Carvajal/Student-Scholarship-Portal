@@ -1248,11 +1248,17 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .stepper-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  border: 2px solid var(--border-color);
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
   background: var(--bg-parchment);
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 0.9rem;
+  line-height: 1;
+  color: var(--text-muted);
 }
 
 .stepper-item.is-active {
@@ -1262,6 +1268,7 @@ h1, h2, h3, h4, h5, h6 {
 .stepper-item.is-active .stepper-dot {
   border-color: var(--secondary-gold);
   background: var(--secondary-gold);
+  color: var(--dark-maroon);
 }
 
 .stepper-text {
