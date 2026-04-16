@@ -112,6 +112,75 @@ document.addEventListener("DOMContentLoaded", () => {
     const navLinks = document.querySelectorAll(".nav-link");
     const sections = document.querySelectorAll(".app-main section");
 
+    // Notification Dropdown Logic
+    const notifToggle = document.getElementById("notifToggle");
+    const notifDropdown = document.getElementById("notifDropdown");
+    const notifBadgeCount = document.getElementById("notifBadgeCount");
+    const notifBodyList = document.getElementById("notifBodyList");
+    if (notifToggle && notifDropdown && notifBodyList) {
+        notifToggle.addEventListener("click", (e) => {
+            const isHidden = notifDropdown.classList.contains("hidden");
+            if (isHidden) {
+                notifDropdown.classList.remove("hidden");
+            } else {
+                notifDropdown.classList.add("hidden");
+            }
+        });
+        
+        document.addEventListener("click", (e) => {
+            if (!notifDropdown.contains(e.target) && !notifToggle.contains(e.target)) {
+                notifDropdown.classList.add("hidden");
+            }
+        });
+
+        // Filter logic
+        const filterBtns = notifDropdown.querySelectorAll(".filter-btn");
+        const notifItems = Array.from(notifBodyList.querySelectorAll(".notif-item"));
+        
+        filterBtns.forEach(btn => {
+            btn.addEventListener("click", () => {
+                filterBtns.forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                
+                const filter = btn.getAttribute("data-filter");
+                notifItems.forEach(item => {
+                    if (filter === "all") {
+                        item.style.display = "flex";
+                    } else if (filter === "unread") {
+                        if (item.classList.contains("unread")) {
+                            item.style.display = "flex";
+                        } else {
+                            item.style.display = "none";
+                        }
+                    }
+                });
+            });
+        });
+
+        // Mark as read on click
+        notifItems.forEach(item => {
+            item.addEventListener("click", () => {
+                if (item.classList.contains("unread")) {
+                    item.classList.remove("unread");
+                    const dot = item.querySelector(".notif-unread-dot");
+                    if (dot) dot.style.display = "none";
+                    
+                    if (notifBadgeCount) {
+                        let currentCount = parseInt(notifBadgeCount.textContent || "0");
+                        if (currentCount > 0) {
+                            currentCount--;
+                            if (currentCount === 0) {
+                                notifBadgeCount.style.display = "none";
+                            } else {
+                                notifBadgeCount.textContent = currentCount;
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    }
+
     const VIEW_TRANSITION_MS = 220;
     sections.forEach((sec) => sec.classList.add("view-transition"));
     let activeSection = Array.from(sections).find((sec) => !sec.classList.contains("hidden")) || null;

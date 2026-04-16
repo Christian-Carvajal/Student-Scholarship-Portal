@@ -28,10 +28,7 @@
         <h3 id="modalTitle">Alert</h3>
         <div id="modalBody" class="modal-body"></div>
         <div class="modal-actions">
-          <button
-            id="modalBtnCancel"
-            class="btn btn-ghost hidden"
-          >
+          <button id="modalBtnCancel" class="btn btn-ghost hidden">
             Cancel
           </button>
           <button id="modalBtnOk" class="btn btn-gold">OK</button>
@@ -133,6 +130,88 @@
       <h1>Student Scholarship <span>Portal</span></h1>
 
       <div class="app-header-actions">
+        <!-- Notification Widget -->
+        <div class="notif-widget" id="notifWidget">
+          <button class="btn-icon" id="notifToggle" aria-label="Notifications">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"
+              />
+            </svg>
+            <span class="notif-badge" id="notifBadgeCount">1</span>
+          </button>
+
+          <div class="notif-dropdown hidden" id="notifDropdown">
+            <div class="notif-header">
+              <h3>Notifications</h3>
+              <div class="notif-filters">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="unread">Unread</button>
+              </div>
+            </div>
+            <div class="notif-body" id="notifBodyList">
+              <div class="notif-section-title">Earlier</div>
+
+              <div class="notif-item unread">
+                <div class="notif-icon system">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                    />
+                  </svg>
+                </div>
+                <div class="notif-content">
+                  <p>
+                    <strong>System Alert:</strong> General Merit Applications
+                    are closing on May 15, 2026.
+                  </p>
+                  <span class="notif-time">2 days ago</span>
+                  <div class="notif-details">
+                    Heads up! The General Merit Scholarship tracking will
+                    automatically close on May 15, 2026. Please ensure all
+                    pending applications are submitted and documents are
+                    complete before this date.
+                  </div>
+                </div>
+                <div class="notif-unread-dot"></div>
+              </div>
+
+              <div class="notif-item">
+                <div class="notif-icon update">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12zM7 9h10v2H7zM7 12h7v2H7z"
+                    />
+                  </svg>
+                </div>
+                <div class="notif-content">
+                  <p>
+                    <strong>Application Update:</strong> Your "Engineering
+                    Excellence" application is now Under Review.
+                  </p>
+                  <span class="notif-time">5 days ago</span>
+                  <div class="notif-details">
+                    The registration office has received your documents and they
+                    are currently being checked for eligibility. Please monitor
+                    your tracker for the final outcome.
+                  </div>
+                </div>
+                <div class="notif-unread-dot" style="display: none"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <button id="navLogout" class="btn btn-ghost" type="button">
           <svg
             class="header-logout-icon"
@@ -161,20 +240,9 @@
           >
           <a class="nav-link" data-target="view-apply">Apply Now</a>
           <a class="nav-link" data-target="view-tracker">My Tracker</a>
-          <a class="nav-link" data-target="view-docs">Documents</a>
-          <a class="nav-link" data-target="view-notifications">
-            <span>Notifications</span>
-            <span class="nav-badge" aria-label="2 unread notifications">2</span>
-          </a>
+          <a class="nav-link" data-target="view-docs">My Documents</a>
           <a class="nav-link" data-target="view-faq">FAQ</a>
           <a class="nav-link" data-target="view-contact">Contact Support</a>
-          <hr
-            style="
-              margin: 1rem 0;
-              border: 0;
-              border-top: 1px solid var(--border-color);
-            "
-          />
         </nav>
       </aside>
 
@@ -224,76 +292,930 @@
           <div class="view-grid">
             <div class="view-primary">
               <p class="section-lead">
-                Complete the form, attach your requirements, and submit. You can track your status anytime under <strong>My Tracker</strong>.
+                Complete the form, attach your requirements, and submit. You can
+                track your status anytime under <strong>My Tracker</strong>.
               </p>
 
-              <div class="stepper" aria-label="Application steps">
-                <div class="stepper-item is-active">
+              <div
+                class="stepper"
+                id="applicationStepper"
+                aria-label="Application steps"
+              >
+                <button
+                  type="button"
+                  class="stepper-item is-active"
+                  id="step1Btn"
+                  onclick="goToStep(1, 'stepper')"
+                  style="
+                    background: none;
+                    border: none;
+                    text-align: left;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    width: 100%;
+                    font-family: inherit;
+                  "
+                >
                   <div class="stepper-dot" aria-hidden="true">1</div>
                   <div class="stepper-text">Fill out details</div>
-                </div>
-                <div class="stepper-item">
+                </button>
+                <button
+                  type="button"
+                  class="stepper-item"
+                  id="step2Btn"
+                  onclick="goToStep(2, 'stepper')"
+                  data-locked="true"
+                  aria-disabled="true"
+                  style="
+                    cursor: not-allowed;
+                    background: none;
+                    border: none;
+                    text-align: left;
+                    opacity: 0.6;
+                    display: flex;
+                    align-items: center;
+                    width: 100%;
+                    font-family: inherit;
+                  "
+                >
                   <div class="stepper-dot" aria-hidden="true">2</div>
                   <div class="stepper-text">Upload documents</div>
-                </div>
-                <div class="stepper-item">
+                </button>
+                <button
+                  type="button"
+                  class="stepper-item"
+                  id="step3Btn"
+                  onclick="goToStep(3, 'stepper')"
+                  data-locked="true"
+                  aria-disabled="true"
+                  style="
+                    cursor: not-allowed;
+                    background: none;
+                    border: none;
+                    text-align: left;
+                    opacity: 0.6;
+                    display: flex;
+                    align-items: center;
+                    width: 100%;
+                    font-family: inherit;
+                  "
+                >
                   <div class="stepper-dot" aria-hidden="true">3</div>
                   <div class="stepper-text">Submit & wait for review</div>
-                </div>
+                </button>
               </div>
 
               <form id="applicationForm">
-                <div class="form-group">
-                  <label>Select Scholarship</label>
-                  <select id="appScholarship" class="form-control" required>
-                    <!-- Populated dynamically -->
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label>Current Cumulative GPA</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    max="4.0"
-                    id="appGpa"
-                    class="form-control"
-                    required
-                    placeholder="e.g. 3.75"
-                  />
-                </div>
-                <div class="form-group">
-                  <label>Motivation Essay / Letter of Intent</label>
-                  <textarea
-                    id="appEssay"
-                    class="form-control"
-                    rows="6"
-                    required
-                    placeholder="In 150–300 words, explain your academic goals and why you qualify."
-                  ></textarea>
+                <!-- STEP 1: Fill Out Details -->
+                <div id="step1Content">
+                  <h3 class="subsection-title">Personal Information</h3>
+                  <div class="form-grid">
+                    <div class="form-group">
+                      <label>Full Name (Last, First, M.I.)</label>
+                      <input
+                        type="text"
+                        id="appFullName"
+                        class="form-control"
+                        required
+                        placeholder="e.g. Dela Cruz, Juan D."
+                        oninput="validateStep1()"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label>Date of Birth</label>
+                      <input
+                        type="date"
+                        id="appDob"
+                        class="form-control"
+                        required
+                        onchange="validateStep1()"
+                      />
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1">
+                      <label>Permanent Address</label>
+                      <textarea
+                        id="appAddress"
+                        class="form-control"
+                        rows="2"
+                        required
+                        placeholder="e.g. 123 Example St., Las Pinas City"
+                        oninput="validateStep1()"
+                      ></textarea>
+                    </div>
+                    <div class="form-group">
+                      <label>Contact Number</label>
+                      <input
+                        type="text"
+                        id="appContact"
+                        class="form-control"
+                        required
+                        placeholder="e.g. 0912-345-6789"
+                        oninput="validateStep1()"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label>Email Address</label>
+                      <input
+                        type="email"
+                        id="appEmail"
+                        class="form-control"
+                        required
+                        placeholder="e.g. juan@perpetualdalta.edu.ph"
+                        oninput="validateStep1()"
+                      />
+                    </div>
+                  </div>
+
+                  <h3 class="subsection-title" style="margin-top: 2rem">
+                    Academic Information
+                  </h3>
+                  <div class="form-grid">
+                    <div class="form-group">
+                      <label>Select Scholarship</label>
+                      <select
+                        id="appScholarship"
+                        class="form-control"
+                        required
+                        onchange="validateStep1()"
+                      >
+                        <option value="">-- Choose one --</option>
+                        <option value="merit">General Merit</option>
+                        <option value="academic">Academic Excellence</option>
+                        <option value="need">Need-Based</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label>Current Course / Program</label>
+                      <input
+                        type="text"
+                        id="appCourse"
+                        class="form-control"
+                        required
+                        placeholder="e.g. BS Information Technology"
+                        oninput="validateStep1()"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label>Current Year Level</label>
+                      <select
+                        id="appYearLevel"
+                        class="form-control"
+                        required
+                        onchange="validateStep1()"
+                      >
+                        <option value="">Select Level</option>
+                        <option value="1">1st Year</option>
+                        <option value="2">2nd Year</option>
+                        <option value="3">3rd Year</option>
+                        <option value="4">4th Year</option>
+                        <option value="5">5th Year</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label>General Weighted Average (GWA)</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="1.0"
+                        max="5.0"
+                        id="appGpa"
+                        class="form-control"
+                        required
+                        placeholder="1.00 - 5.00"
+                        oninput="validateStep1()"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label>Student ID Number</label>
+                      <input
+                        type="text"
+                        id="appStudentId"
+                        class="form-control"
+                        required
+                        placeholder="e.g. XX-XXXX"
+                        oninput="validateStep1()"
+                      />
+                    </div>
+                  </div>
+
+                  <h3 class="subsection-title" style="margin-top: 2rem">
+                    Financial & Special Information
+                  </h3>
+                  <div class="form-grid">
+                    <div class="form-group">
+                      <label>Combined Monthly Family Income (PHP)</label>
+                      <input
+                        type="number"
+                        id="appIncome"
+                        class="form-control"
+                        required
+                        placeholder="e.g. 15000"
+                        oninput="validateStep1()"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label>Father's / Mother's Occupation</label>
+                      <input
+                        type="text"
+                        id="appOccupation"
+                        class="form-control"
+                        required
+                        placeholder="e.g. Vendor / Housewife"
+                        oninput="validateStep1()"
+                      />
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1">
+                      <label>Special Membership</label>
+                      <select
+                        id="appSpecial"
+                        class="form-control"
+                        onchange="validateStep1()"
+                      >
+                        <option value="none">None / Not Applicable</option>
+                        <option value="indigenous">Indigenous Group</option>
+                        <option value="pwd">PWD</option>
+                        <option value="solo_parent">Solo Parent</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div
+                    style="
+                      margin-top: 2rem;
+                      display: flex;
+                      justify-content: flex-end;
+                      align-items: center;
+                      gap: 1rem;
+                    "
+                  >
+                    <button
+                      type="button"
+                      id="btnNextStep1"
+                      class="btn btn-gold"
+                      onclick="goToStep(2)"
+                    >
+                      Next: Upload Documents
+                    </button>
+                  </div>
                 </div>
 
-                <h3 class="subsection-title">File Uploads</h3>
-                <div class="form-grid">
-                  <div class="form-group">
-                    <label>Official Transcript (PDF)</label>
-                    <input type="file" accept=".pdf" class="form-control" required />
-                    <small class="help-text">PDF only. Clear scan preferred.</small>
+                <!-- STEP 2: Upload Documents -->
+                <div id="step2Content" style="display: none">
+                  <h3 class="subsection-title">Attach Required Documents</h3>
+                  <p
+                    style="
+                      margin-bottom: 1.5rem;
+                      color: var(--text-muted);
+                      font-size: 0.95rem;
+                    "
+                  >
+                    Please ensure files are clear and readable. Required formats
+                    are typically PDF unless specified.
+                  </p>
+
+                  <div class="form-grid">
+                    <div class="form-group">
+                      <label>Proof of Identity</label>
+                      <input
+                        type="file"
+                        id="fileIdentity"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        class="form-control req-file"
+                        required
+                        onchange="validateStep2()"
+                      />
+                      <small class="help-text"
+                        >PSA Birth Certificate (PDF/JPG).</small
+                      >
+                    </div>
+
+                    <div class="form-group">
+                      <label>Academic Proof</label>
+                      <input
+                        type="file"
+                        id="fileAcademic"
+                        accept=".pdf"
+                        class="form-control req-file"
+                        required
+                        onchange="validateStep2()"
+                      />
+                      <small class="help-text"
+                        >Certified True Copy of Grades (Form 138/TOR)
+                        (PDF).</small
+                      >
+                    </div>
+
+                    <div class="form-group">
+                      <label>Enrollment Proof</label>
+                      <input
+                        type="file"
+                        id="fileEnrollment"
+                        accept=".pdf"
+                        class="form-control req-file"
+                        required
+                        onchange="validateStep2()"
+                      />
+                      <small class="help-text"
+                        >Certificate of Enrollment or Reg Form (PDF).</small
+                      >
+                    </div>
+
+                    <div class="form-group">
+                      <label>Proof of Income</label>
+                      <input
+                        type="file"
+                        id="fileIncome"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        class="form-control req-file"
+                        required
+                        onchange="validateStep2()"
+                      />
+                      <small class="help-text"
+                        >ITR, Tax Exemption, or Indigency Cert (PDF/JPG).</small
+                      >
+                    </div>
+
+                    <div class="form-group">
+                      <label>Character Reference</label>
+                      <input
+                        type="file"
+                        id="fileMoral"
+                        accept=".pdf"
+                        class="form-control req-file"
+                        required
+                        onchange="validateStep2()"
+                      />
+                      <small class="help-text"
+                        >Certificate of Good Moral (PDF).</small
+                      >
+                    </div>
+
+                    <div class="form-group">
+                      <label>Recent Photo</label>
+                      <input
+                        type="file"
+                        id="filePhoto"
+                        accept=".jpg,.jpeg,.png"
+                        class="form-control req-file"
+                        required
+                        onchange="validateStep2()"
+                      />
+                      <small class="help-text"
+                        >2x2 ID Picture with white background (JPG/PNG).</small
+                      >
+                    </div>
                   </div>
-                  <div class="form-group">
-                    <label>Valid UPHSD Student ID (Image/PDF)</label>
-                    <input type="file" accept="image/*,.pdf" class="form-control" required />
-                    <small class="help-text">JPG/PNG/PDF accepted.</small>
-                  </div>
-                  <div class="form-group">
-                    <label>Recommendation Letter (Optional)</label>
-                    <input type="file" accept=".pdf" class="form-control" />
-                    <small class="help-text">If available, upload as PDF.</small>
+
+                  <div
+                    style="
+                      margin-top: 2rem;
+                      display: flex;
+                      justify-content: space-between;
+                    "
+                  >
+                    <button
+                      type="button"
+                      class="btn btn-ghost"
+                      onclick="goToStep(1)"
+                    >
+                      Back
+                    </button>
+                    <button
+                      type="button"
+                      id="btnNextStep2"
+                      class="btn btn-gold"
+                      disabled
+                      style="opacity: 0.6; cursor: not-allowed"
+                      onclick="goToStep(3)"
+                    >
+                      Proceed to Final Review
+                    </button>
                   </div>
                 </div>
 
-                <button type="submit" class="btn" style="margin-top: 1rem; width: 100%">
-                  Submit Formal Application
-                </button>
+                <!-- STEP 3: Final Review -->
+                <div id="step3Content" style="display: none">
+                  <h3 class="subsection-title">Final Review</h3>
+                  <p
+                    style="
+                      margin-bottom: 1.5rem;
+                      color: var(--text-muted);
+                      font-size: 0.95rem;
+                    "
+                  >
+                    Please verify that all information entered is accurate
+                    before submitting. Any false information may result in
+                    disqualification.
+                  </p>
+
+                  <div
+                    style="
+                      background: var(--bg-surface);
+                      padding: 2rem;
+                      border: 1px solid var(--border-color);
+                      box-shadow: 4px 4px 0px rgba(122, 17, 20, 0.05);
+                      margin-bottom: 2rem;
+                    "
+                  >
+                    <div
+                      style="
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 1.25rem;
+                        font-size: 1rem;
+                      "
+                    >
+                      <div>
+                        <strong>Name:</strong>
+                        <span id="revName" style="color: var(--primary-maroon)"
+                          >--</span
+                        >
+                      </div>
+                      <div>
+                        <strong>Scholarship:</strong>
+                        <span
+                          id="revScholarship"
+                          style="color: var(--primary-maroon)"
+                          >--</span
+                        >
+                      </div>
+                      <div>
+                        <strong>Course/Year:</strong>
+                        <span
+                          id="revCourseYear"
+                          style="color: var(--primary-maroon)"
+                          >--</span
+                        >
+                      </div>
+                      <div>
+                        <strong>GWA:</strong>
+                        <span id="revGwa" style="color: var(--primary-maroon)"
+                          >--</span
+                        >
+                      </div>
+                      <div>
+                        <strong>Email:</strong>
+                        <span id="revEmail" style="color: var(--primary-maroon)"
+                          >--</span
+                        >
+                      </div>
+                      <div>
+                        <strong>Files Uploaded:</strong>
+                        <span id="revFiles" style="color: var(--primary-maroon)"
+                          >0/6</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style="display: flex; flex-direction: column; gap: 1rem">
+                    <button
+                      type="submit"
+                      id="btnSubmitFinal"
+                      class="btn"
+                      style="width: 100%"
+                    >
+                      Submit Formal Application
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-ghost"
+                      style="width: 100%"
+                      onclick="goToStep(2)"
+                    >
+                      Back to Uploads
+                    </button>
+                  </div>
+                </div>
+
+                <script>
+                  let step1AttemptedNext = false;
+
+                  function getOrCreateErrorBox(el) {
+                    const group = el ? el.closest(".form-group") : null;
+                    if (!group || !el || !el.id) return null;
+
+                    let box = group.querySelector(
+                      `.field-error-box[data-for="${el.id}"]`,
+                    );
+                    if (!box) {
+                      box = document.createElement("div");
+                      box.className = "field-error-box";
+                      box.setAttribute("data-for", el.id);
+                      box.setAttribute("aria-live", "polite");
+                      box.innerHTML =
+                        '<span class="field-bubble-icon" aria-hidden="true">!</span><span class="field-bubble-text"></span>';
+                      group.appendChild(box);
+                    }
+                    return box;
+                  }
+
+                  function setFieldError(el, message) {
+                    if (!el) return;
+                    el.classList.add("is-invalid");
+                    el.setAttribute("aria-invalid", "true");
+                    const box = getOrCreateErrorBox(el);
+                    if (box) {
+                      const textEl = box.querySelector(".field-bubble-text");
+                      if (textEl) textEl.textContent = message;
+                      box.style.display = "block";
+                    }
+                  }
+
+                  function clearFieldError(el) {
+                    if (!el) return;
+                    el.classList.remove("is-invalid");
+                    el.setAttribute("aria-invalid", "false");
+                    const box = getOrCreateErrorBox(el);
+                    if (box) {
+                      const textEl = box.querySelector(".field-bubble-text");
+                      if (textEl) textEl.textContent = "";
+                      box.style.display = "none";
+                    }
+                  }
+
+                  function scrollToFirstStep1Invalid() {
+                    const firstInvalid = document.querySelector(
+                      "#step1Content .form-control.is-invalid",
+                    );
+                    if (firstInvalid) {
+                      firstInvalid.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center",
+                      });
+                      firstInvalid.focus({ preventScroll: true });
+                    }
+                  }
+
+                  function getOrCreateInfoPopup(el) {
+                    const group = el ? el.closest(".form-group") : null;
+                    if (!group || !el || !el.id) return null;
+
+                    let box = group.querySelector(
+                      `.field-info-popup[data-for="${el.id}"]`,
+                    );
+                    if (!box) {
+                      box = document.createElement("div");
+                      box.className = "field-info-popup";
+                      box.setAttribute("data-for", el.id);
+                      box.setAttribute("aria-live", "polite");
+                      box.innerHTML =
+                        '<span class="field-bubble-icon" aria-hidden="true">i</span><span class="field-bubble-text"></span>';
+                      group.appendChild(box);
+                    }
+                    return box;
+                  }
+
+                  function showFieldInfoPopup(el, message) {
+                    const box = getOrCreateInfoPopup(el);
+                    if (!box) return;
+                    const textEl = box.querySelector(".field-bubble-text");
+                    if (textEl) textEl.textContent = message;
+                    box.style.display = "block";
+                    clearTimeout(box._hideTimer);
+                    box._hideTimer = setTimeout(() => {
+                      box.style.display = "none";
+                    }, 2800);
+                  }
+
+                  function showStepLockedMessage(title, htmlMessage) {
+                    if (window.showModal) {
+                      window.showModal(title, htmlMessage);
+                    } else {
+                      const text = htmlMessage.replace(/<[^>]*>/g, "");
+                      alert(text);
+                    }
+                  }
+
+                  document.addEventListener("DOMContentLoaded", () => {
+                    // Set maximum date of birth to exactly 18 years ago to prevent selecting underage dates.
+                    const dobEl = document.getElementById("appDob");
+                    if (dobEl) {
+                      const today = new Date();
+                      const yyyy = today.getFullYear() - 18;
+                      let mm = today.getMonth() + 1;
+                      let dd = today.getDate();
+                      if (mm < 10) mm = "0" + mm;
+                      if (dd < 10) dd = "0" + dd;
+                      dobEl.max = `${yyyy}-${mm}-${dd}`;
+
+                      // Prevent wheel/scroll from changing the date value unexpectedly.
+                      dobEl.addEventListener(
+                        "wheel",
+                        (e) => {
+                          e.preventDefault();
+                          showFieldInfoPopup(
+                            dobEl,
+                            `Scrolling is disabled here. Choose a date on or before ${dobEl.max}.`,
+                          );
+                        },
+                        { passive: false },
+                      );
+
+                      // Prevent keyboard date stepping that can accidentally bypass intended picking flow.
+                      dobEl.addEventListener("keydown", (e) => {
+                        const blockedKeys = [
+                          "ArrowUp",
+                          "ArrowDown",
+                          "PageUp",
+                          "PageDown",
+                        ];
+                        if (blockedKeys.includes(e.key)) {
+                          e.preventDefault();
+                          showFieldInfoPopup(
+                            dobEl,
+                            `Use the calendar picker. Allowed dates are on or before ${dobEl.max}.`,
+                          );
+                        }
+                      });
+
+                      // Explain disabled future/underage dates when user opens the date field.
+                      dobEl.addEventListener("click", () => {
+                        showFieldInfoPopup(
+                          dobEl,
+                          `Dates after ${dobEl.max} are disabled because applicant must be 18+ years old.`,
+                        );
+                      });
+
+                      // If a typed/manual value exceeds max, reset and explain immediately.
+                      dobEl.addEventListener("change", () => {
+                        if (dobEl.value && dobEl.max) {
+                          const selected = new Date(dobEl.value + "T00:00:00");
+                          const maxDate = new Date(dobEl.max + "T00:00:00");
+                          if (selected > maxDate) {
+                            dobEl.value = "";
+                            showFieldInfoPopup(
+                              dobEl,
+                              `That date is not allowed. Please pick ${dobEl.max} or earlier.`,
+                            );
+                          }
+                        }
+                      });
+                    }
+
+                    validateStep1();
+                  });
+
+                  function validateStep1(forceShowRequired = false) {
+                    if (forceShowRequired) step1AttemptedNext = true;
+                    const showRequiredMessages = step1AttemptedNext;
+
+                    const reqIds = [
+                      "appFullName",
+                      "appDob",
+                      "appAddress",
+                      "appContact",
+                      "appEmail",
+                      "appScholarship",
+                      "appCourse",
+                      "appYearLevel",
+                      "appGpa",
+                      "appStudentId",
+                      "appIncome",
+                      "appOccupation",
+                    ];
+                    let missingCount = 0;
+                    let allFilled = true;
+                    let emailValid = false;
+                    let gwaValid = false;
+                    let ageValid = false;
+                    let emailStatusMsg = "Invalid email format";
+                    let ageStatusMsg = "Applicant must be 18+ years old";
+
+                    // Required checks
+                    for (let id of reqIds) {
+                      const el = document.getElementById(id);
+                      if (!el) {
+                        allFilled = false;
+                        continue;
+                      }
+
+                      const value = (el.value || "").trim();
+                      if (value === "") {
+                        allFilled = false;
+                        missingCount++;
+                        if (showRequiredMessages) {
+                          setFieldError(el, "This field is required.");
+                        } else {
+                          clearFieldError(el);
+                        }
+                      } else {
+                        clearFieldError(el);
+                      }
+                    }
+
+                    // Email check
+                    const emailEl = document.getElementById("appEmail");
+                    if (emailEl && emailEl.value.trim() !== "") {
+                      const emailValue = emailEl.value.trim();
+                      if (!emailValue.includes("@")) {
+                        emailStatusMsg = `Please include an '@' in the email address. '${emailValue}' is missing an '@'.`;
+                        setFieldError(emailEl, emailStatusMsg);
+                      } else {
+                        const emailRegex = /^[^\s@]+@[^\s@]+$/;
+                        if (emailRegex.test(emailValue)) {
+                          emailValid = true;
+                          clearFieldError(emailEl);
+                        } else {
+                          emailStatusMsg =
+                            "Email must include text before and after '@'.";
+                          setFieldError(emailEl, emailStatusMsg);
+                        }
+                      }
+                    }
+
+                    // GWA check
+                    const gwaEl = document.getElementById("appGpa");
+                    if (gwaEl && gwaEl.value.trim() !== "") {
+                      const gwa = parseFloat(gwaEl.value);
+                      if (!Number.isNaN(gwa) && gwa >= 1.0 && gwa <= 5.0) {
+                        gwaValid = true;
+                        clearFieldError(gwaEl);
+                      } else {
+                        setFieldError(
+                          gwaEl,
+                          "GWA must be between 1.00 and 5.00.",
+                        );
+                      }
+                    }
+
+                    // DOB / age check
+                    const dobEl = document.getElementById("appDob");
+                    if (dobEl && dobEl.value) {
+                      const dob = new Date(dobEl.value + "T00:00:00");
+
+                      if (dobEl.max) {
+                        const maxDobDate = new Date(dobEl.max + "T00:00:00");
+                        if (dob > maxDobDate) {
+                          ageStatusMsg = `Date of birth must be on or before ${dobEl.max}.`;
+                          setFieldError(dobEl, ageStatusMsg);
+                          showFieldInfoPopup(dobEl, ageStatusMsg);
+                        }
+                      }
+
+                      const today = new Date();
+                      let age = today.getFullYear() - dob.getFullYear();
+                      const m = today.getMonth() - dob.getMonth();
+                      if (m < 0 || (m === 0 && today.getDate() < dob.getDate()))
+                        age--;
+
+                      if (
+                        age >= 18 &&
+                        dob.getFullYear() > 1900 &&
+                        (!dobEl.max || dob <= new Date(dobEl.max + "T00:00:00"))
+                      ) {
+                        ageValid = true;
+                        clearFieldError(dobEl);
+                      } else {
+                        setFieldError(dobEl, ageStatusMsg);
+                        showFieldInfoPopup(dobEl, ageStatusMsg);
+                      }
+                    }
+
+                    const isStep1Valid =
+                      allFilled && emailValid && gwaValid && ageValid;
+
+                    // Keep Next clickable for guided validation; gate progression via goToStep().
+                    const btn = document.getElementById("btnNextStep1");
+                    if (btn) {
+                      btn.disabled = false;
+                      btn.style.opacity = "1";
+                      btn.style.cursor = "pointer";
+                    }
+
+                    // Keep stepper step 2 locked until valid
+                    const step2Btn = document.getElementById("step2Btn");
+                    if (step2Btn) {
+                      step2Btn.dataset.locked = isStep1Valid ? "false" : "true";
+                      step2Btn.setAttribute(
+                        "aria-disabled",
+                        isStep1Valid ? "false" : "true",
+                      );
+                      step2Btn.style.opacity = isStep1Valid ? "1" : "0.6";
+                      step2Btn.style.cursor = isStep1Valid
+                        ? "pointer"
+                        : "not-allowed";
+                    }
+
+                    return isStep1Valid;
+                  }
+
+                  function validateStep2() {
+                    const fileInputs = document.querySelectorAll(".req-file");
+                    let allUploaded = true;
+                    let uploadCount = 0;
+
+                    fileInputs.forEach((input) => {
+                      if (!input.files || input.files.length === 0) {
+                        allUploaded = false;
+                      } else {
+                        uploadCount++;
+                      }
+                    });
+
+                    const revFiles = document.getElementById("revFiles");
+                    if (revFiles) revFiles.textContent = uploadCount + "/6";
+
+                    const btn = document.getElementById("btnNextStep2");
+                    const step3Btn = document.getElementById("step3Btn");
+                    if (allUploaded) {
+                      btn.disabled = false;
+                      btn.style.opacity = "1";
+                      btn.style.cursor = "pointer";
+                      if (step3Btn) {
+                        step3Btn.dataset.locked = "false";
+                        step3Btn.setAttribute("aria-disabled", "false");
+                        step3Btn.style.opacity = "1";
+                        step3Btn.style.cursor = "pointer";
+                      }
+                    } else {
+                      btn.disabled = true;
+                      btn.style.opacity = "0.6";
+                      btn.style.cursor = "not-allowed";
+                      if (step3Btn) {
+                        step3Btn.dataset.locked = "true";
+                        step3Btn.setAttribute("aria-disabled", "true");
+                        step3Btn.style.opacity = "0.6";
+                        step3Btn.style.cursor = "not-allowed";
+                      }
+                    }
+                  }
+
+                  function goToStep(stepNumber, source = "button") {
+                    if (stepNumber === 2) {
+                      const step1Visible =
+                        document.getElementById("step1Content").style
+                          .display !== "none";
+                      if (step1Visible) {
+                        const canProceed = validateStep1(true);
+                        if (!canProceed) {
+                          if (source === "stepper") {
+                            showStepLockedMessage(
+                              "Step Locked",
+                              "You cannot open <strong>Step 2</strong> yet. Please complete all required fields in <strong>Step 1</strong> first.",
+                            );
+                          }
+                          scrollToFirstStep1Invalid();
+                          return;
+                        }
+                      }
+                    }
+
+                    const targetBtn = document.getElementById(
+                      "step" + stepNumber + "Btn",
+                    );
+                    if (
+                      stepNumber !== 1 &&
+                      targetBtn &&
+                      targetBtn.dataset.locked === "true"
+                    ) {
+                      if (source === "stepper") {
+                        const msg =
+                          stepNumber === 3
+                            ? "You cannot open <strong>Step 3</strong> yet. Please upload all required documents in <strong>Step 2</strong> first."
+                            : "This step is currently locked.";
+                        showStepLockedMessage("Step Locked", msg);
+                      }
+                      return;
+                    }
+
+                    document.getElementById("step1Content").style.display =
+                      "none";
+                    document.getElementById("step2Content").style.display =
+                      "none";
+                    document.getElementById("step3Content").style.display =
+                      "none";
+
+                    for (let i = 1; i <= 3; i++) {
+                      const btn = document.getElementById("step" + i + "Btn");
+                      if (btn) btn.classList.remove("is-active");
+                    }
+
+                    document.getElementById(
+                      "step" + stepNumber + "Content",
+                    ).style.display = "block";
+                    if (targetBtn) targetBtn.classList.add("is-active");
+
+                    if (stepNumber === 3) {
+                      document.getElementById("revName").textContent =
+                        document.getElementById("appFullName").value || "--";
+                      const s = document.getElementById("appScholarship");
+                      document.getElementById("revScholarship").textContent =
+                        s.options[s.selectedIndex]?.text || "--";
+                      document.getElementById("revCourseYear").textContent =
+                        (document.getElementById("appCourse").value || "--") +
+                        " / " +
+                        (document.getElementById("appYearLevel").value ||
+                          "--") +
+                        " Yr";
+                      document.getElementById("revGwa").textContent =
+                        document.getElementById("appGpa").value || "--";
+                      document.getElementById("revEmail").textContent =
+                        document.getElementById("appEmail").value || "--";
+                    }
+                  }
+                </script>
               </form>
             </div>
 
@@ -319,7 +1241,10 @@
 
               <div class="aside-card aside-highlight">
                 <div class="aside-title">Need help?</div>
-                <div class="aside-text">Use <strong>Contact Support</strong> for document issues, eligibility questions, or status clarification.</div>
+                <div class="aside-text">
+                  Use <strong>Contact Support</strong> for document issues,
+                  eligibility questions, or status clarification.
+                </div>
               </div>
             </aside>
           </div>
@@ -366,120 +1291,403 @@
           </table>
         </section>
 
-        <!-- 6. NOTIFICATIONS -->
-        <section id="view-notifications" class="hidden">
-          <h2 class="section-title">Notifications</h2>
-          <div class="view-grid">
-            <div class="view-primary">
-              <div class="toolbar">
-                <input type="text" class="form-control" placeholder="Search notifications..." style="flex: 2; min-width: 240px" />
-                <select class="form-control" style="flex: 1; min-width: 180px">
-                  <option value="">All</option>
-                  <option value="system">System</option>
-                  <option value="updates">Application updates</option>
-                </select>
-                <button class="btn btn-sm" type="button">Mark all as read</button>
-              </div>
-
-              <div class="notification-list">
-                <div class="notification-item is-unread">
-                  <div class="notification-top">
-                    <div class="notification-title">System Alert</div>
-                    <div class="notification-time">2 days ago</div>
-                  </div>
-                  <div class="notification-body">General Merit Applications are closing on May 15, 2026.</div>
-                </div>
-
-                <div class="notification-item">
-                  <div class="notification-top">
-                    <div class="notification-title">Application Update</div>
-                    <div class="notification-time">5 days ago</div>
-                  </div>
-                  <div class="notification-body">Your “Engineering Excellence” application is now <strong>Under Review</strong>.</div>
-                </div>
-              </div>
-            </div>
-
-            <aside class="view-aside">
-              <div class="aside-card">
-                <div class="aside-title">Notification preferences</div>
-                <div class="pref-row"><input type="checkbox" checked disabled /><label>Email updates for status changes</label></div>
-                <div class="pref-row"><input type="checkbox" checked disabled /><label>System deadline reminders</label></div>
-                <div class="pref-row"><input type="checkbox" disabled /><label>Weekly digest</label></div>
-                <div class="aside-text" style="margin-top: 0.75rem;">(UI-only preview — settings can be wired to your backend later.)</div>
-              </div>
-
-              <div class="aside-card aside-highlight">
-                <div class="aside-title">Tip</div>
-                <div class="aside-text">If you’re waiting for updates, check <strong>My Tracker</strong> for the most accurate status.</div>
-              </div>
-            </aside>
-          </div>
-        </section>
-
         <!-- 7. DOCUMENTS (Standalone) -->
         <section id="view-docs" class="hidden">
           <h2 class="section-title">My Documents</h2>
           <div class="view-grid view-grid--with-header">
             <div class="view-header">
               <p class="section-lead">
-                Manage your uploaded requirements. Files are checked alongside your application for completeness.
+                Manage your uploaded requirements. Files are checked alongside
+                your application for completeness.
               </p>
 
               <div class="toolbar">
-                <input type="text" class="form-control" placeholder="Search documents (filename)..." style="flex: 2; min-width: 240px" />
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Search documents (filename)..."
+                  style="flex: 2; min-width: 240px"
+                />
                 <select class="form-control" style="flex: 1; min-width: 180px">
                   <option value="">All types</option>
                   <option value="pdf">PDF</option>
                   <option value="image">Images</option>
                 </select>
-                <button class="btn btn-gold btn-sm" type="button">Upload New</button>
               </div>
             </div>
 
             <div class="view-primary">
               <div class="doc-grid">
-                <div class="doc-card">
-                  <div class="doc-title">Transcript_v2.pdf</div>
-                  <div class="doc-meta">Uploaded: April 1, 2026</div>
-                  <div class="doc-meta">Type: PDF</div>
+                <!-- 1. Proof of Identity -->
+                <div class="doc-card" id="card-identity">
+                  <div
+                    style="
+                      font-size: 0.85rem;
+                      color: var(--primary-maroon);
+                      font-weight: 700;
+                      text-transform: uppercase;
+                      margin-bottom: 0.5rem;
+                    "
+                  >
+                    Proof of Identity
+                  </div>
+                  <div class="doc-title file-name">
+                    PSA_Birth_Certificate.pdf
+                  </div>
+                  <div class="doc-meta file-hint" style="display: none">
+                    PSA Birth Certificate (PDF/JPG).
+                  </div>
+                  <div class="doc-meta file-meta">
+                    Uploaded: April 1, 2026<br />Type: PDF
+                  </div>
+
                   <div class="doc-actions">
-                    <button class="btn btn-gold btn-sm" type="button">Download</button>
-                    <button class="btn btn-sm" type="button">Replace</button>
+                    <button
+                      class="btn btn-gold btn-sm btn-action-dl"
+                      type="button"
+                    >
+                      Download
+                    </button>
+                    <button
+                      class="btn btn-sm btn-action-rm"
+                      type="button"
+                      onclick="
+                        removeDocument(
+                          'card-identity',
+                          'PSA Birth Certificate (PDF/JPG).',
+                        )
+                      "
+                    >
+                      Remove
+                    </button>
+                    <button
+                      class="btn btn-sm btn-action-up"
+                      type="button"
+                      style="display: none"
+                      onclick="alert('Upload prompt opened.')"
+                    >
+                      Choose File
+                    </button>
                   </div>
                 </div>
-                <div class="doc-card">
-                  <div class="doc-title">Student_ID_Scanned.png</div>
-                  <div class="doc-meta">Uploaded: April 1, 2026</div>
-                  <div class="doc-meta">Type: Image</div>
+
+                <!-- 2. Academic Proof -->
+                <div class="doc-card doc-card--hint" id="card-academic">
+                  <div
+                    style="
+                      font-size: 0.85rem;
+                      color: var(--primary-maroon);
+                      font-weight: 700;
+                      text-transform: uppercase;
+                      margin-bottom: 0.5rem;
+                    "
+                  >
+                    Academic Proof
+                  </div>
+                  <div class="doc-title file-name">No file chosen</div>
+                  <div class="doc-meta file-hint">
+                    Certified True Copy of Grades (Form 138/TOR) (PDF).
+                  </div>
+                  <div class="doc-meta file-meta" style="display: none"></div>
+
                   <div class="doc-actions">
-                    <button class="btn btn-gold btn-sm" type="button">Download</button>
-                    <button class="btn btn-sm" type="button">Replace</button>
+                    <button
+                      class="btn btn-gold btn-sm btn-action-dl"
+                      type="button"
+                      style="display: none"
+                    >
+                      Download
+                    </button>
+                    <button
+                      class="btn btn-sm btn-action-rm"
+                      type="button"
+                      style="display: none"
+                      onclick="
+                        removeDocument(
+                          'card-academic',
+                          'Certified True Copy of Grades (Form 138/TOR) (PDF).',
+                        )
+                      "
+                    >
+                      Remove
+                    </button>
+                    <button
+                      class="btn btn-sm btn-action-up"
+                      type="button"
+                      onclick="alert('Upload prompt opened.')"
+                    >
+                      Choose File
+                    </button>
                   </div>
                 </div>
-                <div class="doc-card doc-card--hint">
-                  <div class="doc-title">Add another requirement</div>
-                  <div class="doc-meta">Recommendation letter, certificate, etc.</div>
+
+                <!-- 3. Enrollment Proof -->
+                <div class="doc-card doc-card--hint" id="card-enrollment">
+                  <div
+                    style="
+                      font-size: 0.85rem;
+                      color: var(--primary-maroon);
+                      font-weight: 700;
+                      text-transform: uppercase;
+                      margin-bottom: 0.5rem;
+                    "
+                  >
+                    Enrollment Proof
+                  </div>
+                  <div class="doc-title file-name">No file chosen</div>
+                  <div class="doc-meta file-hint">
+                    Certificate of Enrollment or Reg Form (PDF).
+                  </div>
+                  <div class="doc-meta file-meta" style="display: none"></div>
+
                   <div class="doc-actions">
-                    <button class="btn btn-sm" type="button">Choose File</button>
+                    <button
+                      class="btn btn-gold btn-sm btn-action-dl"
+                      type="button"
+                      style="display: none"
+                    >
+                      Download
+                    </button>
+                    <button
+                      class="btn btn-sm btn-action-rm"
+                      type="button"
+                      style="display: none"
+                      onclick="
+                        removeDocument(
+                          'card-enrollment',
+                          'Certificate of Enrollment or Reg Form (PDF).',
+                        )
+                      "
+                    >
+                      Remove
+                    </button>
+                    <button
+                      class="btn btn-sm btn-action-up"
+                      type="button"
+                      onclick="alert('Upload prompt opened.')"
+                    >
+                      Choose File
+                    </button>
+                  </div>
+                </div>
+
+                <!-- 4. Proof of Income -->
+                <div class="doc-card doc-card--hint" id="card-income">
+                  <div
+                    style="
+                      font-size: 0.85rem;
+                      color: var(--primary-maroon);
+                      font-weight: 700;
+                      text-transform: uppercase;
+                      margin-bottom: 0.5rem;
+                    "
+                  >
+                    Proof of Income
+                  </div>
+                  <div class="doc-title file-name">No file chosen</div>
+                  <div class="doc-meta file-hint">
+                    ITR, Tax Exemption, or Indigency Cert (PDF/JPG).
+                  </div>
+                  <div class="doc-meta file-meta" style="display: none"></div>
+
+                  <div class="doc-actions">
+                    <button
+                      class="btn btn-gold btn-sm btn-action-dl"
+                      type="button"
+                      style="display: none"
+                    >
+                      Download
+                    </button>
+                    <button
+                      class="btn btn-sm btn-action-rm"
+                      type="button"
+                      style="display: none"
+                      onclick="
+                        removeDocument(
+                          'card-income',
+                          'ITR, Tax Exemption, or Indigency Cert (PDF/JPG).',
+                        )
+                      "
+                    >
+                      Remove
+                    </button>
+                    <button
+                      class="btn btn-sm btn-action-up"
+                      type="button"
+                      onclick="alert('Upload prompt opened.')"
+                    >
+                      Choose File
+                    </button>
+                  </div>
+                </div>
+
+                <!-- 5. Character Reference -->
+                <div class="doc-card doc-card--hint" id="card-character">
+                  <div
+                    style="
+                      font-size: 0.85rem;
+                      color: var(--primary-maroon);
+                      font-weight: 700;
+                      text-transform: uppercase;
+                      margin-bottom: 0.5rem;
+                    "
+                  >
+                    Character Reference
+                  </div>
+                  <div class="doc-title file-name">No file chosen</div>
+                  <div class="doc-meta file-hint">
+                    Certificate of Good Moral (PDF).
+                  </div>
+                  <div class="doc-meta file-meta" style="display: none"></div>
+
+                  <div class="doc-actions">
+                    <button
+                      class="btn btn-gold btn-sm btn-action-dl"
+                      type="button"
+                      style="display: none"
+                    >
+                      Download
+                    </button>
+                    <button
+                      class="btn btn-sm btn-action-rm"
+                      type="button"
+                      style="display: none"
+                      onclick="
+                        removeDocument(
+                          'card-character',
+                          'Certificate of Good Moral (PDF).',
+                        )
+                      "
+                    >
+                      Remove
+                    </button>
+                    <button
+                      class="btn btn-sm btn-action-up"
+                      type="button"
+                      onclick="alert('Upload prompt opened.')"
+                    >
+                      Choose File
+                    </button>
+                  </div>
+                </div>
+
+                <!-- 6. Recent Photo -->
+                <div class="doc-card doc-card--hint" id="card-photo">
+                  <div
+                    style="
+                      font-size: 0.85rem;
+                      color: var(--primary-maroon);
+                      font-weight: 700;
+                      text-transform: uppercase;
+                      margin-bottom: 0.5rem;
+                    "
+                  >
+                    Recent Photo
+                  </div>
+                  <div class="doc-title file-name">No file chosen</div>
+                  <div class="doc-meta file-hint">
+                    2x2 ID Picture with white background (JPG/PNG).
+                  </div>
+                  <div class="doc-meta file-meta" style="display: none"></div>
+
+                  <div class="doc-actions">
+                    <button
+                      class="btn btn-gold btn-sm btn-action-dl"
+                      type="button"
+                      style="display: none"
+                    >
+                      Download
+                    </button>
+                    <button
+                      class="btn btn-sm btn-action-rm"
+                      type="button"
+                      style="display: none"
+                      onclick="
+                        removeDocument(
+                          'card-photo',
+                          '2x2 ID Picture with white background (JPG/PNG).',
+                        )
+                      "
+                    >
+                      Remove
+                    </button>
+                    <button
+                      class="btn btn-sm btn-action-up"
+                      type="button"
+                      onclick="alert('Upload prompt opened.')"
+                    >
+                      Choose File
+                    </button>
                   </div>
                 </div>
               </div>
+
+              <!-- Temporary inline script for remove button functionality -->
+              <script>
+                function removeDocument(cardId, hintText) {
+                  // Show confirmation modal
+                  if (window.showModal) {
+                    window.showModal(
+                      "Remove Document",
+                      "<p style='font-size: 1.15rem; color: var(--text-dark); font-weight: 500;'>Are you sure you want to remove this file?</p><p style='margin-top: 12px; color: var(--text-muted); font-size: 1.05rem; line-height: 1.5;'>Make sure to upload a replacement before the deadline to ensure your application is complete and avoid delays in the processing of your scholarship.</p>",
+                      true,
+                      () => {
+                        executeRemoval(cardId, hintText);
+                      },
+                    );
+                  } else if (
+                    confirm(
+                      "Are you sure you want to remove this file? Make sure to upload another file before the deadline to avoid application delays.",
+                    )
+                  ) {
+                    // Fallback to standard confirm if showModal isn't loaded
+                    executeRemoval(cardId, hintText);
+                  }
+                }
+
+                function executeRemoval(cardId, hintText) {
+                  const card = document.getElementById(cardId);
+                  if (card) {
+                    card.classList.add("doc-card--hint");
+                    card.querySelector(".file-name").textContent =
+                      "No file chosen";
+
+                    const meta = card.querySelector(".file-meta");
+                    meta.style.display = "none";
+                    meta.innerHTML = "";
+
+                    const hint = card.querySelector(".file-hint");
+                    hint.style.display = "block";
+                    hint.textContent = hintText;
+
+                    card.querySelector(".btn-action-dl").style.display = "none";
+                    card.querySelector(".btn-action-rm").style.display = "none";
+                    card.querySelector(".btn-action-up").style.display =
+                      "inline-block";
+                  }
+                }
+              </script>
             </div>
 
             <aside class="view-aside">
               <div class="aside-card">
                 <div class="aside-title">Recommended uploads</div>
                 <ul class="bullet-list">
-                  <li>Transcript / TOR (PDF)</li>
-                  <li>Student ID (Image/PDF)</li>
-                  <li>Recommendation letter (optional)</li>
+                  <li>Proof of Identity (PSA Birth Certificate)</li>
+                  <li>Academic Proof (Form 138/TOR)</li>
+                  <li>Enrollment Proof (Reg Form/COE)</li>
+                  <li>Proof of Income (ITR/Tax Exemption/Indigency)</li>
+                  <li>Character Reference (Good Moral)</li>
+                  <li>Recent Photo (2x2 with white background)</li>
                 </ul>
               </div>
 
               <div class="aside-card aside-highlight">
                 <div class="aside-title">Quality check</div>
-                <div class="aside-text">If text is unreadable when zoomed in, re-scan before submitting to avoid delays.</div>
+                <div class="aside-text">
+                  If text is unreadable when zoomed in, re-scan before
+                  submitting to avoid delays.
+                </div>
               </div>
             </aside>
           </div>
@@ -491,8 +1699,15 @@
           <div class="view-grid">
             <div class="view-primary">
               <div class="toolbar">
-                <input type="text" class="form-control" placeholder="Search FAQs (keyword)..." style="flex: 2; min-width: 240px" />
-                <button class="btn btn-gold btn-sm" type="button">Search</button>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Search FAQs (keyword)..."
+                  style="flex: 2; min-width: 240px"
+                />
+                <button class="btn btn-gold btn-sm" type="button">
+                  Search
+                </button>
               </div>
 
               <div class="faq-list" id="faqAccordion">
@@ -501,7 +1716,9 @@
                     How does the automated ranking work? <span>+</span>
                   </div>
                   <div class="faq-answer">
-                    Rankings are calculated dynamically based on your cumulative GPA compared against the minimum threshold set by the system administrator.
+                    Rankings are calculated dynamically based on your cumulative
+                    GPA compared against the minimum threshold set by the system
+                    administrator.
                   </div>
                 </div>
                 <div class="faq-item">
@@ -509,23 +1726,29 @@
                     Can I apply for multiple scholarships? <span>+</span>
                   </div>
                   <div class="faq-answer">
-                    Yes, as long as you meet the eligibility requirements for each specific fund. Ensure your essays are tailored appropriately.
+                    Yes, as long as you meet the eligibility requirements for
+                    each specific fund. Ensure your essays are tailored
+                    appropriately.
                   </div>
                 </div>
                 <div class="faq-item">
                   <div class="faq-question">
-                    Who is eligible for the UPHSD Gold Tier grant? <span>+</span>
+                    Who is eligible for the UPHSD Gold Tier grant?
+                    <span>+</span>
                   </div>
                   <div class="faq-answer">
-                    You must have completed at least 2 full semesters as a regular student with no record of disciplinary action.
+                    You must have completed at least 2 full semesters as a
+                    regular student with no record of disciplinary action.
                   </div>
                 </div>
                 <div class="faq-item">
                   <div class="faq-question">
-                    What file types are accepted for requirements? <span>+</span>
+                    What file types are accepted for requirements?
+                    <span>+</span>
                   </div>
                   <div class="faq-answer">
-                    Transcripts and letters should be uploaded as PDF. Student ID may be uploaded as JPG/PNG or PDF.
+                    Transcripts and letters should be uploaded as PDF. Student
+                    ID may be uploaded as JPG/PNG or PDF.
                   </div>
                 </div>
               </div>
@@ -544,7 +1767,10 @@
 
               <div class="aside-card aside-highlight">
                 <div class="aside-title">Still need help?</div>
-                <div class="aside-text">Open <strong>Contact Support</strong> and provide your Student ID + Application ID for faster assistance.</div>
+                <div class="aside-text">
+                  Open <strong>Contact Support</strong> and provide your Student
+                  ID + Application ID for faster assistance.
+                </div>
               </div>
             </aside>
           </div>
@@ -555,38 +1781,86 @@
           <h2 class="section-title">Contact Support</h2>
           <div class="view-grid">
             <div class="view-primary">
-              <p class="section-lead">For faster resolution, include your <strong>Student ID</strong> and (if applicable) your <strong>Application ID</strong>.</p>
+              <p class="section-lead">
+                For faster resolution, include your
+                <strong>Student ID</strong> and (if applicable) your
+                <strong>Application ID</strong>.
+              </p>
 
               <form id="contactForm">
                 <div class="form-grid">
                   <div class="form-group">
                     <label>Your Name</label>
-                    <input type="text" name="name" id="contactName" class="form-control" required placeholder="e.g. Juan De La Cruz" />
+                    <input
+                      type="text"
+                      name="name"
+                      id="contactName"
+                      class="form-control"
+                      required
+                      placeholder="e.g. Juan De La Cruz"
+                    />
                   </div>
                   <div class="form-group">
                     <label>Email Address</label>
-                    <input type="email" name="email" id="contactEmail" class="form-control" required placeholder="Where we will send the auto-reply" />
+                    <input
+                      type="email"
+                      name="email"
+                      id="contactEmail"
+                      class="form-control"
+                      required
+                      placeholder="Where we will send the auto-reply"
+                    />
                   </div>
                 </div>
                 <div class="form-group">
                   <label>Subject</label>
-                  <input type="text" name="title" id="contactSubject" class="form-control" required placeholder="e.g. Document upload issue / Eligibility question" />
+                  <input
+                    type="text"
+                    name="title"
+                    id="contactSubject"
+                    class="form-control"
+                    required
+                    placeholder="e.g. Document upload issue / Eligibility question"
+                  />
                 </div>
                 <div class="form-group">
                   <label>Message</label>
-                  <textarea name="message" id="contactMessage" class="form-control" rows="6" required placeholder="Describe the issue and any relevant details..."></textarea>
-                  <small class="help-text">Avoid sending passwords. Support will never ask for your password.</small>
+                  <textarea
+                    name="message"
+                    id="contactMessage"
+                    class="form-control"
+                    rows="6"
+                    required
+                    placeholder="Describe the issue and any relevant details..."
+                  ></textarea>
+                  <small class="help-text"
+                    >Avoid sending passwords. Support will never ask for your
+                    password.</small
+                  >
                 </div>
-                <button type="submit" class="btn" id="btnSubmitContact">Send via Email Support</button>
+                <button type="submit" class="btn" id="btnSubmitContact">
+                  Send via Email Support
+                </button>
               </form>
             </div>
 
             <aside class="view-aside">
               <div class="aside-card">
                 <div class="aside-title">Support details</div>
-                <div class="kv"><div class="kv-k">Response time</div><div class="kv-v">Within 1–3 business days</div></div>
-                <div class="kv"><div class="kv-k">Best time to contact</div><div class="kv-v">Weekdays, 8:00 AM – 5:00 PM</div></div>
-                <div class="kv"><div class="kv-k">What to include</div><div class="kv-v">Student ID, screenshot (if needed), steps to reproduce</div></div>
+                <div class="kv">
+                  <div class="kv-k">Response time</div>
+                  <div class="kv-v">Within 1–3 business days</div>
+                </div>
+                <div class="kv">
+                  <div class="kv-k">Best time to contact</div>
+                  <div class="kv-v">Weekdays, 8:00 AM – 5:00 PM</div>
+                </div>
+                <div class="kv">
+                  <div class="kv-k">What to include</div>
+                  <div class="kv-v">
+                    Student ID, screenshot (if needed), steps to reproduce
+                  </div>
+                </div>
               </div>
 
               <div class="aside-card aside-highlight">
@@ -604,42 +1878,52 @@
     </div>
 
     <!-- EmailJS SDK -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"
+    ></script>
     <script type="text/javascript">
-      (function() {
-          emailjs.init("eSRnEOEJEaoP8a_rj"); // Public Key
+      (function () {
+        emailjs.init("eSRnEOEJEaoP8a_rj"); // Public Key
       })();
 
-      document.addEventListener('DOMContentLoaded', () => {
-        const contactForm = document.getElementById('contactForm');
-        const btnSubmitContact = document.getElementById('btnSubmitContact');
+      document.addEventListener("DOMContentLoaded", () => {
+        const contactForm = document.getElementById("contactForm");
+        const btnSubmitContact = document.getElementById("btnSubmitContact");
 
-        if(contactForm) {
-          contactForm.addEventListener('submit', function(event) {
-              event.preventDefault();
-              
-              const prevText = btnSubmitContact.innerText;
-              btnSubmitContact.innerText = 'Sending...';
-              btnSubmitContact.disabled = true;
+        if (contactForm) {
+          contactForm.addEventListener("submit", function (event) {
+            event.preventDefault();
 
-              // Send the Admin Notification
-              emailjs.sendForm('service_h0p6jys', 'template_zwmmbp2', this)
-                .then(function() {
-                    // Send the Auto-Reply to Student
-                    return emailjs.sendForm('service_h0p6jys', 'template_46i1e8g', contactForm);
-                })
-                .then(function() {
-                    alert('Message sent successfully! An auto-reply has been sent to your email.');
-                    contactForm.reset();
-                })
-                .catch(function(error) {
-                    console.error('FAILED...', error);
-                    alert('Failed to send the message. Please try again later.');
-                })
-                .finally(function() {
-                    btnSubmitContact.innerText = prevText;
-                    btnSubmitContact.disabled = false;
-                });
+            const prevText = btnSubmitContact.innerText;
+            btnSubmitContact.innerText = "Sending...";
+            btnSubmitContact.disabled = true;
+
+            // Send the Admin Notification
+            emailjs
+              .sendForm("service_h0p6jys", "template_zwmmbp2", this)
+              .then(function () {
+                // Send the Auto-Reply to Student
+                return emailjs.sendForm(
+                  "service_h0p6jys",
+                  "template_46i1e8g",
+                  contactForm,
+                );
+              })
+              .then(function () {
+                alert(
+                  "Message sent successfully! An auto-reply has been sent to your email.",
+                );
+                contactForm.reset();
+              })
+              .catch(function (error) {
+                console.error("FAILED...", error);
+                alert("Failed to send the message. Please try again later.");
+              })
+              .finally(function () {
+                btnSubmitContact.innerText = prevText;
+                btnSubmitContact.disabled = false;
+              });
           });
         }
       });

@@ -90,6 +90,97 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     });
 
+    // Notification Dropdown Logic
+    const notifToggle = document.getElementById("notifToggle");
+    const notifDropdown = document.getElementById("notifDropdown");
+    const notifBadgeCount = document.getElementById("notifBadgeCount");
+    const notifBodyList = document.getElementById("notifBodyList");
+
+    if (notifToggle && notifDropdown && notifBodyList) {
+        // Handle Toggling the Widget
+        notifToggle.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const isHidden = notifDropdown.classList.contains("hidden");
+            if (isHidden) {
+                notifDropdown.classList.remove("hidden");
+            } else {
+                notifDropdown.classList.add("hidden");
+            }
+        });
+
+        // Close on outside click
+        document.addEventListener("click", (e) => {
+            if (!notifDropdown.contains(e.target)) {
+                notifDropdown.classList.add("hidden");
+            }
+        });
+
+        // Handle Filter Buttons
+        const filterBtns = notifDropdown.querySelectorAll(".filter-btn");
+        const notifItems = Array.from(notifBodyList.querySelectorAll(".notif-item"));
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation(); // prevent dropdown from closing
+                
+                // Update active button state
+                filterBtns.forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+
+                const mode = btn.getAttribute("data-filter");
+
+                // Execute filtering
+                notifItems.forEach(item => {
+                    if (mode === "unread") {
+                        if (item.classList.contains("unread")) {
+                            item.classList.remove("hidden");
+                        } else {
+                            item.classList.add("hidden");
+                        }
+                    } else {
+                        // mode === "all"
+                        item.classList.remove("hidden");
+                    }
+                });
+            });
+        });
+
+        // Handle Notification Clicks (Expand + Mark Read)
+        notifItems.forEach(item => {
+            item.addEventListener("click", (e) => {
+                e.stopPropagation();
+
+                // Toggle Accordion expansion
+                item.classList.toggle("is-expanded");
+
+                // Mark as read if it is currently unread
+                if (item.classList.contains("unread")) {
+                    item.classList.remove("unread");
+                    
+                    // Hide the unread dot
+                    const dot = item.querySelector(".notif-unread-dot");
+                    if (dot) dot.style.opacity = "0";
+
+                    // Update Badge Count
+                    if (notifBadgeCount) {
+                        let currentCount = parseInt(notifBadgeCount.textContent || "0");
+                        if (currentCount > 0) {
+                            currentCount -= 1;
+                            if (currentCount === 0) {
+                                notifBadgeCount.style.display = "none";
+                            } else {
+                                notifBadgeCount.textContent = currentCount;
+                            }
+                        }
+                    }
+
+                    // If currently viewing the "Unread" tab, technically it shouldn't disappear instantly
+                    // as it's confusing, so we leave it visible until the user switches tabs again.
+                }
+            });
+        });
+    }
+
     // Dashboard Metrics + Live Clock
     const metricTotalApplicants = document.getElementById("metricTotalApplicants");
     const metricTotalScholarships = document.getElementById("metricTotalScholarships");
@@ -251,7 +342,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const segments = [
             { value: pending, color: "rgba(122, 17, 20, 0.22)" },
-            { value: approved, color: "rgba(253, 187, 17, 0.80)" },
+            { value: approved, color: "rgba(39, 98, 32, 0.80)" },
             { value: rejected, color: "rgba(122, 17, 20, 0.92)" },
         ];
 
@@ -354,8 +445,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function navigateTo(targetId) {
         if(targetId === "navLogout") return;
+
+        const highlightTarget = targetId === "view-review-detail" ? "view-review" : targetId;
+
         navLinks.forEach(n => {
-            if (n.getAttribute("data-target") === targetId) n.classList.add("active");
+            if (n.getAttribute("data-target") === highlightTarget) n.classList.add("active");
             else n.classList.remove("active");
         });
 
@@ -412,7 +506,7 @@ document.addEventListener("DOMContentLoaded", () => {
             scholarship: "STEM Excellence Fund",
             gpa: "3.86",
             submittedAt: "2026-04-10",
-            autoVetStatus: "Verified",
+            autoVetStatus: "Pending",
             reviewProgress: 0,
             essay:
                 "I am applying for the STEM Excellence Fund to support my final year capstone project and reduce financial burden while maintaining academic performance.",
@@ -445,7 +539,7 @@ document.addEventListener("DOMContentLoaded", () => {
         tbody.innerHTML = reviewRows
             .map((row) => {
                 const statusClass =
-                    row.autoVetStatus === "Verified"
+                    row.autoVetStatus === "Approved"
                         ? "status-approved"
                         : row.autoVetStatus === "Pending"
                             ? "status-pending"
@@ -502,15 +596,8 @@ document.addEventListener("DOMContentLoaded", () => {
             docsEl.innerHTML = row.documents.map((d) => `<li>${d}</li>`).join("");
         }
 
-        // Show detail section but keep Review nav highlighted
-        sections.forEach(sec => {
-            if (sec.id === "view-review-detail") sec.classList.remove("hidden");
-            else sec.classList.add("hidden");
-        });
-        navLinks.forEach(n => {
-            if (n.getAttribute("data-target") === "view-review") n.classList.add("active");
-            else n.classList.remove("active");
-        });
+        // Navigate via our nice animation wrapper, it will auto-highlight "view-review"
+        navigateTo("view-review-detail");
 
         // Detach any previous scroll listener
         if (reviewScrollListener) {
@@ -557,8 +644,8 @@ document.addEventListener("DOMContentLoaded", () => {
         window.addEventListener("resize", reviewScrollListener);
 
         // Run once to catch tiny placeholder data pages
-        // Wait a tick for CSS to render to get accurate docHeight
-        setTimeout(calculateProgress, 50);
+        // Delay long enough for the page to be visible (220ms typical transition + 50 buffer)
+        setTimeout(calculateProgress, 270);
     }
 
     document.addEventListener("click", (e) => {
@@ -619,7 +706,4 @@ document.addEventListener("DOMContentLoaded", () => {
             );
         });
     }
-
-    // Init
-    // Keep Admin Dashboard as the default view; render review table on demand.
 });
