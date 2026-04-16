@@ -622,7 +622,79 @@
           </div>
         </div>
       </section>
+
+      <div class="divider-line"></div>
+
+      <!-- FAQ Section -->
+      <section id="faq" class="page-section" style="background-color: #fafafa">
+        <div class="container section-grid">
+          <div class="content-block">
+            <h3 class="section-heading">Frequently Asked Questions</h3>
+            <div class="faq-list" id="faqAccordion">
+              <div class="faq-item">
+                <div class="faq-question">
+                  How does the automated ranking work? <span>+</span>
+                </div>
+                <div class="faq-answer">
+                  Rankings are calculated dynamically based on your cumulative
+                  GPA compared against the minimum threshold set by the system
+                  administrator.
+                </div>
+              </div>
+              <div class="faq-item">
+                <div class="faq-question">
+                  Can I apply for multiple scholarships? <span>+</span>
+                </div>
+                <div class="faq-answer">
+                  Yes, as long as you meet the eligibility requirements for
+                  each specific fund. Ensure your essays are tailored
+                  appropriately.
+                </div>
+              </div>
+              <div class="faq-item">
+                <div class="faq-question">
+                  Who is eligible for the UPHSD Gold Tier grant?
+                  <span>+</span>
+                </div>
+                <div class="faq-answer">
+                  You must have completed at least 2 full semesters as a
+                  regular student with no record of disciplinary action.
+                </div>
+              </div>
+              <div class="faq-item">
+                <div class="faq-question">
+                  What file types are accepted for requirements?
+                  <span>+</span>
+                </div>
+                <div class="faq-answer">
+                  Transcripts and letters should be uploaded as PDF. Student
+                  ID may be uploaded as JPG/PNG or PDF.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
+
+    <script>
+      // FAQ Accordion Script for index.html
+      document.addEventListener("DOMContentLoaded", () => {
+        const questions = document.querySelectorAll('#faqAccordion .faq-question');
+        questions.forEach(question => {
+          question.addEventListener('click', () => {
+            const faqItem = question.parentElement;
+            faqItem.classList.toggle('active');
+            const span = question.querySelector('span');
+            if (faqItem.classList.contains('active')) {
+              span.textContent = '-';
+            } else {
+              span.textContent = '+';
+            }
+          });
+        });
+      });
+    </script>
 
     <footer
       id="contact"
