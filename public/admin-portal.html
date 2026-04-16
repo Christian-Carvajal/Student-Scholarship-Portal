@@ -491,23 +491,55 @@
         <!-- ADD SCHOLARSHIP (separate window) -->
         <section id="view-add-scholarship" class="hidden">
           <h2 class="section-title">Add Scholarship</h2>
-          <form
-            id="addScholarshipForm"
-            style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem"
-          >
+          <form id="addScholarshipForm">
             <div class="form-group">
-              <label>Title</label>
-              <input type="text" class="form-control" required />
+              <label for="scholarshipTitle">Title</label>
+              <input
+                type="text"
+                id="scholarshipTitle"
+                name="title"
+                class="form-control"
+                required
+              />
             </div>
+
+            <div class="form-row form-row--compact">
+              <div class="form-group form-group--amount">
+                <label for="scholarshipFundAmount">Fund Amount</label>
+                <input
+                  type="number"
+                  id="scholarshipFundAmount"
+                  name="fundAmount"
+                  class="form-control"
+                  required
+                  min="0"
+                  step="1"
+                  inputmode="numeric"
+                  placeholder="e.g. 10000"
+                />
+              </div>
+              <div class="form-group form-group--deadline">
+                <label for="scholarshipDeadline">Deadline</label>
+                <input
+                  type="date"
+                  id="scholarshipDeadline"
+                  name="deadline"
+                  class="form-control"
+                  required
+                />
+              </div>
+            </div>
+
             <div class="form-group">
-              <label>Fund Amount</label>
-              <input type="number" class="form-control" required />
+              <label for="scholarshipDescription">Scholarship Description</label>
+              <textarea
+                id="scholarshipDescription"
+                name="description"
+                class="form-control"
+                rows="2"
+              ></textarea>
             </div>
-            <div class="form-group" style="grid-column: span 2">
-              <label>Validation Description</label>
-              <textarea class="form-control" rows="2"></textarea>
-            </div>
-            <button type="submit" class="btn" style="grid-column: span 2">
+            <button type="submit" class="btn">
               Publish Scholarship
             </button>
           </form>

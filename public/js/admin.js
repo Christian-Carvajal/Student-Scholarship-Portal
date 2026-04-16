@@ -489,10 +489,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Add scholarship form handler
     const addScholarshipForm = document.getElementById("addScholarshipForm");
+    const scholarshipDeadlineInput = document.getElementById("scholarshipDeadline");
+
+    if (scholarshipDeadlineInput) {
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const yyyy = String(today.getFullYear());
+        const mm = String(today.getMonth() + 1).padStart(2, "0");
+        const dd = String(today.getDate()).padStart(2, "0");
+        scholarshipDeadlineInput.min = `${yyyy}-${mm}-${dd}`;
+    }
+
     if (addScholarshipForm) {
         addScholarshipForm.addEventListener("submit", (e) => {
             e.preventDefault();
-            window.showModal("Published", "Scholarship published (placeholder).<br/><br/>Connect to DB later.");
+
+            if (!addScholarshipForm.reportValidity()) return;
+
+            const deadlineValue = scholarshipDeadlineInput ? scholarshipDeadlineInput.value : "";
+            if (deadlineValue) {
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const deadlineDate = new Date(`${deadlineValue}T00:00:00`);
+
+                if (Number.isNaN(deadlineDate.getTime()) || deadlineDate < today) {
+                    window.showModal(
+                        "Invalid Deadline",
+                        "Please select a deadline that is today or later."
+                    );
+                    if (scholarshipDeadlineInput) scholarshipDeadlineInput.focus();
+                    return;
+                }
+            }
+
+            window.showModal(
+                "Published",
+                "Scholarship published (placeholder).<br/><br/>Deadline included. Connect to DB later."
+            );
             e.target.reset();
         });
     }
