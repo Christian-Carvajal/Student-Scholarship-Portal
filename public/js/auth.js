@@ -142,6 +142,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (registerForm) registerForm.reset();
         if (regStudentIdInput) regStudentIdInput.focus();
+        
+        if (btnSubmitRegister) {
+            btnSubmitRegister.disabled = false;
+            btnSubmitRegister.textContent = 'Create Account';
+        }
     }
 
     function applyAuthUI(options = {}) {
@@ -279,7 +284,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const expectedRole = isStudentLayout ? 'student' : 'admin';
         
         const user = mockUsers.find(u => 
-            u.studentId.toLowerCase() === username.toLowerCase() && 
+            (((u.studentId || '').toLowerCase() === username.toLowerCase()) || 
+             (u.email && u.email.toLowerCase() === username.toLowerCase())) && 
             u.password === password && 
             (u.role === expectedRole || (!u.role && expectedRole === 'student')) // Assume old mock users without role are students
         );
@@ -355,11 +361,6 @@ document.addEventListener('DOMContentLoaded', () => {
             showModal('Registration Successful', '<p>Your account has been successfully created. You can now login.</p>');
             clearAuthInputs();
             applyAuthUI();
-
-            if (btnSubmitRegister) {
-                btnSubmitRegister.disabled = false;
-                btnSubmitRegister.textContent = 'Create Account';
-            }
         });
     }
 

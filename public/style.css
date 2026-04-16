@@ -675,11 +675,17 @@ select.form-control {
   transition: opacity var(--transition-speed), transform var(--transition-speed);
 }
 
-.modal-overlay--pop.is-open,
+.modal-overlay--pop.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: opacity var(--transition-speed), visibility 0s;
+  }
+
 .modal-overlay--pop.is-closing {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: none;
   transition: opacity var(--transition-speed), visibility 0s;
 }
 
