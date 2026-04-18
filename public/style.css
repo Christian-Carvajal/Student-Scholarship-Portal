@@ -905,20 +905,44 @@ select.form-control {
 .login-left img { max-width: 250px; margin-bottom: 2rem; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.4)); z-index: 2; position: relative;}
 .login-left h1 { font-family: var(--font-serif); font-size: 3rem; line-height: 1.2; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); color: var(--secondary-gold); z-index: 2; position: relative; }
 
-.login-panel { width: 100%; max-width: 420px; background: var(--bg-surface); padding: 3.5rem; box-shadow: 10px 10px 0px rgba(122, 17, 20, 0.05); border: 1px solid var(--border-color); border-top: 5px solid var(--primary-maroon); height: min(680px, calc(100vh - 6rem)); overflow: auto; overscroll-behavior: contain; }
-.login-toggle { display: flex; gap: 1rem; margin-bottom: 2.5rem; border-bottom: 2px solid var(--border-color); }
+.login-panel { width: 100%; max-width: 420px; background: var(--bg-surface); padding: 3.5rem; box-shadow: 10px 10px 0px rgba(122, 17, 20, 0.05); border: 1px solid var(--border-color); border-top: 5px solid var(--primary-maroon); height: auto; max-height: calc(100vh - 6rem); overflow: auto; overscroll-behavior: contain; }
+.login-toggle { display: flex; gap: 1rem; margin-bottom: 1rem; border-bottom: 2px solid var(--border-color); }
 .toggle-btn { flex: 1; background: none; border: none; padding: 10px; font-weight: 600; font-size: 1.1rem; color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; font-family: var(--font-sans); }
 .toggle-btn.active { color: var(--primary-maroon); border-bottom-color: var(--secondary-gold); }
 
-.form-title { font-size: 2rem; color: var(--primary-maroon); margin-bottom: 2rem; font-family: var(--font-serif); text-transform: none; }
+.form-title { font-size: 2rem; color: var(--primary-maroon); margin: 0 0 1.6rem; font-family: var(--font-serif); text-transform: none; }
 .form-title::after { display: none; }
 
 .form-tabs { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
 .form-tabs a { text-decoration: none; color: var(--text-muted); font-weight: 600; font-size: 0.9rem; padding-bottom: 5px; border-bottom: 2px solid transparent; transition: color 0.3s; }
 .form-tabs a.active { color: var(--primary-maroon); border-bottom-color: var(--primary-maroon); }
 
+.login-page #authForm #password {
+  margin-bottom: 0.15rem;
+}
+
+.login-page #authForm .forgot-pass {
+  display: block;
+  width: 100%;
+  text-align: right;
+  margin-top: 0.55rem;
+  padding-top: 0.2rem;
+  font-size: 1rem;
+  color: var(--primary-maroon);
+  text-decoration: none;
+  text-underline-offset: 2px;
+  transition: color 0.2s ease;
+}
+
+.login-page #authForm .forgot-pass:hover {
+  color: #5e0d10;
+  text-decoration: underline;
+}
+
 /* Auth transitions (Student/Admin + Login/Register) */
 .auth-panel-body {
+  --auth-shift-x: 0px;
+  --auth-shift-y: 8px;
   transition: opacity var(--transition-speed), transform var(--transition-speed);
   transform-origin: top center;
 }
@@ -1142,9 +1166,15 @@ select.form-control {
 
 /* ... existing auth transitions ... */
 
-.auth-panel-body.is-fading {
+.auth-panel-body.is-fading,
+.auth-panel-body.is-transition-out {
   opacity: 0;
-  transform: translateY(10px) scale(0.985);
+  transform: translate3d(var(--auth-shift-x), var(--auth-shift-y), 0) scale(0.99);
+}
+
+.auth-panel-body.is-transition-in {
+  opacity: 0;
+  transform: translate3d(calc(var(--auth-shift-x, 0px) * -1), calc(var(--auth-shift-y, 8px) * -1), 0) scale(0.99);
 }
 
 /* Register section: capped height + internal scroll (prevents page expansion) */
@@ -1181,6 +1211,8 @@ select.form-control {
 @media (prefers-reduced-motion: reduce) {
   .auth-panel-body { transition: none; }
   .auth-panel-body.is-fading { opacity: 1; transform: none; }
+  .auth-panel-body.is-transition-out { opacity: 1; transform: none; }
+  .auth-panel-body.is-transition-in { opacity: 1; transform: none; }
   .register-fields { transition: none; }
 }
 

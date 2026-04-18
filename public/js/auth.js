@@ -182,8 +182,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let authUiToken = 0;
     let authPanelTransitionTimer = null;
+    let authPanelUnlockTimer = null;
     function withAuthPanelTransition(updateStateFn, options = {}) {
-        const { clearInputs = false } = options;
+        const { clearInputs = false, shiftX = 0, shiftY = 8 } = options;
         const token = ++authUiToken;
 
         setAuthInteractionDisabled(true);
@@ -195,8 +196,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        authPanelBody.classList.add('is-fading');
+        authPanelBody.style.setProperty('--auth-shift-x', `${shiftX}px`);
+        authPanelBody.style.setProperty('--auth-shift-y', `${shiftY}px`);
+        authPanelBody.classList.remove('is-transition-in');
+        authPanelBody.classList.add('is-transition-out');
         if (authPanelTransitionTimer) window.clearTimeout(authPanelTransitionTimer);
+        if (authPanelUnlockTimer) window.clearTimeout(authPanelUnlockTimer);
 
         authPanelTransitionTimer = window.setTimeout(() => {
             // Ignore stale transitions if user clicked again
@@ -207,13 +212,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             window.requestAnimationFrame(() => {
                 if (token !== authUiToken) return;
-                authPanelBody.classList.remove('is-fading');
-                window.setTimeout(() => {
+                authPanelBody.classList.remove('is-transition-out');
+                authPanelBody.classList.add('is-transition-in');
+                window.requestAnimationFrame(() => {
                     if (token !== authUiToken) return;
-                    setAuthInteractionDisabled(false);
-                }, 180);
+                    authPanelBody.classList.remove('is-transition-in');
+                    authPanelUnlockTimer = window.setTimeout(() => {
+                        if (token !== authUiToken) return;
+                        setAuthInteractionDisabled(false);
+                    }, 180);
+                });
             });
-        }, 170);
+        }, 120);
     }
 
     // Role Toggle (Student / Admin)
@@ -222,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
         withAuthPanelTransition(() => {
             isStudentLayout = true;
             // Keep current mode (login/register) for student, but re-render will enforce rules.
-        }, { clearInputs: true });
+        }, { clearInputs: true, shiftX: 16, shiftY: 0 });
     });
 
     btnAdminRole.addEventListener('click', (e) => {
@@ -230,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
         withAuthPanelTransition(() => {
             isStudentLayout = false;
             isLoginMode = true;
-        }, { clearInputs: true });
+        }, { clearInputs: true, shiftX: -16, shiftY: 0 });
     });
 
     // Login/Register Tabs
@@ -239,7 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
         withAuthPanelTransition(() => {
             isLoginMode = true;
             closeRegisterModal();
-        }, { clearInputs: true });
+        }, { clearInputs: true, shiftX: 12, shiftY: 0 });
     });
 
     tabRegister.addEventListener('click', (e) => {
@@ -249,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
         withAuthPanelTransition(() => {
             isLoginMode = true;
             openRegisterModal();
-        }, { clearInputs: true });
+        }, { clearInputs: true, shiftX: -12, shiftY: 0 });
     });
 
     function updateModeUI() {
