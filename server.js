@@ -9,6 +9,7 @@ app.use(express.json());
 
 // Serve static frontend files from 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // API Routes mounting
 app.use('/api/applications', applicationRoutes);

@@ -458,6 +458,29 @@ select.form-control {
   color: #fff;
 }
 
+.btn-applied,
+.btn-applied:disabled {
+  background-color: #d0d0d0;
+  border-color: #b9b9b9;
+  color: #6a6a6a;
+  cursor: not-allowed;
+}
+
+.btn-applied::after,
+.btn-applied:disabled::after {
+  display: none;
+}
+
+.btn-applied:hover,
+.btn-applied:disabled:hover,
+.card button[data-action="apply-scholarship"][disabled],
+.card button[data-action="apply-scholarship"][disabled]:hover {
+  background-color: #d0d0d0;
+  border-color: #b9b9b9;
+  color: #6a6a6a;
+  cursor: not-allowed;
+}
+
 /* --------------------------------------
    Scholarship Cards (Asymmetric Grid)
 -------------------------------------- */
@@ -603,6 +626,11 @@ select.form-control {
   color: var(--primary-maroon); 
   border-color: #eaa9ab; 
 }
+.status-incomplete {
+  background: #fbecec;
+  color: var(--primary-maroon);
+  border-color: #eaa9ab;
+}
 
 /* --------------------------------------
    FAQ / Accordions
@@ -658,6 +686,10 @@ select.form-control {
   justify-content: center;
   z-index: 2000;
   backdrop-filter: blur(4px);
+}
+
+#customModal {
+  z-index: 2600;
 }
 
 .modal-content {
@@ -1761,6 +1793,237 @@ select.form-control {
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
+}
+
+.scholarship-doc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.6rem;
+}
+
+.scholarship-doc-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  padding: 2rem 1.7rem;
+  position: relative;
+  display: grid;
+  gap: 0.75rem;
+  box-shadow: 6px 6px 0px rgba(122, 17, 20, 0.05);
+  transition: transform var(--transition-speed), box-shadow var(--transition-speed), border-color var(--transition-speed);
+}
+
+.scholarship-doc-card::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 30px;
+  height: 30px;
+  border-top: 3px solid var(--primary-maroon);
+  border-left: 3px solid var(--primary-maroon);
+  transition: border-color var(--transition-speed);
+}
+
+.scholarship-doc-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  border-color: var(--secondary-gold);
+}
+
+.scholarship-doc-card:hover::before {
+  border-color: var(--secondary-gold);
+}
+
+.scholarship-doc-title {
+  font-size: 1.7rem;
+  line-height: 1.15;
+  font-weight: 700;
+  color: var(--primary-maroon);
+  text-transform: uppercase;
+}
+
+.scholarship-doc-meta {
+  color: var(--text-muted);
+  font-size: 0.98rem;
+  line-height: 1.35;
+}
+
+.scholarship-doc-status-lock {
+  font-size: 0.85rem;
+  color: #6a0f12;
+  background: rgba(122, 17, 20, 0.08);
+  border: 1px solid rgba(122, 17, 20, 0.2);
+  padding: 0.35rem 0.5rem;
+}
+
+.scholarship-doc-action {
+  margin-top: 0.7rem;
+}
+
+.scholarship-doc-panel {
+  margin-top: 0.55rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.18);
+  padding-top: 0.75rem;
+  display: none;
+  gap: 0.6rem;
+}
+
+.scholarship-doc-panel.is-open {
+  display: grid;
+}
+
+.scholarship-doc-row {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  padding: 1.1rem 1rem;
+  box-shadow: 4px 4px 0px rgba(122, 17, 20, 0.04);
+  display: grid;
+  gap: 0.55rem;
+}
+
+.scholarship-doc-row-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+}
+
+.scholarship-doc-type {
+  font-weight: 700;
+  color: var(--primary-maroon);
+  font-size: 1.05rem;
+}
+
+.scholarship-doc-file {
+  font-size: 1rem;
+  color: var(--text-dark);
+  overflow-wrap: anywhere;
+}
+
+.scholarship-doc-hint {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.scholarship-doc-missing {
+  font-size: 0.9rem;
+  color: #6a0f12;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.scholarship-doc-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.scholarship-doc-empty {
+  border: 1px dashed var(--border-color);
+  background: rgba(253, 187, 17, 0.06);
+  padding: 1rem;
+  color: var(--text-muted);
+}
+
+#studentDocumentApplicationCards .scholarship-doc-empty {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-height: clamp(280px, 52vh, 620px);
+  padding: 2.25rem;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: inherit;
+  font-size: 1.12rem;
+  line-height: 1.6;
+}
+
+.student-doc-upload-input {
+  display: none;
+}
+
+#studentDocumentsModal {
+  z-index: 2200;
+  backdrop-filter: blur(9px);
+}
+
+#adminDocumentsModal {
+  z-index: 2200;
+  backdrop-filter: blur(9px);
+}
+
+.admin-review-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+#btnShowSubmittedDocs {
+  padding: 0.9rem 1.9rem;
+}
+
+
+.student-docs-modal-content {
+  width: min(96vw, 1160px);
+  max-width: 1160px;
+  max-height: calc(100vh - 2rem);
+  border-top: 6px solid var(--primary-maroon);
+}
+
+.student-docs-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.student-docs-modal-header h3 {
+  margin-bottom: 0.35rem;
+}
+
+.student-docs-modal-meta {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.student-docs-modal-body {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 1200px) {
+  .student-docs-modal-body {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .scholarship-doc-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .scholarship-doc-card {
+    padding: 1.4rem 1.1rem;
+  }
+
+  .student-docs-modal-content {
+    width: 96vw;
+    max-height: calc(100vh - 1.2rem);
+    padding: 1.4rem;
+  }
+
+  .student-docs-modal-body {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Notifications */

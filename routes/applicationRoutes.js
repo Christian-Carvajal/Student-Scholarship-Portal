@@ -1,10 +1,23 @@
 const express = require('express');
 const router = express.Router();
 const appController = require('../controllers/applicationController');
+const { handleApplicationUploads, handleSingleDocumentUpload } = require('../middleware/applicationUpload');
 
 router.get('/', appController.getAllApplications);
-router.post('/apply', appController.submitApplicationWithTransaction);
+router.post('/apply', handleApplicationUploads, appController.submitApplicationWithTransaction);
 router.put('/:id/status', appController.updateApplicationStatus);
 router.get('/scholarships', appController.getScholarships);
+router.get('/scholarships/published', appController.getPublishedScholarships);
+router.post('/scholarships', appController.createScholarship);
+router.delete('/scholarships/:id', appController.removeScholarship);
+router.get('/notifications/student/:student_id', appController.getStudentNotifications);
+router.put('/notifications/:notification_id/read', appController.markStudentNotificationRead);
+router.get('/notifications/admin/:admin_id', appController.getAdminNotifications);
+router.put('/notifications/admin/:notification_id/read', appController.markAdminNotificationRead);
+router.get('/student/:student_id/documents', appController.getStudentDocuments);
+router.post('/student/:student_id/applications/:application_id/documents', handleSingleDocumentUpload, appController.uploadStudentDocumentForApplication);
+router.delete('/student/:student_id/documents/:document_id', appController.removeStudentDocument);
+router.delete('/:application_id/documents/:document_id', appController.removeApplicationDocumentAsAdmin);
 router.get('/student/:student_id', appController.getStudentApplications);
+router.get('/:id/documents', appController.getApplicationDocuments);
 module.exports = router;

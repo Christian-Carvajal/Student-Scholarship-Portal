@@ -187,7 +187,7 @@ CREATE TABLE IF NOT EXISTS student_documents (
   document_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   student_id VARCHAR(50) NOT NULL,
   application_id INT UNSIGNED NULL,
-  document_type_id TINYINT UNSIGNED NOT NULL,
+  document_type_id TINYINT UNSIGNED NULL,
   original_filename VARCHAR(255) NOT NULL,
   storage_path VARCHAR(500) NOT NULL,
   mime_type VARCHAR(120) NULL,
@@ -202,8 +202,47 @@ CREATE TABLE IF NOT EXISTS student_documents (
   KEY idx_student_documents_type (document_type_id),
   CONSTRAINT fk_student_documents_student FOREIGN KEY (student_id) REFERENCES students(student_id) ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT fk_student_documents_application FOREIGN KEY (application_id) REFERENCES applications(id) ON UPDATE CASCADE ON DELETE SET NULL,
-  CONSTRAINT fk_student_documents_type FOREIGN KEY (document_type_id) REFERENCES document_types(document_type_id) ON UPDATE CASCADE ON DELETE RESTRICT
+  CONSTRAINT fk_student_documents_type FOREIGN KEY (document_type_id) REFERENCES document_types(document_type_id) ON UPDATE CASCADE ON DELETE SET NULL
 ) ENGINE=InnoDB;
+
+-- Existing database compatibility:
+-- Align FK behavior when script is re-run against an existing schema.
+SET @fk_student_documents_type_exists := (
+  SELECT COUNT(*)
+  FROM information_schema.REFERENTIAL_CONSTRAINTS
+  WHERE CONSTRAINT_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'student_documents'
+    AND CONSTRAINT_NAME = 'fk_student_documents_type'
+);
+
+SET @drop_fk_student_documents_type_sql := IF(
+  @fk_student_documents_type_exists > 0,
+  'ALTER TABLE student_documents DROP FOREIGN KEY fk_student_documents_type',
+  'SELECT 1'
+);
+PREPARE stmt_drop_fk_student_documents_type FROM @drop_fk_student_documents_type_sql;
+EXECUTE stmt_drop_fk_student_documents_type;
+DEALLOCATE PREPARE stmt_drop_fk_student_documents_type;
+
+ALTER TABLE student_documents
+  MODIFY COLUMN document_type_id TINYINT UNSIGNED NULL;
+
+SET @fk_student_documents_type_readd_exists := (
+  SELECT COUNT(*)
+  FROM information_schema.REFERENTIAL_CONSTRAINTS
+  WHERE CONSTRAINT_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'student_documents'
+    AND CONSTRAINT_NAME = 'fk_student_documents_type'
+);
+
+SET @add_fk_student_documents_type_sql := IF(
+  @fk_student_documents_type_readd_exists = 0,
+  'ALTER TABLE student_documents ADD CONSTRAINT fk_student_documents_type FOREIGN KEY (document_type_id) REFERENCES document_types(document_type_id) ON UPDATE CASCADE ON DELETE SET NULL',
+  'SELECT 1'
+);
+PREPARE stmt_add_fk_student_documents_type FROM @add_fk_student_documents_type_sql;
+EXECUTE stmt_add_fk_student_documents_type;
+DEALLOCATE PREPARE stmt_add_fk_student_documents_type;
 
 CREATE TABLE IF NOT EXISTS application_status_history (
   history_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,

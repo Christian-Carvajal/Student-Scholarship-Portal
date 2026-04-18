@@ -124,6 +124,22 @@
       </div>
     </div>
 
+    <!-- Admin Submitted Documents Popup Modal -->
+    <div id="adminDocumentsModal" class="modal-overlay modal-overlay--pop hidden">
+      <div class="modal-content modal-content--scrollable student-docs-modal-content">
+        <div class="student-docs-modal-header">
+          <div>
+            <h3 id="adminDocumentsModalTitle">Submitted Documents</h3>
+            <div id="adminDocumentsModalMeta" class="student-docs-modal-meta"></div>
+          </div>
+          <button id="adminDocumentsModalClose" type="button" class="btn btn-ghost btn-sm">
+            Close
+          </button>
+        </div>
+        <div id="adminDocumentsModalBody" class="student-docs-modal-body"></div>
+      </div>
+    </div>
+
     <!-- Header -->
     <header class="app-header">
       <img src="uphsd.svg" alt="UPHSD Logo" />
@@ -239,6 +255,9 @@
           <a class="nav-link" data-target="view-review">Review Applications</a>
           <a class="nav-link" data-target="view-add-scholarship"
             >Add Scholarship</a
+          >
+          <a class="nav-link" data-target="view-remove-scholarship"
+            >Remove Scholarship</a
           >
         </nav>
       </aside>
@@ -456,16 +475,24 @@
             <aside class="view-aside">
               <div class="aside-card">
                 <div class="aside-title">Submitted Documents</div>
-                <ul class="bullet-list" id="reviewDocs">
-                  <li>—</li>
-                </ul>
+                <div style="margin-top: 0.85rem">
+                  <button
+                    class="btn btn-gold btn-sm"
+                    type="button"
+                    id="btnShowSubmittedDocs"
+                    data-action="show-submitted-docs"
+                    disabled
+                  >
+                    Show Submitted Documents
+                  </button>
+                </div>
               </div>
 
               <div class="aside-card aside-highlight">
                 <div class="aside-title">Admin Decision</div>
                 <div class="aside-text" style="margin-bottom: 1rem">
-                  Approve or reject after verifying the GPA and documents.
-                  (Placeholder actions — will be connected to SQL later.)
+                  Approve or reject after verifying the GPA, essay, and
+                  supporting documents.
                 </div>
                 <div style="display: flex; gap: 0.75rem; flex-wrap: wrap">
                   <button
@@ -505,17 +532,18 @@
 
             <div class="form-row form-row--compact">
               <div class="form-group form-group--amount">
-                <label for="scholarshipFundAmount">Fund Amount</label>
+                <label for="scholarshipMinimumGwa">Minimum GWA</label>
                 <input
                   type="number"
-                  id="scholarshipFundAmount"
-                  name="fundAmount"
+                  id="scholarshipMinimumGwa"
+                  name="min_gpa"
                   class="form-control"
                   required
-                  min="0"
-                  step="1"
-                  inputmode="numeric"
-                  placeholder="e.g. 10000"
+                  min="1"
+                  max="5"
+                  step="0.01"
+                  inputmode="decimal"
+                  placeholder="e.g. 1.75"
                 />
               </div>
               <div class="form-group form-group--deadline">
@@ -543,6 +571,49 @@
               Publish Scholarship
             </button>
           </form>
+
+          <p
+            style="
+              margin-top: 1.25rem;
+              color: var(--text-muted);
+              font-size: 0.95rem;
+            "
+          >
+         
+          </p>
+        </section>
+
+        <section id="view-remove-scholarship" class="hidden">
+          <h2 class="section-title">Remove Scholarship</h2>
+          <p
+            style="
+              margin-bottom: 1rem;
+              color: var(--text-muted);
+              font-size: 0.95rem;
+            "
+          >
+            Removing a scholarship also removes related applications so admin
+            and student trackers stay in sync.
+          </p>
+
+          <table class="data-table data-table--justified">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Minimum GWA</th>
+                <th>Status</th>
+                <th>Deadline</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="adminScholarshipTableBody">
+              <tr>
+                <td colspan="5" style="text-align: center; color: #6c757d">
+                  Loading scholarships...
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </section>
 
         <!-- 7. DOCUMENTS (Standalone) -->

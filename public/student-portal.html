@@ -124,6 +124,22 @@
       </div>
     </div>
 
+    <!-- Student Documents Popup Modal -->
+    <div id="studentDocumentsModal" class="modal-overlay modal-overlay--pop hidden">
+      <div class="modal-content modal-content--scrollable student-docs-modal-content">
+        <div class="student-docs-modal-header">
+          <div>
+            <h3 id="studentDocumentsModalTitle">Application Documents</h3>
+            <div id="studentDocumentsModalMeta" class="student-docs-modal-meta"></div>
+          </div>
+          <button id="studentDocumentsModalClose" type="button" class="btn btn-ghost btn-sm">
+            Close
+          </button>
+        </div>
+        <div id="studentDocumentsModalBody" class="student-docs-modal-body"></div>
+      </div>
+    </div>
+
     <!-- Header -->
     <header class="app-header">
       <img src="uphsd.svg" alt="UPHSD Logo" />
@@ -263,20 +279,19 @@
             "
           >
             <input
+              id="scholarshipSearchInput"
               type="text"
               placeholder="Search title or description..."
               class="form-control"
-              style="flex: 2"
+              style="flex: 3"
             />
-            <select class="form-control" style="flex: 1">
+            <select id="scholarshipGwaFilter" class="form-control" style="flex: 2">
               <option value="">Filter GPA</option>
-              <option value="3.5">3.5+</option>
-              <option value="3.0">3.0+</option>
-            </select>
-            <select class="form-control" style="flex: 1">
-              <option value="">Filter Type</option>
-              <option value="merit">Merit-Based</option>
-              <option value="need">Need-Based</option>
+              <option value="1.50">1.50 and below (1.00 highest)</option>
+              <option value="2.00">2.00 and below</option>
+              <option value="2.50">2.50 and below</option>
+              <option value="3.00">3.00 and below</option>
+              <option value="3.50">3.50 and below</option>
             </select>
           </div>
 
@@ -486,13 +501,12 @@
                       />
                     </div>
                     <div class="form-group">
-                      <label>Learner's Reference Number</label>
+                      <label>Learner's Reference Number (LRN) (Optional)</label>
                       <input
                         type="text"
-                        id="appStudentId"
+                        id="appLearnerRef"
                         class="form-control"
-                        required
-                        placeholder="e.g. XX-XXXX"
+                        placeholder="e.g. 123456789012"
                         oninput="validateStep1()"
                       />
                     </div>
@@ -536,6 +550,24 @@
                         <option value="pwd">PWD</option>
                         <option value="solo_parent">Solo Parent</option>
                       </select>
+                    </div>
+                  </div>
+
+                  <h3 class="subsection-title" style="margin-top: 2rem">
+                    Essay / Letter of Intent
+                  </h3>
+                  <div class="form-grid">
+                    <div class="form-group" style="grid-column: 1 / -1">
+                      <label>Why are you applying for this scholarship?</label>
+                      <textarea
+                        id="appEssay"
+                        class="form-control"
+                        rows="5"
+                        required
+                        maxlength="2500"
+                        placeholder="Share your goals, financial need, and how this scholarship will help your education."
+                        oninput="validateStep1()"
+                      ></textarea>
                     </div>
                   </div>
 
@@ -765,6 +797,19 @@
                           >0/6</span
                         >
                       </div>
+                      <div style="grid-column: 1 / -1">
+                        <strong>Essay / Letter of Intent:</strong>
+                        <div
+                          id="revEssay"
+                          style="
+                            color: var(--primary-maroon);
+                            margin-top: 0.35rem;
+                            white-space: pre-wrap;
+                          "
+                        >
+                          --
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -970,9 +1015,9 @@
                       "appCourse",
                       "appYearLevel",
                       "appGpa",
-                      "appStudentId",
                       "appIncome",
                       "appOccupation",
+                      "appEssay",
                     ];
                     let missingCount = 0;
                     let allFilled = true;
@@ -1212,6 +1257,8 @@
                         document.getElementById("appGpa").value || "--";
                       document.getElementById("revEmail").textContent =
                         document.getElementById("appEmail").value || "--";
+                      document.getElementById("revEssay").textContent =
+                        document.getElementById("appEssay").value || "--";
                     }
                   }
                 </script>
@@ -1296,376 +1343,13 @@
           <div class="view-grid view-grid--with-header">
             <div class="view-header">
               <p class="section-lead">
-                Manage your uploaded requirements. Files are checked alongside
-                your application for completeness.
+                Documents are grouped by scholarship application. You can
+                update files while your application is pending or under review.
               </p>
-
-              <div class="toolbar">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Search documents (filename)..."
-                  style="flex: 2; min-width: 240px"
-                />
-                <select class="form-control" style="flex: 1; min-width: 180px">
-                  <option value="">All types</option>
-                  <option value="pdf">PDF</option>
-                  <option value="image">Images</option>
-                </select>
-              </div>
             </div>
 
             <div class="view-primary">
-              <div class="doc-grid">
-                <!-- 1. Proof of Identity -->
-                <div class="doc-card" id="card-identity">
-                  <div
-                    style="
-                      font-size: 0.85rem;
-                      color: var(--primary-maroon);
-                      font-weight: 700;
-                      text-transform: uppercase;
-                      margin-bottom: 0.5rem;
-                    "
-                  >
-                    Proof of Identity
-                  </div>
-                  <div class="doc-title file-name">
-                    PSA_Birth_Certificate.pdf
-                  </div>
-                  <div class="doc-meta file-hint" style="display: none">
-                    PSA Birth Certificate (PDF/JPG).
-                  </div>
-                  <div class="doc-meta file-meta">
-                    Uploaded: April 1, 2026<br />Type: PDF
-                  </div>
-
-                  <div class="doc-actions">
-                    <button
-                      class="btn btn-gold btn-sm btn-action-dl"
-                      type="button"
-                    >
-                      Download
-                    </button>
-                    <button
-                      class="btn btn-sm btn-action-rm"
-                      type="button"
-                      onclick="
-                        removeDocument(
-                          'card-identity',
-                          'PSA Birth Certificate (PDF/JPG).',
-                        )
-                      "
-                    >
-                      Remove
-                    </button>
-                    <button
-                      class="btn btn-sm btn-action-up"
-                      type="button"
-                      style="display: none"
-                      onclick="alert('Upload prompt opened.')"
-                    >
-                      Choose File
-                    </button>
-                  </div>
-                </div>
-
-                <!-- 2. Academic Proof -->
-                <div class="doc-card doc-card--hint" id="card-academic">
-                  <div
-                    style="
-                      font-size: 0.85rem;
-                      color: var(--primary-maroon);
-                      font-weight: 700;
-                      text-transform: uppercase;
-                      margin-bottom: 0.5rem;
-                    "
-                  >
-                    Academic Proof
-                  </div>
-                  <div class="doc-title file-name">No file chosen</div>
-                  <div class="doc-meta file-hint">
-                    Certified True Copy of Grades (Form 138/TOR) (PDF).
-                  </div>
-                  <div class="doc-meta file-meta" style="display: none"></div>
-
-                  <div class="doc-actions">
-                    <button
-                      class="btn btn-gold btn-sm btn-action-dl"
-                      type="button"
-                      style="display: none"
-                    >
-                      Download
-                    </button>
-                    <button
-                      class="btn btn-sm btn-action-rm"
-                      type="button"
-                      style="display: none"
-                      onclick="
-                        removeDocument(
-                          'card-academic',
-                          'Certified True Copy of Grades (Form 138/TOR) (PDF).',
-                        )
-                      "
-                    >
-                      Remove
-                    </button>
-                    <button
-                      class="btn btn-sm btn-action-up"
-                      type="button"
-                      onclick="alert('Upload prompt opened.')"
-                    >
-                      Choose File
-                    </button>
-                  </div>
-                </div>
-
-                <!-- 3. Enrollment Proof -->
-                <div class="doc-card doc-card--hint" id="card-enrollment">
-                  <div
-                    style="
-                      font-size: 0.85rem;
-                      color: var(--primary-maroon);
-                      font-weight: 700;
-                      text-transform: uppercase;
-                      margin-bottom: 0.5rem;
-                    "
-                  >
-                    Enrollment Proof
-                  </div>
-                  <div class="doc-title file-name">No file chosen</div>
-                  <div class="doc-meta file-hint">
-                    Certificate of Enrollment or Reg Form (PDF).
-                  </div>
-                  <div class="doc-meta file-meta" style="display: none"></div>
-
-                  <div class="doc-actions">
-                    <button
-                      class="btn btn-gold btn-sm btn-action-dl"
-                      type="button"
-                      style="display: none"
-                    >
-                      Download
-                    </button>
-                    <button
-                      class="btn btn-sm btn-action-rm"
-                      type="button"
-                      style="display: none"
-                      onclick="
-                        removeDocument(
-                          'card-enrollment',
-                          'Certificate of Enrollment or Reg Form (PDF).',
-                        )
-                      "
-                    >
-                      Remove
-                    </button>
-                    <button
-                      class="btn btn-sm btn-action-up"
-                      type="button"
-                      onclick="alert('Upload prompt opened.')"
-                    >
-                      Choose File
-                    </button>
-                  </div>
-                </div>
-
-                <!-- 4. Proof of Income -->
-                <div class="doc-card doc-card--hint" id="card-income">
-                  <div
-                    style="
-                      font-size: 0.85rem;
-                      color: var(--primary-maroon);
-                      font-weight: 700;
-                      text-transform: uppercase;
-                      margin-bottom: 0.5rem;
-                    "
-                  >
-                    Proof of Income
-                  </div>
-                  <div class="doc-title file-name">No file chosen</div>
-                  <div class="doc-meta file-hint">
-                    ITR, Tax Exemption, or Indigency Cert (PDF/JPG).
-                  </div>
-                  <div class="doc-meta file-meta" style="display: none"></div>
-
-                  <div class="doc-actions">
-                    <button
-                      class="btn btn-gold btn-sm btn-action-dl"
-                      type="button"
-                      style="display: none"
-                    >
-                      Download
-                    </button>
-                    <button
-                      class="btn btn-sm btn-action-rm"
-                      type="button"
-                      style="display: none"
-                      onclick="
-                        removeDocument(
-                          'card-income',
-                          'ITR, Tax Exemption, or Indigency Cert (PDF/JPG).',
-                        )
-                      "
-                    >
-                      Remove
-                    </button>
-                    <button
-                      class="btn btn-sm btn-action-up"
-                      type="button"
-                      onclick="alert('Upload prompt opened.')"
-                    >
-                      Choose File
-                    </button>
-                  </div>
-                </div>
-
-                <!-- 5. Character Reference -->
-                <div class="doc-card doc-card--hint" id="card-character">
-                  <div
-                    style="
-                      font-size: 0.85rem;
-                      color: var(--primary-maroon);
-                      font-weight: 700;
-                      text-transform: uppercase;
-                      margin-bottom: 0.5rem;
-                    "
-                  >
-                    Character Reference
-                  </div>
-                  <div class="doc-title file-name">No file chosen</div>
-                  <div class="doc-meta file-hint">
-                    Certificate of Good Moral (PDF).
-                  </div>
-                  <div class="doc-meta file-meta" style="display: none"></div>
-
-                  <div class="doc-actions">
-                    <button
-                      class="btn btn-gold btn-sm btn-action-dl"
-                      type="button"
-                      style="display: none"
-                    >
-                      Download
-                    </button>
-                    <button
-                      class="btn btn-sm btn-action-rm"
-                      type="button"
-                      style="display: none"
-                      onclick="
-                        removeDocument(
-                          'card-character',
-                          'Certificate of Good Moral (PDF).',
-                        )
-                      "
-                    >
-                      Remove
-                    </button>
-                    <button
-                      class="btn btn-sm btn-action-up"
-                      type="button"
-                      onclick="alert('Upload prompt opened.')"
-                    >
-                      Choose File
-                    </button>
-                  </div>
-                </div>
-
-                <!-- 6. Recent Photo -->
-                <div class="doc-card doc-card--hint" id="card-photo">
-                  <div
-                    style="
-                      font-size: 0.85rem;
-                      color: var(--primary-maroon);
-                      font-weight: 700;
-                      text-transform: uppercase;
-                      margin-bottom: 0.5rem;
-                    "
-                  >
-                    Recent Photo
-                  </div>
-                  <div class="doc-title file-name">No file chosen</div>
-                  <div class="doc-meta file-hint">
-                    2x2 ID Picture with white background (JPG/PNG).
-                  </div>
-                  <div class="doc-meta file-meta" style="display: none"></div>
-
-                  <div class="doc-actions">
-                    <button
-                      class="btn btn-gold btn-sm btn-action-dl"
-                      type="button"
-                      style="display: none"
-                    >
-                      Download
-                    </button>
-                    <button
-                      class="btn btn-sm btn-action-rm"
-                      type="button"
-                      style="display: none"
-                      onclick="
-                        removeDocument(
-                          'card-photo',
-                          '2x2 ID Picture with white background (JPG/PNG).',
-                        )
-                      "
-                    >
-                      Remove
-                    </button>
-                    <button
-                      class="btn btn-sm btn-action-up"
-                      type="button"
-                      onclick="alert('Upload prompt opened.')"
-                    >
-                      Choose File
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Temporary inline script for remove button functionality -->
-              <script>
-                function removeDocument(cardId, hintText) {
-                  // Show confirmation modal
-                  if (window.showModal) {
-                    window.showModal(
-                      "Remove Document",
-                      "<p style='font-size: 1.15rem; color: var(--text-dark); font-weight: 500;'>Are you sure you want to remove this file?</p><p style='margin-top: 12px; color: var(--text-muted); font-size: 1.05rem; line-height: 1.5;'>Make sure to upload a replacement before the deadline to ensure your application is complete and avoid delays in the processing of your scholarship.</p>",
-                      true,
-                      () => {
-                        executeRemoval(cardId, hintText);
-                      },
-                    );
-                  } else if (
-                    confirm(
-                      "Are you sure you want to remove this file? Make sure to upload another file before the deadline to avoid application delays.",
-                    )
-                  ) {
-                    // Fallback to standard confirm if showModal isn't loaded
-                    executeRemoval(cardId, hintText);
-                  }
-                }
-
-                function executeRemoval(cardId, hintText) {
-                  const card = document.getElementById(cardId);
-                  if (card) {
-                    card.classList.add("doc-card--hint");
-                    card.querySelector(".file-name").textContent =
-                      "No file chosen";
-
-                    const meta = card.querySelector(".file-meta");
-                    meta.style.display = "none";
-                    meta.innerHTML = "";
-
-                    const hint = card.querySelector(".file-hint");
-                    hint.style.display = "block";
-                    hint.textContent = hintText;
-
-                    card.querySelector(".btn-action-dl").style.display = "none";
-                    card.querySelector(".btn-action-rm").style.display = "none";
-                    card.querySelector(".btn-action-up").style.display =
-                      "inline-block";
-                  }
-                }
-              </script>
+              <div id="studentDocumentApplicationCards" class="scholarship-doc-grid"></div>
             </div>
 
             <aside class="view-aside">
@@ -1685,7 +1369,8 @@
                 <div class="aside-title">Quality check</div>
                 <div class="aside-text">
                   If text is unreadable when zoomed in, re-scan before
-                  submitting to avoid delays.
+                  submitting to avoid delays. Changes stop once the application
+                  is approved or rejected.
                 </div>
               </div>
             </aside>

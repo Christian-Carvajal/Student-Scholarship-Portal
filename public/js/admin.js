@@ -95,9 +95,207 @@ document.addEventListener("DOMContentLoaded", () => {
     const notifDropdown = document.getElementById("notifDropdown");
     const notifBadgeCount = document.getElementById("notifBadgeCount");
     const notifBodyList = document.getElementById("notifBodyList");
+    const notifFilterBtns = notifDropdown
+        ? Array.from(notifDropdown.querySelectorAll(".filter-btn"))
+        : [];
+    const ADMIN_NOTIFICATION_REFRESH_MS = 10000;
+    let adminNotificationRows = [];
+    let adminNotificationFilterMode = "all";
+    let adminNotificationRefreshTimer = null;
+
+    function getCurrentAdminId() {
+        const adminId = Number(currentUser?.admin_id ?? currentUser?.id);
+        if (Number.isInteger(adminId) && adminId > 0) return adminId;
+
+        const legacyLogin = String(currentUser?.studentId || currentUser?.username || "").trim().toLowerCase();
+        if (legacyLogin === "admin") return 1;
+
+        return null;
+    }
+
+    function notificationIconClass(notificationType) {
+        const type = String(notificationType || "").toUpperCase();
+        if (type === "APPLICATION_STATUS") return "update";
+        if (type === "NEW_APPLICATION") return "update";
+        return "system";
+    }
+
+    function formatRelativeTime(input) {
+        const date = new Date(input);
+        if (Number.isNaN(date.getTime())) return "Just now";
+
+        const diffMs = Date.now() - date.getTime();
+        const mins = Math.floor(diffMs / (60 * 1000));
+        if (mins < 1) return "Just now";
+        if (mins < 60) return `${mins} min ago`;
+
+        const hours = Math.floor(mins / 60);
+        if (hours < 24) return `${hours} hr ago`;
+
+        const days = Math.floor(hours / 24);
+        if (days < 30) return `${days} day${days === 1 ? "" : "s"} ago`;
+
+        return formatDateOnly(input);
+    }
+
+    function notificationDetailsHtml(row) {
+        const details = [];
+
+        details.push(row.message || "No additional details provided.");
+
+        if (row.reference_type === "application" && row.reference_id !== null && row.reference_id !== undefined) {
+            details.push(`Application ID: ${row.reference_id}`);
+        }
+
+        if (row.reference_type === "scholarship" && row.reference_id !== null && row.reference_id !== undefined) {
+            details.push(`Scholarship ID: ${row.reference_id}`);
+        }
+
+        const created = new Date(row.created_at);
+        if (!Number.isNaN(created.getTime())) {
+            details.push(`Received: ${created.toLocaleString()}`);
+        }
+
+        return details.map((line) => escapeHtml(String(line))).join("<br/>");
+    }
+
+    function updateNotificationBadge() {
+        if (!notifBadgeCount) return;
+
+        const unreadCount = adminNotificationRows.filter((item) => !item.is_read).length;
+        if (unreadCount <= 0) {
+            notifBadgeCount.style.display = "none";
+            return;
+        }
+
+        notifBadgeCount.style.display = "inline-flex";
+        notifBadgeCount.textContent = String(unreadCount);
+    }
+
+    function applyNotificationFilter(mode = adminNotificationFilterMode) {
+        if (!notifBodyList) return;
+
+        adminNotificationFilterMode = mode;
+        const items = Array.from(notifBodyList.querySelectorAll(".notif-item"));
+
+        for (const item of items) {
+            if (mode === "unread" && !item.classList.contains("unread")) {
+                item.style.display = "none";
+            } else {
+                item.style.display = "flex";
+            }
+        }
+    }
+
+    function renderNotificationList() {
+        if (!notifBodyList) return;
+
+        if (!adminNotificationRows.length) {
+            notifBodyList.innerHTML = `
+                <div class="notif-section-title">Notifications</div>
+                <div class="notif-item" style="cursor: default;">
+                    <div class="notif-icon system">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                        </svg>
+                    </div>
+                    <div class="notif-content">
+                        <p>No admin notifications yet.</p>
+                        <span class="notif-time">We'll show scholarship and review updates here.</span>
+                        <div class="notif-details">New submissions, published scholarships, and decision updates will appear in this bell.</div>
+                    </div>
+                </div>
+            `;
+            updateNotificationBadge();
+            return;
+        }
+
+        notifBodyList.innerHTML = `
+            <div class="notif-section-title">Recent</div>
+            ${adminNotificationRows.map((row) => {
+                const unreadClass = row.is_read ? "" : "unread";
+                const iconClass = notificationIconClass(row.notification_type);
+                const dotStyle = row.is_read ? "style=\"display:none\"" : "";
+                return `
+                    <div class="notif-item ${unreadClass}" data-notification-id="${escapeHtml(String(row.notification_id || ""))}">
+                        <div class="notif-icon ${iconClass}">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12zM7 9h10v2H7zM7 12h7v2H7z" />
+                            </svg>
+                        </div>
+                        <div class="notif-content">
+                            <p><strong>${escapeHtml(row.title || "Notification")}</strong></p>
+                            <span class="notif-time">${escapeHtml(formatRelativeTime(row.created_at))}</span>
+                            <div class="notif-details">${notificationDetailsHtml(row)}</div>
+                        </div>
+                        <div class="notif-unread-dot" ${dotStyle}></div>
+                    </div>
+                `;
+            }).join("")}
+        `;
+
+        updateNotificationBadge();
+        applyNotificationFilter(adminNotificationFilterMode);
+    }
+
+    async function markAdminNotificationRead(notificationId) {
+        const adminId = getCurrentAdminId();
+        if (!adminId || !Number.isFinite(Number(notificationId))) return;
+
+        try {
+            await fetch(`/api/applications/notifications/admin/${encodeURIComponent(notificationId)}/read`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ admin_id: adminId }),
+            });
+        } catch (error) {
+            console.error("Failed to mark admin notification as read:", error);
+        }
+    }
+
+    async function fetchAdminNotifications(options = {}) {
+        const { silent = false } = options;
+        const adminId = getCurrentAdminId();
+
+        if (!adminId) {
+            adminNotificationRows = [];
+            renderNotificationList();
+            return;
+        }
+
+        try {
+            const res = await fetch(`/api/applications/notifications/admin/${encodeURIComponent(adminId)}?_ts=${Date.now()}`, {
+                cache: "no-store",
+            });
+            if (!res.ok) throw new Error("Failed to load notifications.");
+
+            const body = await res.json();
+            const list = Array.isArray(body?.notifications)
+                ? body.notifications
+                : (Array.isArray(body) ? body : []);
+
+            adminNotificationRows = list.map((item) => ({
+                notification_id: Number(item.notification_id),
+                title: item.title || "Notification",
+                message: item.message || "",
+                notification_type: item.notification_type || "SYSTEM",
+                reference_type: item.reference_type || "system",
+                reference_id: item.reference_id,
+                is_read: Boolean(item.is_read),
+                created_at: item.created_at,
+            })).filter((item) => Number.isFinite(item.notification_id));
+
+            renderNotificationList();
+        } catch (error) {
+            if (!silent) {
+                console.error("Failed to fetch admin notifications:", error);
+                adminNotificationRows = [];
+                renderNotificationList();
+            }
+        }
+    }
 
     if (notifToggle && notifDropdown && notifBodyList) {
-        // Handle Toggling the Widget
         notifToggle.addEventListener("click", (e) => {
             e.stopPropagation();
             const isHidden = notifDropdown.classList.contains("hidden");
@@ -108,76 +306,69 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        // Close on outside click
         document.addEventListener("click", (e) => {
-            if (!notifDropdown.contains(e.target)) {
+            if (!notifDropdown.contains(e.target) && !notifToggle.contains(e.target)) {
                 notifDropdown.classList.add("hidden");
             }
         });
 
-        // Handle Filter Buttons
-        const filterBtns = notifDropdown.querySelectorAll(".filter-btn");
-        const notifItems = Array.from(notifBodyList.querySelectorAll(".notif-item"));
-
-        filterBtns.forEach(btn => {
+        notifFilterBtns.forEach((btn) => {
             btn.addEventListener("click", (e) => {
-                e.stopPropagation(); // prevent dropdown from closing
-                
-                // Update active button state
-                filterBtns.forEach(b => b.classList.remove("active"));
+                e.stopPropagation();
+                notifFilterBtns.forEach((b) => b.classList.remove("active"));
                 btn.classList.add("active");
 
-                const mode = btn.getAttribute("data-filter");
-
-                // Execute filtering
-                notifItems.forEach(item => {
-                    if (mode === "unread") {
-                        if (item.classList.contains("unread")) {
-                            item.classList.remove("hidden");
-                        } else {
-                            item.classList.add("hidden");
-                        }
-                    } else {
-                        // mode === "all"
-                        item.classList.remove("hidden");
-                    }
-                });
+                const mode = btn.getAttribute("data-filter") || "all";
+                applyNotificationFilter(mode);
             });
         });
 
-        // Handle Notification Clicks (Expand + Mark Read)
-        notifItems.forEach(item => {
-            item.addEventListener("click", (e) => {
-                e.stopPropagation();
+        notifBodyList.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const item = e.target.closest(".notif-item[data-notification-id]");
+            if (!item) return;
 
-                // Toggle Accordion expansion
-                item.classList.toggle("is-expanded");
+            item.classList.toggle("is-expanded");
 
-                // Mark as read if it is currently unread
-                if (item.classList.contains("unread")) {
-                    item.classList.remove("unread");
-                    
-                    // Hide the unread dot
-                    const dot = item.querySelector(".notif-unread-dot");
-                    if (dot) dot.style.opacity = "0";
+            const notificationId = Number(item.getAttribute("data-notification-id"));
+            if (!Number.isFinite(notificationId)) return;
 
-                    // Update Badge Count
-                    if (notifBadgeCount) {
-                        let currentCount = parseInt(notifBadgeCount.textContent || "0");
-                        if (currentCount > 0) {
-                            currentCount -= 1;
-                            if (currentCount === 0) {
-                                notifBadgeCount.style.display = "none";
-                            } else {
-                                notifBadgeCount.textContent = currentCount;
-                            }
-                        }
-                    }
+            const matched = adminNotificationRows.find((row) => row.notification_id === notificationId);
+            if (matched && !matched.is_read) {
+                matched.is_read = true;
+                item.classList.remove("unread");
 
-                    // If currently viewing the "Unread" tab, technically it shouldn't disappear instantly
-                    // as it's confusing, so we leave it visible until the user switches tabs again.
+                const dot = item.querySelector(".notif-unread-dot");
+                if (dot) dot.style.display = "none";
+
+                updateNotificationBadge();
+
+                if (adminNotificationFilterMode === "unread") {
+                    item.style.display = "none";
                 }
-            });
+
+                markAdminNotificationRead(notificationId);
+            }
+        });
+
+        renderNotificationList();
+        fetchAdminNotifications();
+
+        adminNotificationRefreshTimer = window.setInterval(() => {
+            if (!document.hidden) {
+                fetchAdminNotifications({ silent: true });
+            }
+        }, ADMIN_NOTIFICATION_REFRESH_MS);
+
+        window.addEventListener("focus", () => {
+            fetchAdminNotifications({ silent: true });
+        });
+
+        window.addEventListener("beforeunload", () => {
+            if (adminNotificationRefreshTimer) {
+                window.clearInterval(adminNotificationRefreshTimer);
+                adminNotificationRefreshTimer = null;
+            }
         });
     }
 
@@ -446,6 +637,10 @@ document.addEventListener("DOMContentLoaded", () => {
     function navigateTo(targetId) {
         if(targetId === "navLogout") return;
 
+        if (targetId !== "view-review" && targetId !== "view-review-detail") {
+            closeAdminDocumentsModal();
+        }
+
         const highlightTarget = targetId === "view-review-detail" ? "view-review" : targetId;
 
         navLinks.forEach(n => {
@@ -468,15 +663,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 showSectionWithTransition(nextSection);
                 activeSection = nextSection;
 
-                if (targetId === "view-review") renderReviewTable();
+                if (targetId === "view-review") loadReviewRows();
                 if (targetId === "view-admin") refreshDashboardMetrics();
+                if (targetId === "view-add-scholarship" || targetId === "view-remove-scholarship") loadAdminScholarships();
             }, VIEW_TRANSITION_MS);
         } else {
             showSectionWithTransition(nextSection);
             activeSection = nextSection;
 
-            if (targetId === "view-review") renderReviewTable();
+            if (targetId === "view-review") loadReviewRows();
             if (targetId === "view-admin") refreshDashboardMetrics();
+            if (targetId === "view-add-scholarship" || targetId === "view-remove-scholarship") loadAdminScholarships();
         }
     }
 
@@ -487,9 +684,63 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    function escapeHtml(value) {
+        return String(value ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#39;");
+    }
+
+    function normalizeStatusLabel(rawStatus) {
+        const normalized = String(rawStatus || "Pending").trim().toLowerCase();
+        if (normalized.includes("approve")) return "Approved";
+        if (normalized.includes("denied")) return "Rejected";
+        if (normalized.includes("reject")) return "Rejected";
+        if (normalized.includes("review")) return "Under Review";
+        if (normalized.includes("incomplete")) return "Incomplete";
+        if (normalized.includes("eligible")) return "Eligible";
+        if (normalized.includes("submit")) return "Submitted";
+        return "Pending";
+    }
+
+    function statusToBadgeClass(status) {
+        if (status === "Approved") return "status-approved";
+        if (status === "Rejected") return "status-rejected";
+        if (status === "Incomplete") return "status-incomplete";
+        return "status-pending";
+    }
+
+    function formatDateOnly(input) {
+        if (!input) return "N/A";
+        const d = new Date(input);
+        if (Number.isNaN(d.getTime())) return String(input);
+        return d.toISOString().slice(0, 10);
+    }
+
+    const ADMIN_DOCUMENT_REQUIREMENTS = [
+        { code: "identity", label: "Proof of Identity" },
+        { code: "academic", label: "Academic Proof" },
+        { code: "enrollment", label: "Enrollment Proof" },
+        { code: "income", label: "Proof of Income" },
+        { code: "character", label: "Character Reference" },
+        { code: "photo", label: "Recent Photo" },
+    ];
+
     // Add scholarship form handler
     const addScholarshipForm = document.getElementById("addScholarshipForm");
+    const scholarshipTitleInput = document.getElementById("scholarshipTitle");
+    const scholarshipDescriptionInput = document.getElementById("scholarshipDescription");
+    const scholarshipMinimumGwaInput = document.getElementById("scholarshipMinimumGwa");
     const scholarshipDeadlineInput = document.getElementById("scholarshipDeadline");
+    const adminScholarshipTableBody = document.getElementById("adminScholarshipTableBody");
+    const btnShowSubmittedDocs = document.getElementById("btnShowSubmittedDocs");
+    const adminDocumentsModal = document.getElementById("adminDocumentsModal");
+    const adminDocumentsModalTitle = document.getElementById("adminDocumentsModalTitle");
+    const adminDocumentsModalMeta = document.getElementById("adminDocumentsModalMeta");
+    const adminDocumentsModalBody = document.getElementById("adminDocumentsModalBody");
+    const adminDocumentsModalClose = document.getElementById("adminDocumentsModalClose");
 
     if (scholarshipDeadlineInput) {
         const now = new Date();
@@ -501,7 +752,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (addScholarshipForm) {
-        addScholarshipForm.addEventListener("submit", (e) => {
+        addScholarshipForm.addEventListener("submit", async (e) => {
             e.preventDefault();
 
             if (!addScholarshipForm.reportValidity()) return;
@@ -522,66 +773,297 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            window.showModal(
-                "Published",
-                "Scholarship published (placeholder).<br/><br/>Deadline included. Connect to DB later."
-            );
-            e.target.reset();
+            const minimumGwa = scholarshipMinimumGwaInput
+                ? Number(scholarshipMinimumGwaInput.value)
+                : Number.NaN;
+
+            if (!Number.isFinite(minimumGwa) || minimumGwa < 1 || minimumGwa > 5) {
+                window.showModal(
+                    "Invalid Minimum GWA",
+                    "Please enter a valid minimum GWA between 1.00 and 5.00."
+                );
+                if (scholarshipMinimumGwaInput) scholarshipMinimumGwaInput.focus();
+                return;
+            }
+
+            const payload = {
+                title: scholarshipTitleInput ? scholarshipTitleInput.value.trim() : "",
+                description: scholarshipDescriptionInput ? scholarshipDescriptionInput.value.trim() : "",
+                deadline: deadlineValue,
+                min_gpa: minimumGwa,
+                status: "published",
+                admin_id: currentUser?.admin_id || currentUser?.id || null,
+            };
+
+            try {
+                const publishRes = await fetch("/api/applications/scholarships", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+
+                let responseBody = null;
+                try {
+                    responseBody = await publishRes.json();
+                } catch {
+                    responseBody = null;
+                }
+
+                if (!publishRes.ok) {
+                    throw new Error(responseBody?.error || "Unable to publish scholarship.");
+                }
+
+                addScholarshipForm.reset();
+                window.showModal(
+                    "Published",
+                    `Scholarship <b>${escapeHtml(payload.title)}</b> has been published successfully.`
+                );
+
+                await Promise.all([
+                    refreshDashboardMetrics(),
+                    loadAdminScholarships(),
+                ]);
+            } catch (error) {
+                window.showModal("Publish Failed", escapeHtml(error.message || "Unable to publish scholarship."));
+            }
         });
     }
 
-    // Review workflow (placeholder data)
-    const reviewRows = [
-        {
-            id: "APP-1007",
-            applicant: "Jane Doe",
-            studentId: "S-220145",
-            scholarship: "STEM Excellence Fund",
-            gpa: "3.86",
-            submittedAt: "2026-04-10",
-            autoVetStatus: "Pending",
-            reviewProgress: 0,
-            essay:
-                "I am applying for the STEM Excellence Fund to support my final year capstone project and reduce financial burden while maintaining academic performance.",
-            documents: ["Transcript.pdf", "Recommendation_Letter.pdf", "ID_Verification.png"],
-        },
-        {
-            id: "APP-1011",
-            applicant: "Michael Smith",
-            studentId: "S-219882",
-            scholarship: "Community Leadership Award",
-            gpa: "3.61",
-            submittedAt: "2026-04-11",
-            autoVetStatus: "Pending",
-            reviewProgress: 0,
-            essay:
-                "Leadership has shaped my academic path. This scholarship would help me continue community tutoring and mentoring programs while balancing coursework.",
-            documents: ["Transcript.pdf", "Volunteer_Hours.pdf"],
-        },
-    ];
-
+    let reviewRows = [];
     let selectedApplicationId = null;
+    let adminScholarshipRows = [];
+    const ADMIN_REVIEW_REFRESH_MS = 2000;
+    let adminReviewRefreshTimer = null;
+    let adminReviewRefreshBusy = false;
+    let lastReviewRowsSnapshot = "";
+    const lastReviewDocumentsSnapshotByApplication = new Map();
+    let activeAdminDocumentsApplicationId = null;
+    let activeAdminDocumentsApplicationLabel = "";
+    let activeAdminDocumentsStudentName = "";
+    let activeAdminDocumentsStudentId = "";
+    let lastAdminDocumentsModalSnapshot = "";
 
-    // Initial dashboard paint
-    refreshDashboardMetrics();
+    function buildReviewRowsSnapshot(rows) {
+        if (!Array.isArray(rows)) return "[]";
+        return JSON.stringify(
+            rows.map((row) => ({
+                id: String(row.id || ""),
+                status: String(row.autoVetStatus || ""),
+                progress: Number(row.reviewProgress || 0),
+                isDecided: Boolean(row.isDecided),
+                scholarship: String(row.scholarship || ""),
+                gpa: String(row.gpa || ""),
+                submittedAt: String(row.submittedAt || ""),
+                docCount: Array.isArray(row.documents) ? row.documents.length : 0,
+            }))
+        );
+    }
+
+    function buildReviewDocumentsSnapshot(docs) {
+        const rows = Array.isArray(docs) ? docs : [];
+        return JSON.stringify(
+            rows.map((doc) => ({
+                id: String(doc.document_id ?? ""),
+                file: String(doc.original_filename || ""),
+                type: String(doc.document_type_name || doc.document_type_code || ""),
+                url: String(doc.file_url || ""),
+                uploadedAt: String(doc.uploaded_at || doc.created_at || ""),
+                active: String(doc.is_active ?? ""),
+            }))
+        );
+    }
+
+    function normalizeScholarshipStatus(rawStatus) {
+        const value = String(rawStatus || "published").trim().toLowerCase();
+        if (value === "published") return "Published";
+        if (value === "draft") return "Draft";
+        if (value === "closed") return "Closed";
+        if (value === "archived") return "Archived";
+        return value || "Unknown";
+    }
+
+    function renderAdminScholarshipTable() {
+        if (!adminScholarshipTableBody) return;
+
+        if (!adminScholarshipRows.length) {
+            adminScholarshipTableBody.innerHTML = `
+                <tr>
+                    <td colspan="5" style="text-align: center; color: #6c757d;">No scholarships found.</td>
+                </tr>
+            `;
+            return;
+        }
+
+        adminScholarshipTableBody.innerHTML = adminScholarshipRows
+            .map((row) => {
+                const status = normalizeScholarshipStatus(row.status);
+                const deadline = row.deadline ? formatDateOnly(row.deadline) : "N/A";
+                const minGpa = Number.isFinite(Number(row.min_gpa)) ? Number(row.min_gpa).toFixed(2) : "N/A";
+
+                return `
+                    <tr>
+                        <td>${escapeHtml(row.title || "Untitled Scholarship")}</td>
+                        <td>${escapeHtml(minGpa)}</td>
+                        <td>${escapeHtml(status)}</td>
+                        <td>${escapeHtml(deadline)}</td>
+                        <td>
+                            <button
+                                class="btn btn-sm"
+                                type="button"
+                                data-action="remove-scholarship"
+                                data-scholarship-id="${escapeHtml(String(row.id || ""))}"
+                                data-scholarship-title="${escapeHtml(row.title || "Untitled Scholarship")}">
+                                Remove
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            })
+            .join("");
+    }
+
+    async function loadAdminScholarships() {
+        if (!adminScholarshipTableBody) return;
+
+        adminScholarshipTableBody.innerHTML = `
+            <tr>
+                <td colspan="5" style="text-align: center; color: #6c757d;">Loading scholarships...</td>
+            </tr>
+        `;
+
+        try {
+            const res = await fetch(`/api/applications/scholarships?_ts=${Date.now()}`, { cache: "no-store" });
+            if (!res.ok) throw new Error("Failed to load scholarships.");
+
+            const rows = await res.json();
+            adminScholarshipRows = Array.isArray(rows)
+                ? rows
+                    .filter((row) => Number.isInteger(Number(row?.id)) && Number(row.id) > 0)
+                    .sort((a, b) => Number(b.id) - Number(a.id))
+                : [];
+
+            renderAdminScholarshipTable();
+        } catch (error) {
+            console.error("Unable to load scholarship management list:", error);
+            adminScholarshipRows = [];
+            adminScholarshipTableBody.innerHTML = `
+                <tr>
+                    <td colspan="5" style="text-align: center; color: #6c757d;">Unable to load scholarships right now.</td>
+                </tr>
+            `;
+        }
+    }
+
+    function mapReviewRow(raw) {
+        const status = normalizeStatusLabel(raw.status || raw.application_status || raw.autoVetStatus);
+        const decided = status === "Approved" || status === "Rejected";
+        const gpaRaw = raw.submitted_gpa ?? raw.gpa ?? raw.submittedGpa;
+        const gpa = Number.isFinite(Number(gpaRaw)) ? Number(gpaRaw).toFixed(2) : "N/A";
+
+        return {
+            id: String(raw.application_id || raw.id || ""),
+            applicant: raw.student_name || raw.applicant || raw.name || "Unknown Applicant",
+            studentId: raw.student_id || raw.studentId || "N/A",
+            scholarship: raw.scholarship_title || raw.scholarship || "Untitled Scholarship",
+            gpa,
+            submittedAt: formatDateOnly(raw.applied_at || raw.submittedAt),
+            autoVetStatus: status,
+            reviewProgress: decided ? 100 : 0,
+            isDecided: decided,
+            essay: raw.essay || raw.letter_of_intent || raw.application_letter_of_intent || "No essay submitted.",
+            documents: Array.isArray(raw.documents) ? raw.documents : [],
+        };
+    }
+
+    async function loadReviewRows(options = {}) {
+        const { silent = false } = options;
+        try {
+            const res = await fetch(`/api/applications?_ts=${Date.now()}`, { cache: "no-store" });
+            if (!res.ok) throw new Error("Failed to load applications.");
+            const rows = await res.json();
+            const mappedRows = Array.isArray(rows) ? rows.map(mapReviewRow).filter((row) => row.id) : [];
+            const nextSnapshot = buildReviewRowsSnapshot(mappedRows);
+
+            if (silent && nextSnapshot === lastReviewRowsSnapshot) {
+                return;
+            }
+
+            reviewRows = mappedRows;
+            lastReviewRowsSnapshot = nextSnapshot;
+            renderReviewTable();
+        } catch (error) {
+            console.error("Unable to load review rows:", error);
+            reviewRows = [];
+            lastReviewRowsSnapshot = "";
+            if (!silent) {
+                renderReviewTable();
+            }
+        }
+    }
+
+    function isReviewViewActive() {
+        const viewId = activeSection?.id || "";
+        return viewId === "view-review" || viewId === "view-review-detail";
+    }
+
+    async function refreshReviewStateSilently() {
+        if (adminReviewRefreshBusy) return;
+        if (document.hidden) return;
+        if (!isReviewViewActive()) return;
+
+        adminReviewRefreshBusy = true;
+        try {
+            await loadReviewRows({ silent: true });
+
+            if (activeSection?.id === "view-review-detail" && selectedApplicationId) {
+                const selectedRow = reviewRows.find((row) => row.id === selectedApplicationId);
+                if (selectedRow && !selectedRow.isDecided) {
+                    await loadReviewDocuments(selectedApplicationId, selectedRow.documents, { silent: true });
+                }
+            }
+
+            if (activeAdminDocumentsApplicationId && adminDocumentsModal && !adminDocumentsModal.classList.contains("hidden")) {
+                await refreshAdminDocumentsModal({ silent: true });
+            }
+        } catch (error) {
+            console.error("Failed to refresh admin review state:", error);
+        } finally {
+            adminReviewRefreshBusy = false;
+        }
+    }
+
+    function startAdminReviewAutoRefresh() {
+        if (adminReviewRefreshTimer) {
+            window.clearInterval(adminReviewRefreshTimer);
+            adminReviewRefreshTimer = null;
+        }
+
+        adminReviewRefreshTimer = window.setInterval(() => {
+            refreshReviewStateSilently();
+        }, ADMIN_REVIEW_REFRESH_MS);
+    }
 
     function renderReviewTable() {
         const tbody = document.getElementById("adminReviewTableBody");
         if (!tbody) return;
 
+        if (!reviewRows.length) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" style="text-align: center; color: #6c757d;">No applications found yet.</td>
+                </tr>
+            `;
+            return;
+        }
+
         tbody.innerHTML = reviewRows
             .map((row) => {
-                const statusClass =
-                    row.autoVetStatus === "Approved"
-                        ? "status-approved"
-                        : row.autoVetStatus === "Pending"
-                            ? "status-pending"
-                            : "status-rejected";
+                const statusClass = statusToBadgeClass(row.autoVetStatus);
 
                 let buttonText = "Review Application";
                 if (row.isDecided) buttonText = "Review Completed";
                 else if (row.reviewProgress > 0) buttonText = "Continue Reviewing";
-                
+
                 const progressDisplay = `
                     <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                         <progress value="${row.reviewProgress}" max="100" style="width: 60px;"></progress>
@@ -591,13 +1073,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 return `
                     <tr>
-                        <td>${row.applicant}</td>
-                        <td>${row.scholarship}</td>
-                        <td>${row.gpa}</td>
-                        <td><span class="status-badge ${statusClass}">${row.autoVetStatus}</span></td>
+                        <td>${escapeHtml(row.applicant)}</td>
+                        <td>${escapeHtml(row.scholarship)}</td>
+                        <td>${escapeHtml(row.gpa)}</td>
+                        <td><span class="status-badge ${statusClass}">${escapeHtml(row.autoVetStatus)}</span></td>
                         <td>${progressDisplay}</td>
                         <td>
-                            <button class="btn btn-sm" type="button" data-action="review" data-id="${row.id}" ${row.isDecided ? 'disabled style="background-color: #e9ecef; cursor: not-allowed; color: #6c757d; border: 1px solid #ced4da;"' : ''}>${buttonText}</button>
+                            <button class="btn btn-sm" type="button" data-action="review" data-id="${escapeHtml(row.id)}" ${row.isDecided ? 'disabled style="background-color: #e9ecef; cursor: not-allowed; color: #6c757d; border: 1px solid #ced4da;"' : ''}>${buttonText}</button>
                         </td>
                     </tr>
                 `;
@@ -606,6 +1088,265 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     let reviewScrollListener = null;
+
+    function renderReviewDocuments(docsEl, docs) {
+        if (!docsEl) return;
+
+        if (!Array.isArray(docs) || docs.length === 0) {
+            docsEl.innerHTML = "<li>No uploaded documents found for this application.</li>";
+            return;
+        }
+
+        docsEl.innerHTML = docs
+            .map((doc) => {
+                const fileName = escapeHtml(doc.original_filename || "document");
+                const typeName = escapeHtml(doc.document_type_name || doc.document_type_code || "Document");
+
+                return `<li>${fileName} <span style="color:#6c757d;">(${typeName})</span></li>`;
+            })
+            .join("");
+    }
+
+    async function loadReviewDocuments(applicationId, fallbackDocuments = [], options = {}) {
+        const { silent = false } = options;
+        const docsEl = document.getElementById("reviewDocs");
+        if (!docsEl) return;
+
+        if (!silent) {
+            docsEl.innerHTML = "<li>Loading uploaded documents...</li>";
+        }
+
+        try {
+            const res = await fetch(`/api/applications/${encodeURIComponent(applicationId)}/documents?_ts=${Date.now()}`, {
+                cache: "no-store",
+            });
+            if (!res.ok) throw new Error("Failed to load documents.");
+
+            const docs = await res.json();
+            const docRows = Array.isArray(docs) ? docs : [];
+            const nextSnapshot = buildReviewDocumentsSnapshot(docRows);
+            const key = String(applicationId || "");
+            const prevSnapshot = lastReviewDocumentsSnapshotByApplication.get(key) || "";
+
+            if (silent && nextSnapshot === prevSnapshot) {
+                return;
+            }
+
+            lastReviewDocumentsSnapshotByApplication.set(key, nextSnapshot);
+            renderReviewDocuments(docsEl, docRows);
+        } catch (error) {
+            console.error("Failed to load review documents:", error);
+
+            if (silent) return;
+
+            if (Array.isArray(fallbackDocuments) && fallbackDocuments.length > 0) {
+                renderReviewDocuments(docsEl, fallbackDocuments);
+            } else {
+                docsEl.innerHTML = "<li>Unable to load uploaded documents right now.</li>";
+            }
+        }
+    }
+
+    async function fetchApplicationDocuments(applicationId) {
+        const res = await fetch(`/api/applications/${encodeURIComponent(applicationId)}/documents?_ts=${Date.now()}`, {
+            cache: "no-store",
+        });
+
+        if (!res.ok) {
+            let body = null;
+            try {
+                body = await res.json();
+            } catch {
+                body = null;
+            }
+            throw new Error(body?.error || "Unable to load submitted documents.");
+        }
+
+        const docs = await res.json();
+        return Array.isArray(docs) ? docs : [];
+    }
+
+    function buildLatestDocumentByCode(rows) {
+        const latest = new Map();
+
+        for (const row of rows || []) {
+            const code = String(row?.document_type_code || "").trim().toLowerCase();
+            if (!code || latest.has(code)) continue;
+            latest.set(code, row);
+        }
+
+        return latest;
+    }
+
+    function buildAdminSubmittedDocumentsHtml(docs) {
+        const latestByCode = buildLatestDocumentByCode(docs);
+
+        return ADMIN_DOCUMENT_REQUIREMENTS.map((reqDoc) => {
+            const currentDoc = latestByCode.get(reqDoc.code) || null;
+
+            if (currentDoc) {
+                const documentId = Number(currentDoc.document_id);
+                const safeDocumentId = Number.isInteger(documentId) && documentId > 0 ? documentId : 0;
+                const fileName = escapeHtml(currentDoc.original_filename || "Uploaded document");
+                const uploadedAt = escapeHtml(formatDateOnly(currentDoc.uploaded_at));
+                const viewAction = currentDoc.file_url
+                    ? `<a class="btn btn-gold btn-sm" href="${escapeHtml(currentDoc.file_url)}" target="_blank" rel="noopener">View</a>`
+                    : "";
+
+                return `
+                    <div class="scholarship-doc-row">
+                        <div class="scholarship-doc-row-top">
+                            <div class="scholarship-doc-type">${escapeHtml(reqDoc.label)}</div>
+                            <div class="scholarship-doc-hint">${uploadedAt}</div>
+                        </div>
+                        <div class="scholarship-doc-file">${fileName}</div>
+                        <div class="scholarship-doc-row-actions">
+                            ${viewAction}
+                            <button class="btn btn-sm" type="button" data-action="admin-remove-doc" data-document-id="${escapeHtml(String(safeDocumentId))}">Remove</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="scholarship-doc-row">
+                    <div class="scholarship-doc-row-top">
+                        <div class="scholarship-doc-type">${escapeHtml(reqDoc.label)}</div>
+                    </div>
+                    <div class="scholarship-doc-missing">Missing File</div>
+                </div>
+            `;
+        }).join("");
+    }
+
+    async function refreshAdminDocumentsModal(options = {}) {
+        const { silent = false } = options;
+        if (!activeAdminDocumentsApplicationId || !adminDocumentsModalBody) return;
+
+        if (!silent) {
+            adminDocumentsModalBody.innerHTML = '<div class="scholarship-doc-empty">Loading submitted documents...</div>';
+        }
+
+        const docs = await fetchApplicationDocuments(activeAdminDocumentsApplicationId);
+        const nextSnapshot = buildReviewDocumentsSnapshot(docs);
+        if (silent && nextSnapshot === lastAdminDocumentsModalSnapshot) {
+            return;
+        }
+
+        lastAdminDocumentsModalSnapshot = nextSnapshot;
+
+        if (adminDocumentsModalTitle) {
+            adminDocumentsModalTitle.textContent = `${activeAdminDocumentsApplicationLabel || "Submitted Documents"}`;
+        }
+
+        if (adminDocumentsModalMeta) {
+            adminDocumentsModalMeta.textContent = `Applicant: ${activeAdminDocumentsStudentName || "N/A"} | Application ID: ${activeAdminDocumentsApplicationId}`;
+        }
+
+        const nextHtml = buildAdminSubmittedDocumentsHtml(docs);
+        if (adminDocumentsModalBody.innerHTML !== nextHtml) {
+            adminDocumentsModalBody.innerHTML = nextHtml;
+        }
+    }
+
+    function openAdminDocumentsModal(row) {
+        const applicationId = Number(row?.id);
+        if (!Number.isInteger(applicationId) || applicationId <= 0) return;
+        if (!adminDocumentsModal) return;
+
+        activeAdminDocumentsApplicationId = applicationId;
+        activeAdminDocumentsApplicationLabel = row?.scholarship || "Submitted Documents";
+        activeAdminDocumentsStudentName = row?.applicant || "Unknown Applicant";
+        activeAdminDocumentsStudentId = String(row?.studentId || "").trim();
+        lastAdminDocumentsModalSnapshot = "";
+
+        refreshAdminDocumentsModal().catch((error) => {
+            if (adminDocumentsModalBody) {
+                adminDocumentsModalBody.innerHTML = `<div class="scholarship-doc-empty">${escapeHtml(error.message || "Unable to load submitted documents.")}</div>`;
+            }
+        });
+
+        adminDocumentsModal.classList.remove("hidden");
+        adminDocumentsModal.classList.remove("is-closing");
+        window.requestAnimationFrame(() => {
+            adminDocumentsModal.classList.add("is-open");
+        });
+    }
+
+    function closeAdminDocumentsModal() {
+        if (!adminDocumentsModal || adminDocumentsModal.classList.contains("hidden")) {
+            activeAdminDocumentsApplicationId = null;
+            return;
+        }
+
+        adminDocumentsModal.classList.remove("is-open");
+        adminDocumentsModal.classList.add("is-closing");
+
+        window.setTimeout(() => {
+            adminDocumentsModal.classList.remove("is-closing");
+            adminDocumentsModal.classList.add("hidden");
+        }, MODAL_TRANSITION_MS);
+
+        activeAdminDocumentsApplicationId = null;
+        activeAdminDocumentsApplicationLabel = "";
+        activeAdminDocumentsStudentName = "";
+        activeAdminDocumentsStudentId = "";
+        lastAdminDocumentsModalSnapshot = "";
+    }
+
+    async function removeApplicationDocumentFromAdmin(applicationId, documentId) {
+        const res = await fetch(
+            `/api/applications/${encodeURIComponent(applicationId)}/documents/${encodeURIComponent(documentId)}`,
+            { method: "DELETE" }
+        );
+
+        let body = null;
+        let rawText = "";
+        try {
+            rawText = await res.text();
+            body = rawText ? JSON.parse(rawText) : null;
+        } catch {
+            body = null;
+        }
+
+        if (res.ok) {
+            return body;
+        }
+
+        const primaryErrorText = body?.error || rawText.trim() || "";
+        const canFallbackToStudentDelete =
+            (res.status === 404 || /cannot delete/i.test(primaryErrorText)) &&
+            activeAdminDocumentsStudentId &&
+            activeAdminDocumentsStudentId !== "N/A";
+
+        if (canFallbackToStudentDelete) {
+            const fallbackRes = await fetch(
+                `/api/applications/student/${encodeURIComponent(activeAdminDocumentsStudentId)}/documents/${encodeURIComponent(documentId)}`,
+                { method: "DELETE" }
+            );
+
+            let fallbackBody = null;
+            let fallbackText = "";
+            try {
+                fallbackText = await fallbackRes.text();
+                fallbackBody = fallbackText ? JSON.parse(fallbackText) : null;
+            } catch {
+                fallbackBody = null;
+            }
+
+            if (fallbackRes.ok) {
+                return fallbackBody;
+            }
+
+            throw new Error(
+                fallbackBody?.error ||
+                fallbackText.trim() ||
+                `Unable to remove document (HTTP ${fallbackRes.status}).`
+            );
+        }
+
+        throw new Error(primaryErrorText || `Unable to remove document (HTTP ${res.status}).`);
+    }
 
     function navigateToDetail(applicationId) {
         selectedApplicationId = applicationId;
@@ -624,22 +1365,22 @@ document.addEventListener("DOMContentLoaded", () => {
         setText("reviewSubmittedAt", row.submittedAt);
         setText("reviewEssay", row.essay);
 
-        const docsEl = document.getElementById("reviewDocs");
-        if (docsEl) {
-            docsEl.innerHTML = row.documents.map((d) => `<li>${d}</li>`).join("");
+        if (btnShowSubmittedDocs) {
+            btnShowSubmittedDocs.disabled = false;
+            btnShowSubmittedDocs.setAttribute("data-id", String(row.id));
         }
 
-        // Navigate via our nice animation wrapper, it will auto-highlight "view-review"
+        loadReviewDocuments(applicationId, row.documents);
+
+        // Navigate via our animation wrapper; this keeps the review nav highlighted.
         navigateTo("view-review-detail");
 
-        // Detach any previous scroll listener
         if (reviewScrollListener) {
             window.removeEventListener("scroll", reviewScrollListener);
             window.removeEventListener("resize", reviewScrollListener);
             reviewScrollListener = null;
         }
 
-        // Calculate progress based on scroll
         const calculateProgress = () => {
             if (row.reviewProgress === 100) {
                 if (reviewScrollListener) {
@@ -654,7 +1395,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const winHeight = window.innerHeight;
             const scrollTop = window.scrollY;
 
-            // If the document isn't taller than the window, everything is visible
             if (docHeight <= winHeight) {
                 row.reviewProgress = 100;
                 return;
@@ -662,33 +1402,204 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const scrollPercent = (scrollTop / (docHeight - winHeight)) * 100;
             const newProgress = Math.min(100, Math.round(scrollPercent));
-            
+
             if (newProgress > row.reviewProgress) {
                 row.reviewProgress = newProgress;
             }
         };
 
-        // If it was 0, initialize at least to 1% to show they opened it
         if (row.reviewProgress === 0) row.reviewProgress = 1;
 
-        // Start listening
         reviewScrollListener = calculateProgress;
         window.addEventListener("scroll", reviewScrollListener);
         window.addEventListener("resize", reviewScrollListener);
-
-        // Run once to catch tiny placeholder data pages
-        // Delay long enough for the page to be visible (220ms typical transition + 50 buffer)
         setTimeout(calculateProgress, 270);
     }
+
+    async function decideApplication(nextStatus) {
+        if (!selectedApplicationId) return;
+
+        const appId = selectedApplicationId;
+
+        try {
+            const res = await fetch(`/api/applications/${encodeURIComponent(appId)}/status`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status: nextStatus }),
+            });
+
+            let body = null;
+            try {
+                body = await res.json();
+            } catch {
+                body = null;
+            }
+
+            if (!res.ok) {
+                throw new Error(body?.error || "Unable to update application status.");
+            }
+
+            await loadReviewRows();
+            await refreshDashboardMetrics();
+
+            window.showModal(
+                "Updated",
+                `Application <b>${escapeHtml(appId)}</b> is now <b>${escapeHtml(nextStatus)}</b>.`
+            );
+
+            navigateTo("view-review");
+        } catch (error) {
+            window.showModal("Update Failed", escapeHtml(error.message || "Unable to update application status."));
+        }
+    }
+
+    async function removeScholarship(scholarshipId) {
+        const id = Number(scholarshipId);
+        if (!Number.isInteger(id) || id <= 0) {
+            window.showModal("Remove Failed", "Invalid scholarship ID.");
+            return;
+        }
+
+        try {
+            const res = await fetch(`/api/applications/scholarships/${encodeURIComponent(id)}`, {
+                method: "DELETE",
+            });
+
+            let body = null;
+            try {
+                body = await res.json();
+            } catch {
+                body = null;
+            }
+
+            if (!res.ok) {
+                throw new Error(body?.error || "Unable to remove scholarship.");
+            }
+
+            await Promise.all([
+                loadAdminScholarships(),
+                loadReviewRows(),
+                refreshDashboardMetrics(),
+            ]);
+
+            const removedApplications = Number(body?.removed_applications || 0);
+            const appText = removedApplications === 1 ? "1 linked application" : `${removedApplications} linked applications`;
+
+            window.showModal(
+                "Scholarship Removed",
+                `Scholarship <b>${escapeHtml(String(body?.scholarship_title || `#${id}`))}</b> was removed.<br/><br/>Cleanup summary: ${escapeHtml(appText)} removed.`
+            );
+        } catch (error) {
+            window.showModal("Remove Failed", escapeHtml(error.message || "Unable to remove scholarship."));
+        }
+    }
+
+    // Initial paint
+    refreshDashboardMetrics();
+    loadReviewRows();
+    loadAdminScholarships();
+    startAdminReviewAutoRefresh();
+
+    window.addEventListener("focus", () => {
+        refreshReviewStateSilently();
+    });
+
+    window.addEventListener("beforeunload", () => {
+        if (adminReviewRefreshTimer) {
+            window.clearInterval(adminReviewRefreshTimer);
+            adminReviewRefreshTimer = null;
+        }
+    });
 
     document.addEventListener("click", (e) => {
         const btn = e.target.closest("button[data-action]");
         if (!btn) return;
-        if (btn.getAttribute("data-action") !== "review") return;
 
-        const id = btn.getAttribute("data-id");
-        if (!id) return;
-        navigateToDetail(id);
+        const action = btn.getAttribute("data-action");
+        if (action === "review") {
+            const id = btn.getAttribute("data-id");
+            if (!id) return;
+            navigateToDetail(id);
+            return;
+        }
+
+        if (action === "show-submitted-docs") {
+            const id = btn.getAttribute("data-id") || (selectedApplicationId ? String(selectedApplicationId) : "");
+            if (!id) return;
+
+            const row = reviewRows.find((entry) => entry.id === String(id));
+            if (!row) return;
+
+            openAdminDocumentsModal(row);
+            return;
+        }
+
+        if (action === "remove-scholarship") {
+            const scholarshipId = btn.getAttribute("data-scholarship-id");
+            const scholarshipTitle = btn.getAttribute("data-scholarship-title") || "this scholarship";
+            if (!scholarshipId) return;
+
+            window.showModal(
+                "Remove Scholarship",
+                `Remove <b>${escapeHtml(scholarshipTitle)}</b>?<br/><br/>This will also remove linked applications and update admin/student trackers.`,
+                () => {
+                    removeScholarship(scholarshipId);
+                },
+                { okText: "Remove", cancelText: "Cancel", showCancel: true }
+            );
+        }
+    });
+
+    if (adminDocumentsModalBody) {
+        adminDocumentsModalBody.addEventListener("click", (event) => {
+            const removeBtn = event.target.closest("button[data-action='admin-remove-doc']");
+            if (!removeBtn) return;
+
+            const documentId = Number(removeBtn.getAttribute("data-document-id"));
+            const applicationId = Number(activeAdminDocumentsApplicationId);
+
+            if (!Number.isInteger(documentId) || documentId <= 0) return;
+            if (!Number.isInteger(applicationId) || applicationId <= 0) return;
+
+            window.showModal(
+                "Remove Document",
+                "Are you sure you want to delete this document?",
+                async () => {
+                    try {
+                        await removeApplicationDocumentFromAdmin(applicationId, documentId);
+                        await Promise.all([
+                            refreshAdminDocumentsModal(),
+                            loadReviewRows({ silent: true }),
+                            refreshDashboardMetrics(),
+                        ]);
+                        window.showModal("Document Removed", "The selected document has been deleted.");
+                    } catch (error) {
+                        window.showModal("Remove Failed", escapeHtml(error.message || "Unable to remove document."));
+                    }
+                },
+                { okText: "Remove", cancelText: "Cancel", showCancel: true }
+            );
+        });
+    }
+
+    if (adminDocumentsModalClose) {
+        adminDocumentsModalClose.addEventListener("click", () => {
+            closeAdminDocumentsModal();
+        });
+    }
+
+    if (adminDocumentsModal) {
+        adminDocumentsModal.addEventListener("click", (event) => {
+            if (event.target === adminDocumentsModal) {
+                closeAdminDocumentsModal();
+            }
+        });
+    }
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && adminDocumentsModal && !adminDocumentsModal.classList.contains("hidden")) {
+            closeAdminDocumentsModal();
+        }
     });
 
     const backBtn = document.getElementById("btnBackToReview");
@@ -706,15 +1617,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 "Approve",
                 `Approve application <b>${selectedApplicationId}</b>?`,
                 () => {
-                    const row = reviewRows.find(r => r.id === selectedApplicationId);
-                    if (row) {
-                        row.reviewProgress = 100;
-                        row.isDecided = true;
-                        row.autoVetStatus = "Approved"; // Update the visible status label
-                    }
-                    alert(`Approved application ${selectedApplicationId} (placeholder).`);
-                    navigateTo("view-review");
-                }
+                    decideApplication("Approved");
+                },
+                { okText: "Approve", cancelText: "Cancel", showCancel: true }
             );
         });
     }
@@ -727,15 +1632,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 "Reject",
                 `Reject application <b>${selectedApplicationId}</b>?`,
                 () => {
-                    const row = reviewRows.find(r => r.id === selectedApplicationId);
-                    if (row) {
-                        row.reviewProgress = 100;
-                        row.isDecided = true;
-                        row.autoVetStatus = "Rejected"; // Update the visible status label
-                    }
-                    alert(`Rejected application ${selectedApplicationId} (placeholder).`);
-                    navigateTo("view-review");
-                }
+                    decideApplication("Rejected");
+                },
+                { okText: "Reject", cancelText: "Cancel", showCancel: true }
             );
         });
     }

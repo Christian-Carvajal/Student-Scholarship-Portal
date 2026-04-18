@@ -54,6 +54,31 @@ async function setupDatabase() {
             )
         `);
 
+        console.log('Enforcing one application per student per scholarship...');
+        await connection.query(`
+            DELETE a1
+            FROM applications a1
+            INNER JOIN applications a2
+                ON a1.student_id = a2.student_id
+               AND a1.scholarship_id = a2.scholarship_id
+               AND a1.id > a2.id
+        `);
+
+        const [uniqueRows] = await connection.query(`
+            SELECT COUNT(*) AS idx_count
+            FROM information_schema.statistics
+            WHERE table_schema = DATABASE()
+              AND table_name = 'applications'
+              AND index_name = 'uq_applications_student_scholarship'
+        `);
+
+        if (Number(uniqueRows?.[0]?.idx_count || 0) === 0) {
+            await connection.query(`
+                ALTER TABLE applications
+                ADD CONSTRAINT uq_applications_student_scholarship UNIQUE (student_id, scholarship_id)
+            `);
+        }
+
         // Check if there are existing scholarships; if not, populate some samples
         const [rows] = await connection.query('SELECT COUNT(*) as count FROM scholarships');
         if (rows[0].count === 0) {
