@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- Multi-device SVG Favicon Support -->
-    <link rel="icon" type="image/svg+xml" href="uphsd.svg" />
-    <link rel="alternate icon" href="uphsd.svg" />
-    <link rel="apple-touch-icon" href="uphsd.svg" />
-    <link rel="mask-icon" href="uphsd.svg" color="#7a1114" />
+    <link rel="icon" type="image/svg+xml" href="pictures/uphsd.svg" />
+    <link rel="alternate icon" href="pictures/uphsd.svg" />
+    <link rel="apple-touch-icon" href="pictures/uphsd.svg" />
+    <link rel="mask-icon" href="pictures/uphsd.svg" color="#7a1114" />
     <meta name="theme-color" content="#7a1114" />
 
     <title>Student Scholarship Portal | UPHSD Molino</title>
@@ -26,7 +26,7 @@
     <div class="action-nav">
       <div class="nav-container hero-nav-container">
         <div class="hero-brand">
-          <img src="uphsd.svg" alt="UPHSD Logo" class="hero-brand-logo" />
+          <img src="pictures/uphsd.svg" alt="UPHSD Logo" class="hero-brand-logo" />
           <div class="hero-brand-copy">
             <strong>Student Scholarship Portal</strong>
             <span>University of Perpetual Help System DALTA - Molino</span>
@@ -41,7 +41,7 @@
     <main class="landing-main">
       <section class="hero-section">
         <img
-          src="hero.svg"
+          src="pictures/hero.svg"
           alt=""
           class="hero-bg-image"
           loading="lazy"
@@ -278,17 +278,6 @@
             </article>
 
             <article class="scholarship-offer-card">
-              <h4>Security Bank Scholarship Program</h4>
-              <span class="scholarship-offer-amount">Amount per year: ~&#8369;60K - &#8369;100K</span>
-              <p>
-                Provided by Security Bank Foundation, this scholarship is aimed
-                at financially challenged but deserving students. It typically
-                includes tuition assistance, allowance, and mentoring support
-                throughout the student&#39;s college education.
-              </p>
-            </article>
-
-            <article class="scholarship-offer-card">
               <h4>Megaworld Foundation Scholarship</h4>
               <span class="scholarship-offer-amount">Amount per year: ~&#8369;70K - &#8369;120K</span>
               <p>
@@ -296,17 +285,6 @@
                 partner schools, especially those taking business, IT, and
                 engineering courses. It provides full or partial tuition,
                 allowance, and career opportunities within Megaworld companies.
-              </p>
-            </article>
-
-            <article class="scholarship-offer-card">
-              <h4>Aboitiz Scholarship Program</h4>
-              <span class="scholarship-offer-amount">Amount per year: ~&#8369;60K - &#8369;100K</span>
-              <p>
-                Offered by Aboitiz Foundation, this scholarship supports
-                students in priority fields such as engineering, business, and
-                IT. It includes tuition assistance, leadership training, and
-                opportunities to work within Aboitiz companies after graduation.
               </p>
             </article>
 
@@ -322,43 +300,13 @@
             </article>
 
             <article class="scholarship-offer-card">
-              <h4>BDO Foundation Scholarship</h4>
-              <span class="scholarship-offer-amount">Amount per year: ~&#8369;50K - &#8369;90K</span>
+              <h4>Aboitiz Scholarship Program</h4>
+              <span class="scholarship-offer-amount">Amount per year: ~&#8369;60K - &#8369;100K</span>
               <p>
-                The BDO Foundation offers educational assistance to qualified
-                students, especially in business and finance-related programs.
-                It includes tuition support and financial assistance.
-              </p>
-            </article>
-
-            <article class="scholarship-offer-card">
-              <h4>Metrobank Foundation Scholarship</h4>
-              <span class="scholarship-offer-amount">Amount per year: ~&#8369;50K - &#8369;100K</span>
-              <p>
-                From Metrobank Foundation, this scholarship supports students
-                with strong academic standing and leadership potential. Benefits
-                include financial assistance and academic support programs.
-              </p>
-            </article>
-
-            <article class="scholarship-offer-card">
-              <h4>Globe Scholarship Program</h4>
-              <span class="scholarship-offer-amount">Amount per year: ~&#8369;60K - &#8369;120K</span>
-              <p>
-                Offered by Globe Telecom, this scholarship is usually aligned
-                with technology and digital-related courses. It may include
-                tuition support, training, and internship opportunities.
-              </p>
-            </article>
-
-            <article class="scholarship-offer-card">
-              <h4>PLDT-Smart Scholarship</h4>
-              <span class="scholarship-offer-amount">Amount per year: ~&#8369;60K - &#8369;120K</span>
-              <p>
-                Provided by PLDT-Smart Foundation, this program supports
-                students in ICT and engineering fields. It includes tuition,
-                allowance, and potential employment pathways in telecom
-                industries.
+                Offered by Aboitiz Foundation, this scholarship supports
+                students in priority fields such as engineering, business, and
+                IT. It includes tuition assistance, leadership training, and
+                opportunities to work within Aboitiz companies after graduation.
               </p>
             </article>
           </div>
@@ -582,6 +530,20 @@
       <div class="divider-line"></div>
     </main>
 
+    <button
+      type="button"
+      class="home-fab"
+      id="homeFab"
+      aria-label="Back to Home"
+      aria-hidden="true"
+    >
+      <span class="home-fab-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" role="presentation" focusable="false">
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </span>
+    </button>
+
     <script>
       // Philippine time display for hero nav.
       document.addEventListener("DOMContentLoaded", () => {
@@ -632,7 +594,43 @@
     </script>
 
     <script>
-      // Carousel navigation (single-card next / previous).
+      // Show Home button once the user is well into scrolling past hero.
+      document.addEventListener("DOMContentLoaded", () => {
+        const homeFab = document.getElementById("homeFab");
+        const heroSection = document.querySelector(".hero-section");
+        const actionNav = document.querySelector(".action-nav");
+        if (!homeFab || !heroSection) return;
+
+        const getHomeFabThreshold = () => {
+          const navHeight = actionNav?.offsetHeight || 0;
+          const revealPoint = heroSection.offsetTop + heroSection.offsetHeight * 0.62;
+          return Math.max(0, revealPoint - navHeight);
+        };
+
+        let homeFabThreshold = getHomeFabThreshold();
+
+        const syncHomeFabVisibility = () => {
+          const shouldShow = window.scrollY >= homeFabThreshold;
+          homeFab.classList.toggle("is-visible", shouldShow);
+          homeFab.setAttribute("aria-hidden", shouldShow ? "false" : "true");
+        };
+
+        homeFab.addEventListener("click", () => {
+          heroSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+
+        window.addEventListener("scroll", syncHomeFabVisibility, { passive: true });
+        window.addEventListener("resize", () => {
+          homeFabThreshold = getHomeFabThreshold();
+          syncHomeFabVisibility();
+        });
+
+        syncHomeFabVisibility();
+      });
+    </script>
+
+    <script>
+      // Carousel navigation with configurable cards-per-view and step size.
       document.addEventListener("DOMContentLoaded", () => {
         const initSingleCardCarousel = (config) => {
           const carousel = document.getElementById(config.id);
@@ -647,6 +645,24 @@
 
           let currentIndex = 0;
 
+          const getBehavior = () => {
+            const behavior =
+              typeof config.getBehavior === "function"
+                ? config.getBehavior()
+                : config;
+
+            const cardsPerView = Math.max(
+              1,
+              Number.parseInt(behavior.cardsPerView ?? 1, 10) || 1
+            );
+            const stepSize = Math.max(
+              1,
+              Number.parseInt(behavior.stepSize ?? 1, 10) || 1
+            );
+
+            return { cardsPerView, stepSize };
+          };
+
           const getSlideWidth = () => {
             const styles = window.getComputedStyle(track);
             const gap = parseFloat(styles.gap || styles.columnGap || "0");
@@ -656,7 +672,8 @@
           };
 
           const refreshCarousel = () => {
-            const maxIndex = Math.max(0, cards.length - 1);
+            const { cardsPerView } = getBehavior();
+            const maxIndex = Math.max(0, cards.length - cardsPerView);
             currentIndex = Math.min(currentIndex, maxIndex);
 
             const offset = currentIndex * getSlideWidth();
@@ -667,12 +684,15 @@
           };
 
           prevBtn.addEventListener("click", () => {
-            currentIndex = Math.max(0, currentIndex - 1);
+            const { stepSize } = getBehavior();
+            currentIndex = Math.max(0, currentIndex - stepSize);
             refreshCarousel();
           });
 
           nextBtn.addEventListener("click", () => {
-            currentIndex = Math.min(cards.length - 1, currentIndex + 1);
+            const { cardsPerView, stepSize } = getBehavior();
+            const maxIndex = Math.max(0, cards.length - cardsPerView);
+            currentIndex = Math.min(maxIndex, currentIndex + stepSize);
             refreshCarousel();
           });
 
@@ -701,6 +721,10 @@
           cardSelector: ".how-apply-card",
           prevSelector: ".how-apply-prev",
           nextSelector: ".how-apply-next",
+          getBehavior: () =>
+            window.matchMedia("(max-width: 900px)").matches
+              ? { cardsPerView: 1, stepSize: 1 }
+              : { cardsPerView: 2, stepSize: 2 },
         });
       });
     </script>
@@ -821,7 +845,7 @@
         >
           <!-- Enhanced Full Color Logo with Gold Glow Drop Shadow Flare -->
           <img
-            src="uphsd.svg"
+            src="pictures/uphsd.svg"
             alt="UPHSD Logo"
             style="
               height: 205px;
@@ -843,6 +867,16 @@
         <p>
           &copy; 2026 Student Scholarship Program |
           <strong>UPHSD Molino Campus</strong>.
+        </p>
+        <p style="margin-top: 0.55rem;">
+          Website design inspiration:
+          <a
+            href="https://scholar.taguig.gov.ph/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style="color: #f6d88a;"
+            >https://scholar.taguig.gov.ph/</a
+          >
         </p>
       </div>
     </footer>

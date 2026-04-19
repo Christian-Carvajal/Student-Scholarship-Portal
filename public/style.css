@@ -11,6 +11,8 @@
   --text-dark: #1f1412;
   --text-muted: #5e4c49;
   --border-color: #e2d7cc;
+  --section-gradient-a: linear-gradient(rgb(249, 244, 234) 0%, rgb(255, 253, 248) 100%);
+  --section-gradient-b: linear-gradient(rgb(246, 241, 232) 0%, rgb(235, 226, 214) 100%);
 
   /* Typography */
   --font-serif: 'Cinzel', serif;
@@ -1092,6 +1094,63 @@ select.form-control {
   box-shadow: 0 2px 10px rgba(74, 8, 10, 0.18);
 }
 
+.home-fab {
+  position: fixed;
+  right: calc(1.85rem + env(safe-area-inset-right, 0px));
+  bottom: calc(2.1rem + env(safe-area-inset-bottom, 0px));
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px solid #f0b82f;
+  background: linear-gradient(135deg, #7a1114 0%, #4a080a 100%);
+  color: #ffe2a1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 19;
+  box-shadow: 0 12px 22px rgba(74, 8, 10, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(14px) scale(0.95);
+  transition: opacity 220ms ease, transform 220ms ease, box-shadow 220ms ease, visibility 220ms ease;
+}
+
+.home-fab.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+.home-fab:hover {
+  box-shadow: 0 15px 26px rgba(74, 8, 10, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.24);
+  transform: translateY(-2px) scale(1.03);
+}
+
+.home-fab:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(253, 187, 17, 0.35), 0 12px 22px rgba(74, 8, 10, 0.3);
+}
+
+.home-fab-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-fab-icon svg {
+  width: 34px;
+  height: 34px;
+  stroke: currentColor;
+  stroke-width: 3;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transform: rotate(180deg);
+}
+
 .divider-line { height: 1px; background-color: #ededed; width: 100%; max-width: 1400px; margin: 0 auto; }
 
 @media (max-width: 900px) {
@@ -1148,6 +1207,18 @@ select.form-control {
     width: 24px;
     height: 24px;
   }
+
+  .home-fab {
+    right: calc(1.15rem + env(safe-area-inset-right, 0px));
+    bottom: calc(1.35rem + env(safe-area-inset-bottom, 0px));
+    width: 62px;
+    height: 62px;
+  }
+
+  .home-fab-icon svg {
+    width: 30px;
+    height: 30px;
+  }
 }
 
 .page-section { padding: 4.5rem 0; background: #ffffff; border-top: none; }
@@ -1157,7 +1228,8 @@ select.form-control {
 .section-paragraph { font-family: 'Inter', sans-serif; font-size: 1rem; color: #666; line-height: 1.7; max-width: 800px; }
 
 .about-highlight-section {
-  background: linear-gradient(180deg, #f9f4ea 0%, #fffdf8 100%);
+  background-color: rgba(0, 0, 0, 0);
+  background-image: var(--section-gradient-a);
 }
 
 .about-highlight-container {
@@ -1368,7 +1440,8 @@ select.form-control {
 }
 
 .eligibility-guide-section {
-  background: #ece7df;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: var(--section-gradient-b);
 }
 
 .eligibility-guide-container {
@@ -1513,7 +1586,8 @@ select.form-control {
 }
 
 .scholarship-offer-section {
-  background: #ece7df;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: var(--section-gradient-b);
 }
 
 .scholarship-offer-container {
@@ -1609,7 +1683,8 @@ select.form-control {
 }
 
 .required-docs-section {
-  background: #f4eee5;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: var(--section-gradient-a);
 }
 
 .required-docs-container {
@@ -1619,9 +1694,10 @@ select.form-control {
 }
 
 .required-docs-shell {
-  border: 1px dashed #d4c6af;
-  border-radius: 16px;
-  background: #fffdf8;
+  border: 1px solid #dcc8a4;
+  border-radius: 18px;
+  background: #fffaf1;
+  box-shadow: 0 12px 24px rgba(74, 8, 10, 0.12);
   padding: 0 0.9rem 1rem;
   overflow: hidden;
 }
@@ -1629,8 +1705,8 @@ select.form-control {
 .required-docs-shell-topbar {
   margin: 0 -0.9rem;
   display: grid;
-  grid-template-columns: 1fr 0.5fr 1.5fr;
-  height: 7px;
+  grid-template-columns: 1fr 1fr 1fr;
+  height: 6px;
 }
 
 .required-docs-shell-topbar-a {
@@ -1652,6 +1728,7 @@ select.form-control {
   font-size: clamp(1.45rem, 3.1vw, 2rem);
   font-weight: 800;
   color: var(--primary-maroon);
+  letter-spacing: 0.2px;
 }
 
 .required-docs-panel {
@@ -1786,7 +1863,8 @@ select.form-control {
 }
 
 .scholarship-status-section {
-  background: linear-gradient(180deg, #f6efe3 0%, #ede2d3 100%);
+  background-color: rgba(0, 0, 0, 0);
+  background-image: var(--section-gradient-b);
 }
 
 .scholarship-status-container {
@@ -1921,7 +1999,8 @@ select.form-control {
 }
 
 .how-apply-section {
-  background: linear-gradient(180deg, #f6f1e8 0%, #ebe2d6 100%);
+  background-color: rgba(0, 0, 0, 0);
+  background-image: var(--section-gradient-a);
 }
 
 .how-apply-container {
@@ -1985,14 +2064,16 @@ select.form-control {
 }
 
 .how-apply-track {
+  --apply-gap: 0.9rem;
+  --apply-cards-per-view: 2;
   display: flex;
-  gap: 0.9rem;
+  gap: var(--apply-gap);
   transition: transform 320ms ease;
   will-change: transform;
 }
 
 .how-apply-card {
-  flex: 0 0 100%;
+  flex: 0 0 calc((100% - (var(--apply-cards-per-view) - 1) * var(--apply-gap)) / var(--apply-cards-per-view));
   min-width: 0;
   background: #fffdf8;
   border: 1px solid #e5d5bd;
@@ -2061,6 +2142,11 @@ select.form-control {
 .how-apply-nav:not(:disabled):hover {
   border-color: var(--secondary-gold);
   color: var(--primary-maroon);
+}
+
+#identity.page-section {
+  background-color: rgba(0, 0, 0, 0);
+  background-image: var(--section-gradient-a);
 }
 
 @media (max-width: 900px) {
@@ -2220,6 +2306,11 @@ select.form-control {
   .how-apply-carousel {
     grid-template-columns: 40px minmax(0, 1fr) 40px;
     gap: 0.55rem;
+  }
+
+  .how-apply-track {
+    --apply-gap: 0.55rem;
+    --apply-cards-per-view: 1;
   }
 
   .how-apply-card {
