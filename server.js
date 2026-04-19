@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const applicationRoutes = require('./routes/applicationRoutes');
+const chatbotRoutes = require('./routes/chatbotRoutes');
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -13,6 +14,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // API Routes mounting
 app.use('/api/applications', applicationRoutes);
+app.use('/api/chatbot', chatbotRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

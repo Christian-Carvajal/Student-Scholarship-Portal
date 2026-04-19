@@ -682,20 +682,6 @@
       </div>
     </div>
 
-    <button
-      type="button"
-      class="home-fab"
-      id="homeFab"
-      aria-label="Back to Home"
-      aria-hidden="true"
-    >
-      <span class="home-fab-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" role="presentation" focusable="false">
-          <path d="M6 9l6 6 6-6" />
-        </svg>
-      </span>
-    </button>
-
     <script>
       // Philippine time display for hero nav.
       document.addEventListener("DOMContentLoaded", () => {
@@ -742,45 +728,6 @@
             heroArrowBtn.classList.remove("is-clicked");
           }, 320);
         });
-      });
-    </script>
-
-    <script>
-      // Show Home button once the user is well into scrolling past hero.
-      document.addEventListener("DOMContentLoaded", () => {
-        const homeFab = document.getElementById("homeFab");
-        const heroSection = document.querySelector(".hero-section");
-        const actionNav = document.querySelector(".action-nav");
-        if (!homeFab || !heroSection) return;
-
-        const getHomeFabThreshold = () => {
-          const navHeight = actionNav?.offsetHeight || 0;
-          const revealPoint =
-            heroSection.offsetTop + heroSection.offsetHeight * 0.62;
-          return Math.max(0, revealPoint - navHeight);
-        };
-
-        let homeFabThreshold = getHomeFabThreshold();
-
-        const syncHomeFabVisibility = () => {
-          const shouldShow = window.scrollY >= homeFabThreshold;
-          homeFab.classList.toggle("is-visible", shouldShow);
-          homeFab.setAttribute("aria-hidden", shouldShow ? "false" : "true");
-        };
-
-        homeFab.addEventListener("click", () => {
-          heroSection.scrollIntoView({ behavior: "smooth", block: "start" });
-        });
-
-        window.addEventListener("scroll", syncHomeFabVisibility, {
-          passive: true,
-        });
-        window.addEventListener("resize", () => {
-          homeFabThreshold = getHomeFabThreshold();
-          syncHomeFabVisibility();
-        });
-
-        syncHomeFabVisibility();
       });
     </script>
 
@@ -1040,6 +987,8 @@
         }
       });
     </script>
+
+    <script src="./js/chatbot-widget.js"></script>
 
     <footer
       id="contact"
