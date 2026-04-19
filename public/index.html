@@ -512,76 +512,108 @@
 
       <!-- Institutional Identity -->
       <section id="identity" class="page-section">
-        <div class="container section-grid">
-          <div class="content-block">
-            <h3 class="section-heading">Institutional Identity</h3>
-            <div style="margin-bottom: 1.5rem">
-              <h4
-                style="
-                  font-family: &quot;Cinzel&quot;, serif;
-                  font-size: 1.2rem;
-                  color: #7a1114;
-                  margin-bottom: 0.5rem;
-                "
-              >
-                Our Vision
-              </h4>
-              <p
-                style="
-                  font-family: &quot;Inter&quot;, sans-serif;
-                  color: #555;
-                  line-height: 1.6;
-                "
-              >
-                To emerge as a premier university in the Philippines, providing
-                a venue for the pursuit of excellence in academics, technology,
-                and research.
-              </p>
+        <div class="container scholarship-gallery-container">
+          <div class="scholarship-gallery-shell">
+            <div class="scholarship-gallery-topbar" aria-hidden="true">
+              <span class="scholarship-gallery-topbar-a"></span>
+              <span class="scholarship-gallery-topbar-b"></span>
+              <span class="scholarship-gallery-topbar-c"></span>
             </div>
-            <div style="margin-bottom: 1.5rem">
-              <h4
-                style="
-                  font-family: &quot;Cinzel&quot;, serif;
-                  font-size: 1.2rem;
-                  color: #7a1114;
-                  margin-bottom: 0.5rem;
-                "
+
+            <h3 class="scholarship-gallery-title">Scholarship Gallery</h3>
+
+            <div
+              class="scholarship-gallery-carousel"
+              id="identityGalleryCarousel"
+              aria-label="Scholarship Gallery"
+            >
+              <button
+                class="scholarship-gallery-nav scholarship-gallery-prev"
+                type="button"
+                aria-label="Previous scholarship images"
               >
-                Our Mission
-              </h4>
-              <p
-                style="
-                  font-family: &quot;Inter&quot;, sans-serif;
-                  color: #555;
-                  line-height: 1.6;
-                "
+                <span aria-hidden="true">&#8249;</span>
+              </button>
+
+              <div class="scholarship-gallery-viewport">
+                <div class="scholarship-gallery-track">
+                  <button
+                    class="scholarship-gallery-card"
+                    type="button"
+                    data-gallery-caption="Aboitiz Scholarship"
+                    aria-label="Open Aboitiz Scholarship image"
+                  >
+                    <img
+                      src="pictures/abotiz.jpg"
+                      alt="Aboitiz Scholarship"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <span class="scholarship-gallery-card-caption"
+                      >Aboitiz Scholarship</span
+                    >
+                  </button>
+
+                  <button
+                    class="scholarship-gallery-card"
+                    type="button"
+                    data-gallery-caption="SM Foundation Scholarship"
+                    aria-label="Open SM Foundation Scholarship image"
+                  >
+                    <img
+                      src="pictures/sm-foundation.png"
+                      alt="SM Foundation Scholarship"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <span class="scholarship-gallery-card-caption"
+                      >SM Foundation Scholarship</span
+                    >
+                  </button>
+
+                  <button
+                    class="scholarship-gallery-card"
+                    type="button"
+                    data-gallery-caption="Megaworld Foundation Scholarship"
+                    aria-label="Open Megaworld Foundation Scholarship image"
+                  >
+                    <img
+                      src="pictures/megaworld.png"
+                      alt="Megaworld Foundation Scholarship"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <span class="scholarship-gallery-card-caption"
+                      >Megaworld Foundation Scholarship</span
+                    >
+                  </button>
+
+                  <button
+                    class="scholarship-gallery-card"
+                    type="button"
+                    data-gallery-caption="Ayala Foundation Scholarship"
+                    aria-label="Open Ayala Foundation Scholarship image"
+                  >
+                    <img
+                      src="pictures/ayala-foundation.png"
+                      alt="Ayala Foundation Scholarship"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <span class="scholarship-gallery-card-caption"
+                      >Ayala Foundation Scholarship</span
+                    >
+                  </button>
+                </div>
+              </div>
+
+              <button
+                class="scholarship-gallery-nav scholarship-gallery-next"
+                type="button"
+                aria-label="Next scholarship images"
               >
-                Dedicated to the development of the Filipino as a leader;
-                graduating dynamic students committed to the highest quality of
-                life.
-              </p>
-            </div>
-            <div>
-              <h4
-                style="
-                  font-family: &quot;Cinzel&quot;, serif;
-                  font-size: 1.2rem;
-                  color: #7a1114;
-                  margin-bottom: 0.5rem;
-                "
-              >
-                Core Values
-              </h4>
-              <p
-                style="
-                  font-family: &quot;Inter&quot;, sans-serif;
-                  color: #555;
-                  line-height: 1.6;
-                "
-              >
-                Love of God, Academic Excellence, and Filipino Christian
-                Leadership.
-              </p>
+                <span aria-hidden="true">&#8250;</span>
+              </button>
             </div>
           </div>
         </div>
@@ -589,6 +621,66 @@
 
       <div class="divider-line"></div>
     </main>
+
+    <div
+      id="identityGalleryModal"
+      class="modal-overlay modal-overlay--pop"
+      aria-hidden="true"
+    >
+      <div
+        class="modal-content scholarship-gallery-modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Scholarship gallery image preview"
+      >
+        <button
+          type="button"
+          class="scholarship-gallery-modal-close"
+          id="identityGalleryModalClose"
+          aria-label="Close scholarship gallery"
+        >
+          &times;
+        </button>
+
+        <div class="scholarship-gallery-modal-media">
+          <img
+            id="identityGalleryModalImage"
+            src="pictures/aboitiz.png"
+            alt="Scholarship Image Preview"
+            loading="eager"
+            decoding="async"
+          />
+        </div>
+
+        <p class="scholarship-gallery-modal-caption" id="identityGalleryModalCaption">
+          Scholarship Image
+        </p>
+
+        <div class="scholarship-gallery-modal-controls">
+          <button
+            type="button"
+            class="scholarship-gallery-modal-nav"
+            id="identityGalleryModalPrev"
+            aria-label="Previous image"
+          >
+            &#8249;
+          </button>
+
+          <span class="scholarship-gallery-modal-counter" id="identityGalleryModalCounter"
+            >1/4</span
+          >
+
+          <button
+            type="button"
+            class="scholarship-gallery-modal-nav"
+            id="identityGalleryModalNext"
+            aria-label="Next image"
+          >
+            &#8250;
+          </button>
+        </div>
+      </div>
+    </div>
 
     <button
       type="button"
@@ -791,6 +883,161 @@
               ? { cardsPerView: 1, stepSize: 1 }
               : { cardsPerView: 2, stepSize: 2 },
         });
+
+        initSingleCardCarousel({
+          id: "identityGalleryCarousel",
+          trackSelector: ".scholarship-gallery-track",
+          cardSelector: ".scholarship-gallery-card",
+          prevSelector: ".scholarship-gallery-prev",
+          nextSelector: ".scholarship-gallery-next",
+          getBehavior: () => {
+            if (window.matchMedia("(max-width: 680px)").matches) {
+              return { cardsPerView: 1, stepSize: 1 };
+            }
+
+            if (window.matchMedia("(max-width: 1100px)").matches) {
+              return { cardsPerView: 2, stepSize: 1 };
+            }
+
+            return { cardsPerView: 4, stepSize: 1 };
+          },
+        });
+
+        const identityGalleryModal = document.getElementById(
+          "identityGalleryModal",
+        );
+        const identityGalleryCards = Array.from(
+          document.querySelectorAll(".scholarship-gallery-card"),
+        );
+        const identityGalleryModalImage = document.getElementById(
+          "identityGalleryModalImage",
+        );
+        const identityGalleryModalCaption = document.getElementById(
+          "identityGalleryModalCaption",
+        );
+        const identityGalleryModalCounter = document.getElementById(
+          "identityGalleryModalCounter",
+        );
+        const identityGalleryModalPrev = document.getElementById(
+          "identityGalleryModalPrev",
+        );
+        const identityGalleryModalNext = document.getElementById(
+          "identityGalleryModalNext",
+        );
+        const identityGalleryModalClose = document.getElementById(
+          "identityGalleryModalClose",
+        );
+
+        if (
+          identityGalleryModal &&
+          identityGalleryCards.length &&
+          identityGalleryModalImage &&
+          identityGalleryModalCaption &&
+          identityGalleryModalCounter &&
+          identityGalleryModalPrev &&
+          identityGalleryModalNext &&
+          identityGalleryModalClose
+        ) {
+          let activeImageIndex = 0;
+          let closeModalTimer = null;
+
+          const syncGalleryModal = () => {
+            const activeCard = identityGalleryCards[activeImageIndex];
+            const activeImage = activeCard.querySelector("img");
+            const activeCaption =
+              activeCard.getAttribute("data-gallery-caption") ||
+              activeImage?.alt ||
+              "Scholarship Image";
+
+            if (!activeImage) return;
+
+            identityGalleryModalImage.src = activeImage.src;
+            identityGalleryModalImage.alt = activeImage.alt || activeCaption;
+            identityGalleryModalCaption.textContent = activeCaption;
+            identityGalleryModalCounter.textContent = `${activeImageIndex + 1}/${identityGalleryCards.length}`;
+          };
+
+          const openGalleryModal = (index) => {
+            activeImageIndex = index;
+            syncGalleryModal();
+
+            if (closeModalTimer) {
+              window.clearTimeout(closeModalTimer);
+              closeModalTimer = null;
+            }
+
+            identityGalleryModal.classList.remove("is-closing");
+            identityGalleryModal.classList.add("is-open");
+            identityGalleryModal.setAttribute("aria-hidden", "false");
+            document.body.classList.add("gallery-modal-open");
+          };
+
+          const closeGalleryModal = () => {
+            if (!identityGalleryModal.classList.contains("is-open")) return;
+
+            identityGalleryModal.classList.remove("is-open");
+            identityGalleryModal.classList.add("is-closing");
+            identityGalleryModal.setAttribute("aria-hidden", "true");
+            document.body.classList.remove("gallery-modal-open");
+
+            if (closeModalTimer) window.clearTimeout(closeModalTimer);
+            closeModalTimer = window.setTimeout(() => {
+              identityGalleryModal.classList.remove("is-closing");
+              closeModalTimer = null;
+            }, 220);
+          };
+
+          const moveGalleryModal = (step) => {
+            const totalImages = identityGalleryCards.length;
+            activeImageIndex =
+              (activeImageIndex + step + totalImages) % totalImages;
+            syncGalleryModal();
+          };
+
+          identityGalleryCards.forEach((card, index) => {
+            card.addEventListener("click", () => {
+              openGalleryModal(index);
+            });
+          });
+
+          identityGalleryModalPrev.addEventListener("click", () => {
+            moveGalleryModal(-1);
+          });
+
+          identityGalleryModalNext.addEventListener("click", () => {
+            moveGalleryModal(1);
+          });
+
+          identityGalleryModalClose.addEventListener("click", () => {
+            closeGalleryModal();
+          });
+
+          identityGalleryModal.addEventListener("click", (event) => {
+            if (event.target === identityGalleryModal) {
+              closeGalleryModal();
+            }
+          });
+
+          document.addEventListener("keydown", (event) => {
+            if (!identityGalleryModal.classList.contains("is-open")) return;
+
+            if (event.key === "Escape") {
+              closeGalleryModal();
+              return;
+            }
+
+            if (event.key === "ArrowLeft") {
+              event.preventDefault();
+              moveGalleryModal(-1);
+              return;
+            }
+
+            if (event.key === "ArrowRight") {
+              event.preventDefault();
+              moveGalleryModal(1);
+            }
+          });
+        }
       });
     </script>
 
