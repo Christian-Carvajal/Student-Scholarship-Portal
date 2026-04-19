@@ -24,521 +24,433 @@
   <body class="is-landing">
     <!-- Action Nav Layer -->
     <div class="action-nav">
-      <div
-        class="nav-container"
-        style="
-          justify-content: space-between;
-          padding-top: 10px;
-          padding-bottom: 10px;
-        "
-      >
-        <div
-          class="header-brand"
-          style="display: flex; align-items: center; gap: 15px"
-        >
-          <img src="uphsd.svg" alt="UPHSD Logo" style="height: 50px" />
-          <span
-            style="
-              font-family: &quot;Cinzel&quot;, serif;
-              font-size: 1.4rem;
-              font-weight: 700;
-              color: #7a1114;
-            "
-            >STUDENT SCHOLARSHIP PORTAL</span
-          >
+      <div class="nav-container hero-nav-container">
+        <div class="hero-brand">
+          <img src="uphsd.svg" alt="UPHSD Logo" class="hero-brand-logo" />
+          <div class="hero-brand-copy">
+            <strong>Student Scholarship Portal</strong>
+            <span>University of Perpetual Help System DALTA - Molino</span>
+          </div>
+        </div>
+        <div class="hero-time-pill" id="heroTime" aria-live="polite">
+          Philippine Time
         </div>
       </div>
     </div>
 
     <main class="landing-main">
       <section class="hero-section">
+        <img
+          src="hero.svg"
+          alt=""
+          class="hero-bg-image"
+          loading="lazy"
+          decoding="async"
+          fetchpriority="low"
+          aria-hidden="true"
+        />
         <div class="container hero-grid">
           <div class="hero-text">
-            <h1 class="hero-title" style="font-size: 2.2rem">
-              Empowering the Next Generation of Perpetualite Leaders.
-            </h1>
-            <p
-              class="hero-desc"
-              style="font-size: 1.15rem; color: #444; max-width: 650px"
-            >
-              A streamlined, automated scholarship system for the University of
-              Perpetual Help System DALTA – Molino Campus. Apply today and let
-              your academic excellence pave the way for your future.
+            <p class="hero-kicker">UPHSD MOLINO CAMPUS</p>
+            <h1 class="hero-title">Student Scholarship Portal</h1>
+            <p class="hero-quote">
+              "Empowering the next generation of Perpetualite leaders."
             </p>
             <div class="hero-buttons">
-              <a href="login.html" class="btn-solid btn-gold"
-                >APPLY FOR SCHOLARSHIP</a
-              >
-              <a
-                href="#eligibility"
-                class="btn-solid btn-maroon"
-                style="text-decoration: none"
-                >CHECK MY ELIGIBILITY</a
+              <a href="login.html" class="btn-solid hero-cta"
+                >Apply for Scholarship</a
               >
             </div>
           </div>
-          <div class="hero-image">
-            <img src="uphsd.svg" alt="UPHSD Logo" class="huge-logo" />
-          </div>
         </div>
+        <a
+          href="#about"
+          class="hero-scroll-indicator"
+          aria-label="Scroll to About section"
+          >
+          <span aria-hidden="true" class="hero-scroll-icon">
+            <svg viewBox="0 0 24 24" role="presentation" focusable="false">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </span>
+        </a>
       </section>
 
       <div class="divider-line"></div>
 
       <!-- About the Program -->
-      <section id="about" class="page-section">
-        <div class="container section-grid" style="align-items: center">
-          <div class="content-block">
-            <h3 class="section-heading">
-              Character Building is Nation Building.
-            </h3>
-            <p class="section-paragraph">
-              The Student Scholarship Program at UPHSD Molino is designed to
-              honor the hard work and academic dedication of our students. By
-              automating the ranking and vetting process, we ensure a fair,
-              transparent, and efficient system that prioritizes candidates
-              based on their General Weighted Average (GWA) and specific
-              database criteria. We are committed to nurturing "Helpers of God"
-              who excel in academics and leadership.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <div class="divider-line"></div>
-
-      <!-- Available Scholarship Programs -->
-      <section
-        id="programs"
-        class="page-section"
-        style="background-color: #fafafa"
-      >
-        <div
-          class="container"
-          style="max-width: 1200px; margin: 0 auto; padding: 0 4rem"
-        >
-          <h3
-            class="section-heading"
-            style="text-align: center; margin-bottom: 3rem"
-          >
-            Available Scholarship Programs
-          </h3>
-          <div
-            style="
-              display: grid;
-              grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-              gap: 2rem;
-            "
-          >
-            <div
-              style="
-                background: #fff;
-                padding: 2rem;
-                border-top: 4px solid #7a1114;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-              "
-            >
-              <h4
-                style="
-                  font-family: &quot;Cinzel&quot;, serif;
-                  font-size: 1.3rem;
-                  color: #7a1114;
-                  margin-bottom: 1rem;
-                "
-              >
-                Entrance Scholarship
-              </h4>
-              <p
-                style="
-                  font-family: &quot;Inter&quot;, sans-serif;
-                  color: #555;
-                  line-height: 1.6;
-                "
-              >
-                Exclusive to incoming freshmen who graduated as Top 1 to 10 of
-                their Senior High School batch.
-              </p>
-            </div>
-
-            <div
-              style="
-                background: #fff;
-                padding: 2rem;
-                border-top: 4px solid #fdbb11;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-              "
-            >
-              <h4
-                style="
-                  font-family: &quot;Cinzel&quot;, serif;
-                  font-size: 1.3rem;
-                  color: #7a1114;
-                  margin-bottom: 1rem;
-                "
-              >
-                Academic Scholarship
-              </h4>
-              <p
-                style="
-                  font-family: &quot;Inter&quot;, sans-serif;
-                  color: #555;
-                  line-height: 1.6;
-                "
-              >
-                Awarded to currently enrolled students who maintain a superior
-                GWA in the preceding semester.
-              </p>
-            </div>
-
-            <div
-              style="
-                background: #fff;
-                padding: 2rem;
-                border-top: 4px solid #7a1114;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-              "
-            >
-              <h4
-                style="
-                  font-family: &quot;Cinzel&quot;, serif;
-                  font-size: 1.3rem;
-                  color: #7a1114;
-                  margin-bottom: 1rem;
-                "
-              >
-                Tamayo Grants
-              </h4>
-              <p
-                style="
-                  font-family: &quot;Inter&quot;, sans-serif;
-                  color: #555;
-                  line-height: 1.6;
-                "
-              >
-                Special financial assistance for students who demonstrate both
-                academic potential and financial need.
-              </p>
-            </div>
-
-            <div
-              style="
-                background: #fff;
-                padding: 2rem;
-                border-top: 4px solid #fdbb11;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-              "
-            >
-              <h4
-                style="
-                  font-family: &quot;Cinzel&quot;, serif;
-                  font-size: 1.3rem;
-                  color: #7a1114;
-                  margin-bottom: 1rem;
-                "
-              >
-                Performing Arts & Athletics
-              </h4>
-              <p
-                style="
-                  font-family: &quot;Inter&quot;, sans-serif;
-                  color: #555;
-                  line-height: 1.6;
-                "
-              >
-                Grants for students who represent the university in cultural and
-                sporting excellence.
-              </p>
-            </div>
-          </div>
+      <section id="about" class="page-section about-highlight-section">
+        <div class="container about-highlight-container">
+          <p class="about-highlight-kicker">Scholarship Assistance Hub</p>
+          <h3 class="about-highlight-title">Perpetual Scholarship Opportunities</h3>
+          <p class="about-highlight-subtitle">
+            Partnered with trusted agencies and foundations
+          </p>
+          <p class="about-highlight-copy">
+            We offer scholarship opportunities from top government agencies and
+            private organizations like CHED, DOST, TESDA, SM Foundation, Ayala
+            Foundation, and PCSO. These programs can help cover tuition,
+            provide monthly allowances, and support your studies or training,
+            depending on your qualifications and background.
+          </p>
+          <div class="about-highlight-tag">UPHSD Molino Scholarship Desk</div>
         </div>
       </section>
 
       <div class="divider-line"></div>
 
       <!-- Automated Eligibility Criteria -->
-      <section id="eligibility" class="page-section">
-        <div class="container section-grid">
-          <div class="content-block" style="flex: 1">
-            <h3 class="section-heading">Automated Eligibility Criteria</h3>
-            <p class="section-paragraph" style="margin-bottom: 1.5rem">
-              To ensure a factual and merit-based ranking, our system utilizes
-              the following GWA tiers for Academic Scholarships:
+      <section id="eligibility" class="page-section eligibility-guide-section">
+        <div class="container eligibility-guide-container">
+          <h3 class="eligibility-guide-title">Basic Qualification Criteria</h3>
+
+          <div class="eligibility-guide-stripe" aria-hidden="true">
+            <span class="eligibility-guide-stripe-a"></span>
+            <span class="eligibility-guide-stripe-b"></span>
+            <span class="eligibility-guide-stripe-c"></span>
+          </div>
+
+          <p class="eligibility-guide-copy">
+            To be eligible for the scholarship programs we offer, applicants
+            must meet the general requirements set by partner organizations
+            such as the Commission on Higher Education (CHED), Department of
+            Science and Technology (DOST), Technical Education and Skills
+            Development Authority (TESDA), SM Foundation, Ayala Foundation, and
+            Philippine Charity Sweepstakes Office (PCSO).
+          </p>
+
+          <p class="eligibility-guide-copy">
+            In general, applicants must be Filipino citizens who have completed
+            or are currently enrolled in senior high school or college. Most
+            programs require strong academic performance, typically ranging from
+            a general weighted average of 80% to 93%, depending on the
+            scholarship. Financial need is also a major consideration, with
+            income limits applied to ensure assistance is given to deserving
+            students.
+          </p>
+
+          <p class="eligibility-guide-copy">
+            Some scholarships are designed for specific groups, such as STEM
+            students, coconut farmer families, female students, or individuals
+            pursuing technical and vocational training. Applicants must also
+            comply with course-specific and program-specific requirements where
+            applicable.
+          </p>
+
+          <div class="eligibility-guide-reminder">
+            <span class="eligibility-guide-reminder-badge">IMPORTANT REMINDER</span>
+            <h4 class="eligibility-guide-reminder-title">Important Reminder for Students</h4>
+            <p>
+              Before applying, students are encouraged to carefully review the
+              requirements, benefits, and conditions of each scholarship
+              program. Since each scholarship differs in eligibility, coverage,
+              duration, and renewal policies, it is important to confirm that
+              you meet all qualifications before submitting your application.
             </p>
-            <ul
-              style="
-                font-family: &quot;Inter&quot;, sans-serif;
-                font-size: 1.05rem;
-                color: #444;
-                line-height: 1.8;
-                list-style: none;
-                padding-left: 0;
-                margin-bottom: 2rem;
-              "
-            >
-              <li style="margin-bottom: 10px">
-                <strong>Platinum Scholar (100% Tuition Discount):</strong> GWA
-                of 1.00 – 1.20
+
+            <ul class="eligibility-guide-reminder-list">
+              <li>
+                Prepare all required documents in advance, including academic
+                records, proof of income, and valid identification.
               </li>
-              <li style="margin-bottom: 10px">
-                <strong>Gold Scholar (50% Tuition Discount):</strong> GWA of
-                1.21 – 1.50
+              <li>
+                Meet all application deadlines to avoid delays or
+                disqualification due to late submission.
               </li>
-              <li style="margin-bottom: 10px">
-                <strong>Silver Scholar (25% Tuition Discount):</strong> GWA of
-                1.51 – 1.75
+              <li>
+                Maintain good academic standing and follow program rules,
+                including grade requirements, participation duties, or return
+                service obligations when required.
               </li>
             </ul>
-            <div
-              style="
-                background-color: #fff8e6;
-                border-left: 4px solid #fdbb11;
-                padding: 15px 20px;
-              "
-            >
-              <p
-                style="
-                  font-family: &quot;Inter&quot;, sans-serif;
-                  font-size: 0.95rem;
-                  color: #666;
-                  margin: 0;
-                "
-              >
-                <strong>Note:</strong> Applicants must have no grade lower than
-                85% in any subject and must carry a regular load as per the
-                curriculum checklist.
-              </p>
-            </div>
           </div>
         </div>
       </section>
 
       <div class="divider-line"></div>
 
-      <!-- How the System Works -->
-      <section
-        id="guide"
-        class="page-section"
-        style="background-color: #fafafa"
-      >
-        <div
-          class="container"
-          style="max-width: 1200px; margin: 0 auto; padding: 0 4rem"
-        >
-          <h3
-            class="section-heading"
-            style="text-align: center; margin-bottom: 3rem"
-          >
-            How the System Works
-          </h3>
-          <div style="display: grid; gap: 4rem; margin-top: 3rem">
-            <div
-              class="how-step scroll-fade"
-              style="
-                display: flex;
-                align-items: center;
-                gap: 3rem;
-                flex-wrap: wrap;
-              "
-            >
-              <div style="flex: 1; min-width: 300px; text-align: right">
-                <div
-                  style="
-                    color: #7a1114;
-                    font-family: &quot;Cinzel&quot;, serif;
-                    font-size: 2rem;
-                    font-weight: bold;
-                    margin-bottom: 0.5rem;
-                  "
-                >
-                  01
-                </div>
-                <h4
-                  style="
-                    font-family: &quot;Cinzel&quot;, serif;
-                    font-size: 1.4rem;
-                    color: #000;
-                    margin-bottom: 1rem;
-                  "
-                >
-                  Register
-                </h4>
-                <p
-                  style="
-                    font-family: &quot;Inter&quot;, sans-serif;
-                    color: #666;
-                    line-height: 1.6;
-                    font-size: 1rem;
-                  "
-                >
-                  Create your account using your Perpetualite Student ID. Our
-                  secure portal ensures your data is protected.
-                </p>
-              </div>
-              <div style="flex: 1; min-width: 300px; text-align: left">
-                <img
-                  src="uphsd.svg"
-                  alt="Step 1 Image Placeholder"
-                  style="max-width: 180px; opacity: 0.9"
-                />
+      <!-- How to Apply -->
+      <section id="guide" class="page-section how-apply-section">
+        <div class="container how-apply-container">
+          <p class="how-apply-kicker">How to Apply</p>
+          <h3 class="how-apply-title">HOW TO APPLY TO OUR SCHOLARSHIP</h3>
+
+          <div class="how-apply-stripe" aria-hidden="true">
+            <span class="how-apply-stripe-a"></span>
+            <span class="how-apply-stripe-b"></span>
+            <span class="how-apply-stripe-c"></span>
+          </div>
+
+          <div class="how-apply-carousel" id="howApplyCarousel">
+            <button class="how-apply-nav how-apply-prev" type="button" aria-label="Previous steps">
+              <span aria-hidden="true">&#8249;</span>
+            </button>
+
+            <div class="how-apply-viewport">
+              <div class="how-apply-track">
+                <article class="how-apply-card">
+                  <h4>Create or Login Account</h4>
+                  <p>
+                    Register using your Student ID, or sign in if you already
+                    have credentials.
+                  </p>
+                  <div class="how-apply-card-step">1</div>
+                </article>
+
+                <article class="how-apply-card">
+                  <h4>Available Scholarship Programs</h4>
+                  <p>
+                    Open Browse Scholarships, use search and GWA filters, then
+                    click Apply on your chosen scholarship program.
+                  </p>
+                  <div class="how-apply-card-step">2</div>
+                </article>
+
+                <article class="how-apply-card">
+                  <h4>Complete the Application Form</h4>
+                  <p>
+                    Fill out personal, academic, and contact details including
+                    your program, year level, and letter of intent.
+                  </p>
+                  <div class="how-apply-card-step">3</div>
+                </article>
+
+                <article class="how-apply-card">
+                  <h4>Upload All Required Documents</h4>
+                  <p>
+                    Submit identity, academic, enrollment, income, character,
+                    and photo documents before final submission.
+                  </p>
+                  <div class="how-apply-card-step">4</div>
+                </article>
+
+                <article class="how-apply-card">
+                  <h4>Submit for Validation</h4>
+                  <p>
+                    The system checks completeness, eligibility, and duplicate
+                    submissions before recording your application.
+                  </p>
+                  <div class="how-apply-card-step">5</div>
+                </article>
+
+                <article class="how-apply-card">
+                  <h4>Track Status and Notifications</h4>
+                  <p>
+                    Monitor updates in My Tracker and receive status alerts in
+                    your notification bell until a final decision is posted.
+                  </p>
+                  <div class="how-apply-card-step">6</div>
+                </article>
               </div>
             </div>
 
-            <div
-              class="how-step scroll-fade"
-              style="
-                display: flex;
-                align-items: center;
-                gap: 3rem;
-                flex-wrap: wrap;
-                flex-direction: row-reverse;
-              "
-            >
-              <div style="flex: 1; min-width: 300px; text-align: left">
-                <div
-                  style="
-                    color: #fdbb11;
-                    font-family: &quot;Cinzel&quot;, serif;
-                    font-size: 2rem;
-                    font-weight: bold;
-                    margin-bottom: 0.5rem;
-                  "
-                >
-                  02
-                </div>
-                <h4
-                  style="
-                    font-family: &quot;Cinzel&quot;, serif;
-                    font-size: 1.4rem;
-                    color: #000;
-                    margin-bottom: 1rem;
-                  "
-                >
-                  Apply
-                </h4>
-                <p
-                  style="
-                    font-family: &quot;Inter&quot;, sans-serif;
-                    color: #666;
-                    line-height: 1.6;
-                    font-size: 1rem;
-                  "
-                >
-                  Submit your digital Form 138 or Transcript of Records (TOR).
-                  Easily upload and manage your requirements.
-                </p>
-              </div>
-              <div style="flex: 1; min-width: 300px; text-align: right">
-                <img
-                  src="uphsd.svg"
-                  alt="Step 2 Image Placeholder"
-                  style="max-width: 180px; opacity: 0.9"
-                />
-              </div>
+            <button class="how-apply-nav how-apply-next" type="button" aria-label="Next steps">
+              <span aria-hidden="true">&#8250;</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <div class="divider-line"></div>
+
+      <!-- Scholarship We Offer -->
+      <section id="scholarships-offer" class="page-section scholarship-offer-section">
+        <div class="container scholarship-offer-container">
+          <h3 class="scholarship-offer-title">Scholarship We Offer</h3>
+
+          <div class="scholarship-offer-stripe" aria-hidden="true">
+            <span class="scholarship-offer-stripe-a"></span>
+            <span class="scholarship-offer-stripe-b"></span>
+            <span class="scholarship-offer-stripe-c"></span>
+          </div>
+
+          <div class="scholarship-offer-grid">
+            <article class="scholarship-offer-card">
+              <h4>SM College Scholarship</h4>
+              <span class="scholarship-offer-amount">Amount per year: ~&#8369;80K - &#8369;120K</span>
+              <p>
+                Offered by SM Foundation, this scholarship supports incoming
+                college students with strong academic performance and financial
+                need. It covers full tuition, provides monthly allowance,
+                leadership training, and possible employment opportunities
+                within SM after graduation.
+              </p>
+            </article>
+
+            <article class="scholarship-offer-card">
+              <h4>Security Bank Scholarship Program</h4>
+              <span class="scholarship-offer-amount">Amount per year: ~&#8369;60K - &#8369;100K</span>
+              <p>
+                Provided by Security Bank Foundation, this scholarship is aimed
+                at financially challenged but deserving students. It typically
+                includes tuition assistance, allowance, and mentoring support
+                throughout the student&#39;s college education.
+              </p>
+            </article>
+
+            <article class="scholarship-offer-card">
+              <h4>Megaworld Foundation Scholarship</h4>
+              <span class="scholarship-offer-amount">Amount per year: ~&#8369;70K - &#8369;120K</span>
+              <p>
+                The Megaworld Foundation offers scholarships to students in
+                partner schools, especially those taking business, IT, and
+                engineering courses. It provides full or partial tuition,
+                allowance, and career opportunities within Megaworld companies.
+              </p>
+            </article>
+
+            <article class="scholarship-offer-card">
+              <h4>Aboitiz Scholarship Program</h4>
+              <span class="scholarship-offer-amount">Amount per year: ~&#8369;60K - &#8369;100K</span>
+              <p>
+                Offered by Aboitiz Foundation, this scholarship supports
+                students in priority fields such as engineering, business, and
+                IT. It includes tuition assistance, leadership training, and
+                opportunities to work within Aboitiz companies after graduation.
+              </p>
+            </article>
+
+            <article class="scholarship-offer-card">
+              <h4>Ayala U-Go Scholarship</h4>
+              <span class="scholarship-offer-amount">Amount per year: ~&#8369;60K - &#8369;120K</span>
+              <p>
+                Supported by Ayala Foundation, this program focuses on female
+                students with strong academic potential and financial need. It
+                provides tuition support, living allowance, and mentorship
+                programs.
+              </p>
+            </article>
+
+            <article class="scholarship-offer-card">
+              <h4>BDO Foundation Scholarship</h4>
+              <span class="scholarship-offer-amount">Amount per year: ~&#8369;50K - &#8369;90K</span>
+              <p>
+                The BDO Foundation offers educational assistance to qualified
+                students, especially in business and finance-related programs.
+                It includes tuition support and financial assistance.
+              </p>
+            </article>
+
+            <article class="scholarship-offer-card">
+              <h4>Metrobank Foundation Scholarship</h4>
+              <span class="scholarship-offer-amount">Amount per year: ~&#8369;50K - &#8369;100K</span>
+              <p>
+                From Metrobank Foundation, this scholarship supports students
+                with strong academic standing and leadership potential. Benefits
+                include financial assistance and academic support programs.
+              </p>
+            </article>
+
+            <article class="scholarship-offer-card">
+              <h4>Globe Scholarship Program</h4>
+              <span class="scholarship-offer-amount">Amount per year: ~&#8369;60K - &#8369;120K</span>
+              <p>
+                Offered by Globe Telecom, this scholarship is usually aligned
+                with technology and digital-related courses. It may include
+                tuition support, training, and internship opportunities.
+              </p>
+            </article>
+
+            <article class="scholarship-offer-card">
+              <h4>PLDT-Smart Scholarship</h4>
+              <span class="scholarship-offer-amount">Amount per year: ~&#8369;60K - &#8369;120K</span>
+              <p>
+                Provided by PLDT-Smart Foundation, this program supports
+                students in ICT and engineering fields. It includes tuition,
+                allowance, and potential employment pathways in telecom
+                industries.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Required Documents -->
+      <section id="required-docs" class="page-section required-docs-section">
+        <div class="container required-docs-container">
+          <div class="required-docs-shell">
+            <div class="required-docs-shell-topbar" aria-hidden="true">
+              <span class="required-docs-shell-topbar-a"></span>
+              <span class="required-docs-shell-topbar-b"></span>
+              <span class="required-docs-shell-topbar-c"></span>
             </div>
 
-            <div
-              class="how-step scroll-fade"
-              style="
-                display: flex;
-                align-items: center;
-                gap: 3rem;
-                flex-wrap: wrap;
-              "
-            >
-              <div style="flex: 1; min-width: 300px; text-align: right">
-                <div
-                  style="
-                    color: #7a1114;
-                    font-family: &quot;Cinzel&quot;, serif;
-                    font-size: 2rem;
-                    font-weight: bold;
-                    margin-bottom: 0.5rem;
-                  "
-                >
-                  03
-                </div>
-                <h4
-                  style="
-                    font-family: &quot;Cinzel&quot;, serif;
-                    font-size: 1.4rem;
-                    color: #000;
-                    margin-bottom: 1rem;
-                  "
-                >
-                  Vetting
-                </h4>
-                <p
-                  style="
-                    font-family: &quot;Inter&quot;, sans-serif;
-                    color: #666;
-                    line-height: 1.6;
-                    font-size: 1rem;
-                  "
-                >
-                  Our system automatically calculates your ranking based on the
-                  department’s database criteria for an unbiased result.
-                </p>
-              </div>
-              <div style="flex: 1; min-width: 300px; text-align: left">
-                <img
-                  src="uphsd.svg"
-                  alt="Step 3 Image Placeholder"
-                  style="max-width: 180px; opacity: 0.9"
-                />
-              </div>
+            <h3 class="required-docs-title">Required Documents</h3>
+
+            <div class="required-docs-panel required-docs-panel-highlight">
+              <h4>Prepare TWO (2) Sets:</h4>
+              <ul class="required-docs-set-list">
+                <li>
+                  <span class="required-docs-set-badge">SET 1</span>
+                  <span><strong>Authenticated / Certified true copies and photocopies</strong> - for submission.</span>
+                </li>
+                <li>
+                  <span class="required-docs-set-badge">SET 2</span>
+                  <span><strong>Original copies</strong> - for office verification.</span>
+                </li>
+              </ul>
             </div>
 
-            <div
-              class="how-step scroll-fade"
-              style="
-                display: flex;
-                align-items: center;
-                gap: 3rem;
-                flex-wrap: wrap;
-                flex-direction: row-reverse;
-              "
-            >
-              <div style="flex: 1; min-width: 300px; text-align: left">
-                <div
-                  style="
-                    color: #fdbb11;
-                    font-family: &quot;Cinzel&quot;, serif;
-                    font-size: 2rem;
-                    font-weight: bold;
-                    margin-bottom: 0.5rem;
-                  "
-                >
-                  04
-                </div>
-                <h4
-                  style="
-                    font-family: &quot;Cinzel&quot;, serif;
-                    font-size: 1.4rem;
-                    color: #000;
-                    margin-bottom: 1rem;
-                  "
-                >
-                  Notification
-                </h4>
-                <p
-                  style="
-                    font-family: &quot;Inter&quot;, sans-serif;
-                    color: #666;
-                    line-height: 1.6;
-                    font-size: 1rem;
-                  "
-                >
-                  Receive an automated status update once your application is
-                  processed and ranked by the scholarship committee.
-                </p>
-              </div>
-              <div style="flex: 1; min-width: 300px; text-align: right">
-                <img
-                  src="uphsd.svg"
-                  alt="Step 4 Image Placeholder"
-                  style="max-width: 180px; opacity: 0.9"
-                />
-              </div>
+            <div class="required-docs-panel">
+              <span class="required-docs-label">For Renewing Applicants</span>
+              <h4 class="required-docs-subtitle">Required documents:</h4>
+              <ol class="required-docs-numbered-list">
+                <li>
+                  Enrollment Proof - Certificate of Enrollment or Registration Form
+                  (PDF).
+                </li>
+                <li>Academic Proof - latest Form 138 or TOR (PDF).</li>
+                <li>
+                  Proof of Identity - valid government-issued ID or PSA Birth
+                  Certificate (PDF/JPG/JPEG/PNG).
+                </li>
+              </ol>
+            </div>
+
+            <div class="required-docs-panel">
+              <span class="required-docs-label">For New Applicants</span>
+              <h4 class="required-docs-subtitle">Required documents:</h4>
+              <ol class="required-docs-numbered-list">
+                <li>
+                  Enrollment Proof - Certificate of Enrollment or Registration Form
+                  (PDF).
+                </li>
+                <li>Academic Proof - latest Form 138 or TOR (PDF).</li>
+                <li>
+                  Proof of Identity - valid government-issued ID or PSA Birth
+                  Certificate (PDF/JPG/JPEG/PNG).
+                </li>
+                <li>
+                  Proof of Income - ITR, Tax Exemption, or Certificate of
+                  Indigency (PDF/JPG/JPEG/PNG).
+                </li>
+                <li>Character Reference - Certificate of Good Moral (PDF).</li>
+                <li>Recent Photo - 2x2 ID picture (JPG/JPEG/PNG).</li>
+              </ol>
+            </div>
+
+            <div class="required-docs-panel">
+              <span class="required-docs-label">Additional Supporting Documents (If Applicable)</span>
+              <ol class="required-docs-numbered-list required-docs-numbered-grid">
+                <li>Proof of Income for all earning household members.</li>
+                <li>Updated Character Reference from adviser/dean.</li>
+                <li>Recent Photo with white background and name label.</li>
+                <li>Enrollment load summary for unit verification.</li>
+                <li>Academic standing summary from the previous term.</li>
+                <li>Identity revalidation if submitted ID is expired.</li>
+              </ol>
+            </div>
+
+            <div class="required-docs-id-strip">
+              <strong>List of acceptable IDs:</strong>
+              <span>School ID</span>
+              <span>Passport</span>
+              <span>National ID</span>
+              <span>Driver&#39;s License</span>
+              <span>Voter&#39;s ID</span>
+              <span>PhilHealth ID</span>
+              <span>Postal ID</span>
+              <span>Senior / PWD ID</span>
             </div>
           </div>
         </div>
@@ -624,74 +536,127 @@
       </section>
 
       <div class="divider-line"></div>
-
-      <!-- FAQ Section -->
-      <section id="faq" class="page-section" style="background-color: #fafafa">
-        <div class="container section-grid">
-          <div class="content-block">
-            <h3 class="section-heading">Frequently Asked Questions</h3>
-            <div class="faq-list" id="faqAccordion">
-              <div class="faq-item">
-                <div class="faq-question">
-                  How does the automated ranking work? <span>+</span>
-                </div>
-                <div class="faq-answer">
-                  Rankings are calculated dynamically based on your cumulative
-                  GPA compared against the minimum threshold set by the system
-                  administrator.
-                </div>
-              </div>
-              <div class="faq-item">
-                <div class="faq-question">
-                  Can I apply for multiple scholarships? <span>+</span>
-                </div>
-                <div class="faq-answer">
-                  Yes, as long as you meet the eligibility requirements for
-                  each specific fund. Ensure your essays are tailored
-                  appropriately.
-                </div>
-              </div>
-              <div class="faq-item">
-                <div class="faq-question">
-                  Who is eligible for the UPHSD Gold Tier grant?
-                  <span>+</span>
-                </div>
-                <div class="faq-answer">
-                  You must have completed at least 2 full semesters as a
-                  regular student with no record of disciplinary action.
-                </div>
-              </div>
-              <div class="faq-item">
-                <div class="faq-question">
-                  What file types are accepted for requirements?
-                  <span>+</span>
-                </div>
-                <div class="faq-answer">
-                  Transcripts and letters should be uploaded as PDF. Student
-                  ID may be uploaded as JPG/PNG or PDF.
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
     </main>
 
     <script>
-      // FAQ Accordion Script for index.html
+      // Philippine time display for hero nav.
       document.addEventListener("DOMContentLoaded", () => {
-        const questions = document.querySelectorAll('#faqAccordion .faq-question');
-        questions.forEach(question => {
-          question.addEventListener('click', () => {
-            const faqItem = question.parentElement;
-            faqItem.classList.toggle('active');
-            const span = question.querySelector('span');
-            if (faqItem.classList.contains('active')) {
-              span.textContent = '-';
-            } else {
-              span.textContent = '+';
-            }
+        const heroTime = document.getElementById("heroTime");
+        if (!heroTime) return;
+
+        const updateTime = () => {
+          const now = new Date();
+          const day = now.toLocaleDateString("en-PH", {
+            weekday: "long",
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+            timeZone: "Asia/Manila",
           });
+          const time = now.toLocaleTimeString("en-PH", {
+            hour: "numeric",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: true,
+            timeZone: "Asia/Manila",
+          });
+          heroTime.textContent = `Philippine Time | ${day} | ${time}`;
+        };
+
+        updateTime();
+        setInterval(updateTime, 1000);
+      });
+    </script>
+
+    <script>
+      // Delay scroll and animate arrow click for smoother hero interaction.
+      document.addEventListener("DOMContentLoaded", () => {
+        const heroArrowBtn = document.querySelector(".hero-scroll-indicator");
+        const aboutSection = document.getElementById("about");
+        if (!heroArrowBtn || !aboutSection) return;
+
+        heroArrowBtn.addEventListener("click", (event) => {
+          event.preventDefault();
+          heroArrowBtn.classList.add("is-clicked");
+
+          setTimeout(() => {
+            aboutSection.scrollIntoView({ behavior: "smooth", block: "start" });
+            heroArrowBtn.classList.remove("is-clicked");
+          }, 320);
+        });
+      });
+    </script>
+
+    <script>
+      // Carousel navigation (single-card next / previous).
+      document.addEventListener("DOMContentLoaded", () => {
+        const initSingleCardCarousel = (config) => {
+          const carousel = document.getElementById(config.id);
+          if (!carousel) return;
+
+          const track = carousel.querySelector(config.trackSelector);
+          const cards = Array.from(track?.querySelectorAll(config.cardSelector) || []);
+          const prevBtn = carousel.querySelector(config.prevSelector);
+          const nextBtn = carousel.querySelector(config.nextSelector);
+
+          if (!track || cards.length === 0 || !prevBtn || !nextBtn) return;
+
+          let currentIndex = 0;
+
+          const getSlideWidth = () => {
+            const styles = window.getComputedStyle(track);
+            const gap = parseFloat(styles.gap || styles.columnGap || "0");
+            const gapPx = Number.isFinite(gap) ? gap : 0;
+            const cardWidth = cards[0].getBoundingClientRect().width;
+            return cardWidth + gapPx;
+          };
+
+          const refreshCarousel = () => {
+            const maxIndex = Math.max(0, cards.length - 1);
+            currentIndex = Math.min(currentIndex, maxIndex);
+
+            const offset = currentIndex * getSlideWidth();
+            track.style.transform = `translateX(-${offset}px)`;
+
+            prevBtn.disabled = currentIndex <= 0;
+            nextBtn.disabled = currentIndex >= maxIndex;
+          };
+
+          prevBtn.addEventListener("click", () => {
+            currentIndex = Math.max(0, currentIndex - 1);
+            refreshCarousel();
+          });
+
+          nextBtn.addEventListener("click", () => {
+            currentIndex = Math.min(cards.length - 1, currentIndex + 1);
+            refreshCarousel();
+          });
+
+          let resizeTimer = null;
+          window.addEventListener("resize", () => {
+            if (resizeTimer) window.clearTimeout(resizeTimer);
+            resizeTimer = window.setTimeout(() => {
+              refreshCarousel();
+            }, 100);
+          });
+
+          refreshCarousel();
+        };
+
+        initSingleCardCarousel({
+          id: "programsFlowCarousel",
+          trackSelector: ".programs-flow-track",
+          cardSelector: ".programs-flow-card",
+          prevSelector: ".programs-flow-prev",
+          nextSelector: ".programs-flow-next",
+        });
+
+        initSingleCardCarousel({
+          id: "howApplyCarousel",
+          trackSelector: ".how-apply-track",
+          cardSelector: ".how-apply-card",
+          prevSelector: ".how-apply-prev",
+          nextSelector: ".how-apply-next",
         });
       });
     </script>
