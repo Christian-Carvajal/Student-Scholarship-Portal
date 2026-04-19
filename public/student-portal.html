@@ -125,18 +125,33 @@
     </div>
 
     <!-- Student Documents Popup Modal -->
-    <div id="studentDocumentsModal" class="modal-overlay modal-overlay--pop hidden">
-      <div class="modal-content modal-content--scrollable student-docs-modal-content">
+    <div
+      id="studentDocumentsModal"
+      class="modal-overlay modal-overlay--pop hidden"
+    >
+      <div
+        class="modal-content modal-content--scrollable student-docs-modal-content"
+      >
         <div class="student-docs-modal-header">
           <div>
             <h3 id="studentDocumentsModalTitle">Application Documents</h3>
-            <div id="studentDocumentsModalMeta" class="student-docs-modal-meta"></div>
+            <div
+              id="studentDocumentsModalMeta"
+              class="student-docs-modal-meta"
+            ></div>
           </div>
-          <button id="studentDocumentsModalClose" type="button" class="btn btn-ghost btn-sm">
+          <button
+            id="studentDocumentsModalClose"
+            type="button"
+            class="btn btn-ghost btn-sm"
+          >
             Close
           </button>
         </div>
-        <div id="studentDocumentsModalBody" class="student-docs-modal-body"></div>
+        <div
+          id="studentDocumentsModalBody"
+          class="student-docs-modal-body"
+        ></div>
       </div>
     </div>
 
@@ -285,7 +300,11 @@
               class="form-control"
               style="flex: 3"
             />
-            <select id="scholarshipGwaFilter" class="form-control" style="flex: 2">
+            <select
+              id="scholarshipGwaFilter"
+              class="form-control"
+              style="flex: 2"
+            >
               <option value="">Filter GPA</option>
               <option value="1.50">1.50 and below (1.00 highest)</option>
               <option value="2.00">2.00 and below</option>
@@ -1343,13 +1362,16 @@
           <div class="view-grid view-grid--with-header">
             <div class="view-header">
               <p class="section-lead">
-                Documents are grouped by scholarship application. You can
-                update files while your application is pending or under review.
+                Documents are grouped by scholarship application. You can update
+                files while your application is pending or under review.
               </p>
             </div>
 
             <div class="view-primary">
-              <div id="studentDocumentApplicationCards" class="scholarship-doc-grid"></div>
+              <div
+                id="studentDocumentApplicationCards"
+                class="scholarship-doc-grid"
+              ></div>
             </div>
 
             <aside class="view-aside">
