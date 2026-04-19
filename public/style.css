@@ -1785,6 +1785,141 @@ select.form-control {
   color: var(--primary-maroon);
 }
 
+.scholarship-status-section {
+  background: linear-gradient(180deg, #f6efe3 0%, #ede2d3 100%);
+}
+
+.scholarship-status-container {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 4rem;
+}
+
+.scholarship-status-shell {
+  border: 1px solid #dcc8a4;
+  border-radius: 18px;
+  background: #fffaf1;
+  box-shadow: 0 12px 24px rgba(74, 8, 10, 0.12);
+  overflow: hidden;
+}
+
+.scholarship-status-shell-topbar {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  height: 6px;
+}
+
+.scholarship-status-shell-topbar-a {
+  background: #7a1114;
+}
+
+.scholarship-status-shell-topbar-b {
+  background: #fdbb11;
+}
+
+.scholarship-status-shell-topbar-c {
+  background: #4a080a;
+}
+
+.scholarship-status-title {
+  margin: 1rem 0 0.95rem;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(1.45rem, 3vw, 2rem);
+  font-weight: 800;
+  color: var(--primary-maroon);
+  letter-spacing: 0.2px;
+}
+
+.scholarship-status-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 0.9rem;
+  padding: 0 1rem 1rem;
+}
+
+.scholarship-status-card {
+  border: 1px solid #dfcfb2;
+  border-radius: 14px;
+  background: #fffdf8;
+  padding: 0.95rem 1rem;
+}
+
+.scholarship-status-card-offense {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.scholarship-status-card h4 {
+  margin: 0 0 0.8rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.03rem;
+  font-weight: 800;
+  color: var(--primary-maroon);
+}
+
+.scholarship-status-core-list {
+  margin: 0;
+  padding-left: 1.05rem;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.scholarship-status-core-list li {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.99rem;
+  line-height: 1.52;
+  color: #4f3f3a;
+}
+
+.scholarship-status-offense-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.65rem;
+  grid-template-rows: repeat(3, minmax(48px, auto));
+  align-content: start;
+}
+
+.scholarship-status-offense-list li {
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 0.7rem;
+  border: 1px solid #e1d4bd;
+  border-radius: 12px;
+  background: #fff7e9;
+  padding: 0.5rem 0.6rem;
+  min-height: 48px;
+}
+
+.scholarship-status-offense-list li span:last-child {
+  display: block;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.98rem;
+  line-height: 1.42;
+  color: #4f3f3a;
+}
+
+.scholarship-status-offense-badge {
+  min-width: 68px;
+  width: 68px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid #c98e00;
+  background: linear-gradient(135deg, #fff0c8, #f4d992);
+  color: #5f0d10;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 800;
+  flex-shrink: 0;
+  justify-self: start;
+}
+
 .how-apply-section {
   background: linear-gradient(180deg, #f6f1e8 0%, #ebe2d6 100%);
 }
@@ -1958,6 +2093,10 @@ select.form-control {
     padding: 0 1.35rem;
   }
 
+  .scholarship-status-container {
+    padding: 0 1.35rem;
+  }
+
   .required-docs-title {
     font-size: clamp(1.35rem, 6vw, 1.9rem);
   }
@@ -1980,6 +2119,26 @@ select.form-control {
 
   .required-docs-numbered-grid {
     grid-template-columns: 1fr;
+  }
+
+  .scholarship-status-grid {
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
+    padding: 0 0.65rem 0.75rem;
+  }
+
+  .scholarship-status-title {
+    font-size: clamp(1.3rem, 6vw, 1.75rem);
+    margin-top: 0.75rem;
+  }
+
+  .scholarship-status-card {
+    padding: 0.85rem 0.75rem;
+  }
+
+  .scholarship-status-offense-list li span:last-child,
+  .scholarship-status-core-list li {
+    font-size: 0.92rem;
   }
 
   .scholarship-offer-title {
