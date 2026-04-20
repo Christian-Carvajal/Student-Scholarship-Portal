@@ -66,8 +66,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (modalBtnOk) modalBtnOk.addEventListener("click", () => {
         const cb = modalConfirmCallback;
-        closeModal();
-        if (cb) cb();
+        if (!cb) {
+            closeModal();
+            return;
+        }
+
+        let shouldClose = true;
+        try {
+            shouldClose = cb() !== false;
+        } catch (error) {
+            console.error("Modal confirm callback failed:", error);
+        }
+
+        if (shouldClose) {
+            closeModal();
+        }
     });
 
     if (modalBtnCancel) modalBtnCancel.addEventListener("click", () => {
@@ -387,6 +400,40 @@ document.addEventListener("DOMContentLoaded", () => {
     const legendPending = document.getElementById("legendPending");
     const legendApproved = document.getElementById("legendApproved");
     const legendRejected = document.getElementById("legendRejected");
+    const dashboardStatButtons = Array.from(document.querySelectorAll(".dash-metric-btn[data-dashboard-stat]"));
+    const dashboardStatsModal = document.getElementById("dashboardStatsModal");
+    const dashboardStatsModalTitle = document.getElementById("dashboardStatsModalTitle");
+    const dashboardStatsModalMeta = document.getElementById("dashboardStatsModalMeta");
+    const dashboardStatsModalBody = document.getElementById("dashboardStatsModalBody");
+    const dashboardStatsModalClose = document.getElementById("dashboardStatsModalClose");
+
+    const DASHBOARD_STAT_CATEGORY_META = {
+        "total-applicants": {
+            title: "Total Applicants",
+            subtitle: "Showing one row per applicant using their latest application.",
+            dateColumnLabel: "Date Applied",
+        },
+        scholarships: {
+            title: "Scholarships",
+            subtitle: "Showing all available scholarship programs.",
+            dateColumnLabel: "Deadline",
+        },
+        "pending-review": {
+            title: "Pending Review",
+            subtitle: "Applications currently waiting for a final decision.",
+            dateColumnLabel: "Date Applied",
+        },
+        approved: {
+            title: "Approved Applications",
+            subtitle: "Applications that have been approved by the admin.",
+            dateColumnLabel: "Date Applied",
+        },
+        rejected: {
+            title: "Rejected Applications",
+            subtitle: "Applications that have been rejected by the admin.",
+            dateColumnLabel: "Date Applied",
+        },
+    };
 
     const formatInt = (n) => {
         try {
@@ -560,15 +607,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    async function refreshDashboardMetrics() {
+    async function refreshDashboardMetrics(options = {}) {
+        const { showLoadingPlaceholders = true } = options;
+
         startClock();
 
         // Default placeholders while loading
-        setMetricText(metricTotalApplicants, "—");
-        setMetricText(metricTotalScholarships, "—");
-        setMetricText(metricPendingReview, "—");
-        setMetricText(metricApproved, "—");
-        setMetricText(metricRejected, "—");
+        if (showLoadingPlaceholders) {
+            setMetricText(metricTotalApplicants, "—");
+            setMetricText(metricTotalScholarships, "—");
+            setMetricText(metricPendingReview, "—");
+            setMetricText(metricApproved, "—");
+            setMetricText(metricRejected, "—");
+        }
 
         try {
             const [appsRes, scholarshipsRes] = await Promise.all([
@@ -582,7 +633,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const apps = await appsRes.json();
             const scholarships = await scholarshipsRes.json();
 
-            const metrics = computeMetricsFromRows(apps, scholarships);
+            dashboardApplicationRows = Array.isArray(apps) ? apps : [];
+            dashboardScholarshipRows = Array.isArray(scholarships) ? scholarships : [];
+            dashboardDataIsLive = true;
+
+            const metrics = computeMetricsFromRows(dashboardApplicationRows, dashboardScholarshipRows);
 
             setMetricText(metricTotalApplicants, formatInt(metrics.totalApplicants));
             setMetricText(metricTotalScholarships, formatInt(metrics.totalScholarships));
@@ -594,7 +649,11 @@ document.addEventListener("DOMContentLoaded", () => {
             renderStatusDonut(metrics);
         } catch (err) {
             // Fallback to placeholder rows (demo mode) if API/DB isn't available.
-            const metrics = computeMetricsFromRows(reviewRows);
+            dashboardApplicationRows = Array.isArray(reviewRows) ? reviewRows.map((row) => ({ ...row })) : [];
+            dashboardScholarshipRows = Array.isArray(adminScholarshipRows) ? adminScholarshipRows.map((row) => ({ ...row })) : [];
+            dashboardDataIsLive = false;
+
+            const metrics = computeMetricsFromRows(dashboardApplicationRows, dashboardScholarshipRows);
             setMetricText(metricTotalApplicants, formatInt(metrics.totalApplicants));
             setMetricText(metricTotalScholarships, formatInt(metrics.totalScholarships));
             setMetricText(metricPendingReview, formatInt(metrics.pendingReview));
@@ -639,6 +698,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (targetId !== "view-review" && targetId !== "view-review-detail") {
             closeAdminDocumentsModal();
+        }
+
+        if (targetId !== "view-admin") {
+            closeDashboardStatsModal();
         }
 
         const highlightTarget = targetId === "view-review-detail" ? "view-review" : targetId;
@@ -717,6 +780,215 @@ document.addEventListener("DOMContentLoaded", () => {
         const d = new Date(input);
         if (Number.isNaN(d.getTime())) return String(input);
         return d.toISOString().slice(0, 10);
+    }
+
+    function normalizeDashboardApplicationRow(raw) {
+        const status = normalizeStatusLabel(raw?.status || raw?.application_status || raw?.autoVetStatus);
+        const rawApplicationId = raw?.application_id ?? raw?.id ?? "";
+        const applicationId = rawApplicationId !== "" ? String(rawApplicationId) : "N/A";
+        const applicantName =
+            raw?.student_name || raw?.applicant || raw?.name || raw?.full_name || "Unknown Applicant";
+        const scholarshipTitle = raw?.scholarship_title || raw?.scholarship || raw?.title || "N/A";
+        const appliedAtRaw = raw?.applied_at || raw?.submittedAt || raw?.submitted_at || null;
+
+        return {
+            sourceType: "application",
+            applicantName: String(applicantName),
+            scholarshipTitle: String(scholarshipTitle),
+            applicationId,
+            status,
+            dateApplied: formatDateOnly(appliedAtRaw),
+            studentId: String(raw?.student_id || raw?.studentId || ""),
+            appliedAtRaw,
+            sortApplicationId: Number(rawApplicationId),
+        };
+    }
+
+    function normalizeDashboardScholarshipRow(raw) {
+        const rawScholarshipId = raw?.id ?? raw?.scholarship_id ?? "";
+        const scholarshipId = Number.isFinite(Number(rawScholarshipId))
+            ? `SCH-${Number(rawScholarshipId)}`
+            : "N/A";
+        const scholarshipTitle = raw?.title || raw?.scholarship_title || "Untitled Scholarship";
+        const deadlineOrDate = raw?.deadline || raw?.created_at || raw?.updated_at || null;
+        const status = normalizeScholarshipStatus(raw?.status || "published");
+
+        return {
+            sourceType: "scholarship",
+            applicantName: "N/A",
+            scholarshipTitle: String(scholarshipTitle),
+            applicationId: scholarshipId,
+            status,
+            dateApplied: formatDateOnly(deadlineOrDate),
+            sortScholarshipId: Number(rawScholarshipId),
+        };
+    }
+
+    function toSortableTimestamp(value) {
+        const ts = new Date(value || "").getTime();
+        return Number.isNaN(ts) ? 0 : ts;
+    }
+
+    function sortDashboardApplicationRows(rows) {
+        return rows
+            .slice()
+            .sort((a, b) => {
+                const byTime = toSortableTimestamp(b.appliedAtRaw) - toSortableTimestamp(a.appliedAtRaw);
+                if (byTime !== 0) return byTime;
+
+                const aId = Number.isFinite(Number(a.sortApplicationId)) ? Number(a.sortApplicationId) : 0;
+                const bId = Number.isFinite(Number(b.sortApplicationId)) ? Number(b.sortApplicationId) : 0;
+                return bId - aId;
+            });
+    }
+
+    function buildUniqueApplicantRows(rows) {
+        const latestByApplicant = new Map();
+
+        for (const row of rows) {
+            const keyBase = row.studentId || row.applicantName;
+            const dedupeKey = String(keyBase || "unknown").trim().toLowerCase();
+            if (!latestByApplicant.has(dedupeKey)) {
+                latestByApplicant.set(dedupeKey, row);
+            }
+        }
+
+        return Array.from(latestByApplicant.values());
+    }
+
+    function buildDashboardStatRows(categoryKey) {
+        const applicationRows = sortDashboardApplicationRows(
+            (Array.isArray(dashboardApplicationRows) ? dashboardApplicationRows : [])
+                .map((row) => normalizeDashboardApplicationRow(row))
+        );
+
+        if (categoryKey === "total-applicants") {
+            return buildUniqueApplicantRows(applicationRows);
+        }
+
+        if (categoryKey === "pending-review") {
+            return applicationRows.filter((row) => row.status !== "Approved" && row.status !== "Rejected");
+        }
+
+        if (categoryKey === "approved") {
+            return applicationRows.filter((row) => row.status === "Approved");
+        }
+
+        if (categoryKey === "rejected") {
+            return applicationRows.filter((row) => row.status === "Rejected");
+        }
+
+        if (categoryKey === "scholarships") {
+            return (Array.isArray(dashboardScholarshipRows) ? dashboardScholarshipRows : [])
+                .map((row) => normalizeDashboardScholarshipRow(row))
+                .sort((a, b) => {
+                    const aId = Number.isFinite(Number(a.sortScholarshipId)) ? Number(a.sortScholarshipId) : 0;
+                    const bId = Number.isFinite(Number(b.sortScholarshipId)) ? Number(b.sortScholarshipId) : 0;
+                    return bId - aId;
+                });
+        }
+
+        return [];
+    }
+
+    function renderDashboardStatsModalRows(categoryKey) {
+        if (!dashboardStatsModalBody) return;
+
+        const categoryMeta = DASHBOARD_STAT_CATEGORY_META[categoryKey];
+        const rows = buildDashboardStatRows(categoryKey);
+        const dateColumnLabel = categoryMeta?.dateColumnLabel || "Date Applied";
+
+        if (!rows.length) {
+            dashboardStatsModalBody.innerHTML =
+                '<div class="dashboard-stats-empty">No records found for this category.</div>';
+            return;
+        }
+
+        dashboardStatsModalBody.innerHTML = `
+            <div class="dashboard-stats-table-wrap">
+                <table class="data-table data-table--justified dashboard-stats-table">
+                    <thead>
+                        <tr>
+                            <th>Applicant Name</th>
+                            <th>Scholarship Title</th>
+                            <th>Application ID</th>
+                            <th>Status</th>
+                            <th>${escapeHtml(dateColumnLabel)}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rows.map((row) => {
+                            const statusBadge = row.sourceType === "application"
+                                ? `<span class="status-badge ${statusToBadgeClass(row.status)}">${escapeHtml(row.status)}</span>`
+                                : escapeHtml(row.status);
+
+                            return `
+                                <tr>
+                                    <td>${escapeHtml(row.applicantName)}</td>
+                                    <td>${escapeHtml(row.scholarshipTitle)}</td>
+                                    <td>${escapeHtml(row.applicationId)}</td>
+                                    <td>${statusBadge}</td>
+                                    <td>${escapeHtml(row.dateApplied)}</td>
+                                </tr>
+                            `;
+                        }).join("")}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+
+    function closeDashboardStatsModal() {
+        if (!dashboardStatsModal || dashboardStatsModal.classList.contains("hidden")) {
+            return;
+        }
+
+        dashboardStatsModal.classList.remove("is-open");
+        dashboardStatsModal.classList.add("is-closing");
+
+        window.setTimeout(() => {
+            dashboardStatsModal.classList.remove("is-closing");
+            dashboardStatsModal.classList.add("hidden");
+        }, MODAL_TRANSITION_MS);
+    }
+
+    async function openDashboardStatsModal(categoryKey) {
+        if (!dashboardStatsModal || !dashboardStatsModalBody) return;
+
+        const categoryMeta = DASHBOARD_STAT_CATEGORY_META[categoryKey];
+        if (!categoryMeta) return;
+
+        if (dashboardStatsModalTitle) {
+            dashboardStatsModalTitle.textContent = categoryMeta.title;
+        }
+
+        if (dashboardStatsModalMeta) {
+            const sourceText = dashboardDataIsLive
+                ? "Data source: live API."
+                : "Data source: demo fallback.";
+            dashboardStatsModalMeta.textContent = `${categoryMeta.subtitle} ${sourceText}`;
+        }
+
+        dashboardStatsModalBody.innerHTML = '<div class="dashboard-stats-empty">Loading records...</div>';
+        dashboardStatsModal.classList.remove("hidden");
+        dashboardStatsModal.classList.remove("is-closing");
+
+        window.requestAnimationFrame(() => {
+            dashboardStatsModal.classList.add("is-open");
+        });
+
+        await refreshDashboardMetrics({ showLoadingPlaceholders: false });
+
+        if (dashboardStatsModal.classList.contains("hidden")) return;
+
+        if (dashboardStatsModalMeta) {
+            const sourceText = dashboardDataIsLive
+                ? "Data source: live API."
+                : "Data source: demo fallback.";
+            dashboardStatsModalMeta.textContent = `${categoryMeta.subtitle} ${sourceText}`;
+        }
+
+        renderDashboardStatsModalRows(categoryKey);
     }
 
     const ADMIN_DOCUMENT_REQUIREMENTS = [
@@ -832,6 +1104,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let reviewRows = [];
     let selectedApplicationId = null;
     let adminScholarshipRows = [];
+    let dashboardApplicationRows = [];
+    let dashboardScholarshipRows = [];
+    let dashboardDataIsLive = false;
     const ADMIN_REVIEW_REFRESH_MS = 2000;
     let adminReviewRefreshTimer = null;
     let adminReviewRefreshBusy = false;
@@ -849,6 +1124,7 @@ document.addEventListener("DOMContentLoaded", () => {
             rows.map((row) => ({
                 id: String(row.id || ""),
                 status: String(row.autoVetStatus || ""),
+                rejectionReason: String(row.rejectionReason || ""),
                 progress: Number(row.reviewProgress || 0),
                 isDecided: Boolean(row.isDecided),
                 scholarship: String(row.scholarship || ""),
@@ -941,6 +1217,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     .filter((row) => Number.isInteger(Number(row?.id)) && Number(row.id) > 0)
                     .sort((a, b) => Number(b.id) - Number(a.id))
                 : [];
+            dashboardScholarshipRows = adminScholarshipRows.map((row) => ({ ...row }));
 
             renderAdminScholarshipTable();
         } catch (error) {
@@ -959,6 +1236,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const decided = status === "Approved" || status === "Rejected";
         const gpaRaw = raw.submitted_gpa ?? raw.gpa ?? raw.submittedGpa;
         const gpa = Number.isFinite(Number(gpaRaw)) ? Number(gpaRaw).toFixed(2) : "N/A";
+        const rejectionReason = String(raw.rejection_reason || raw.decision_notes || raw.change_note || "").trim();
 
         return {
             id: String(raw.application_id || raw.id || ""),
@@ -971,6 +1249,7 @@ document.addEventListener("DOMContentLoaded", () => {
             reviewProgress: decided ? 100 : 0,
             isDecided: decided,
             essay: raw.essay || raw.letter_of_intent || raw.application_letter_of_intent || "No essay submitted.",
+            rejectionReason,
             documents: Array.isArray(raw.documents) ? raw.documents : [],
         };
     }
@@ -1416,16 +1695,21 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(calculateProgress, 270);
     }
 
-    async function decideApplication(nextStatus) {
+    async function decideApplication(nextStatus, rejectionReason = "") {
         if (!selectedApplicationId) return;
 
         const appId = selectedApplicationId;
+        const payload = { status: nextStatus };
+
+        if (nextStatus === "Rejected") {
+            payload.rejection_reason = String(rejectionReason || "").trim();
+        }
 
         try {
             const res = await fetch(`/api/applications/${encodeURIComponent(appId)}/status`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ status: nextStatus }),
+                body: JSON.stringify(payload),
             });
 
             let body = null;
@@ -1499,6 +1783,28 @@ document.addEventListener("DOMContentLoaded", () => {
     loadReviewRows();
     loadAdminScholarships();
     startAdminReviewAutoRefresh();
+
+    dashboardStatButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const categoryKey = btn.getAttribute("data-dashboard-stat") || "";
+            if (!categoryKey) return;
+            openDashboardStatsModal(categoryKey);
+        });
+    });
+
+    if (dashboardStatsModalClose) {
+        dashboardStatsModalClose.addEventListener("click", () => {
+            closeDashboardStatsModal();
+        });
+    }
+
+    if (dashboardStatsModal) {
+        dashboardStatsModal.addEventListener("click", (event) => {
+            if (event.target === dashboardStatsModal) {
+                closeDashboardStatsModal();
+            }
+        });
+    }
 
     window.addEventListener("focus", () => {
         refreshReviewStateSilently();
@@ -1597,8 +1903,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape" && adminDocumentsModal && !adminDocumentsModal.classList.contains("hidden")) {
+        if (event.key !== "Escape") return;
+
+        if (adminDocumentsModal && !adminDocumentsModal.classList.contains("hidden")) {
             closeAdminDocumentsModal();
+        }
+
+        if (dashboardStatsModal && !dashboardStatsModal.classList.contains("hidden")) {
+            closeDashboardStatsModal();
         }
     });
 
@@ -1628,14 +1940,59 @@ document.addEventListener("DOMContentLoaded", () => {
     if (rejectBtn) {
         rejectBtn.addEventListener("click", () => {
             if (!selectedApplicationId) return;
+
+            const selectedRow = reviewRows.find((row) => row.id === String(selectedApplicationId));
+            const draftReason = String(selectedRow?.rejectionReason || "").trim();
+
             window.showModal(
-                "Reject",
-                `Reject application <b>${selectedApplicationId}</b>?`,
+                "Reject Application",
+                `
+                    <p style="margin-bottom:0.65rem;">Provide a reason for rejecting application <b>${escapeHtml(String(selectedApplicationId))}</b>.</p>
+                    <textarea
+                        id="rejectReasonInput"
+                        class="form-control"
+                        rows="5"
+                        maxlength="500"
+                        placeholder="Enter rejection reason"
+                        style="width:100%; resize:vertical; min-height:120px;"
+                    >${escapeHtml(draftReason)}</textarea>
+                    <div id="rejectReasonError" style="display:none; color:#8b0000; margin-top:0.5rem; font-size:0.92rem;">
+                        Rejection reason is required.
+                    </div>
+                `,
                 () => {
-                    decideApplication("Rejected");
+                    const reasonInput = document.getElementById("rejectReasonInput");
+                    const reasonError = document.getElementById("rejectReasonError");
+                    const rejectionReason = String(reasonInput?.value || "").trim();
+
+                    if (!rejectionReason) {
+                        if (reasonError) {
+                            reasonError.textContent = "Rejection reason is required.";
+                            reasonError.style.display = "block";
+                        }
+                        reasonInput?.focus();
+                        return false;
+                    }
+
+                    if (rejectionReason.length > 500) {
+                        if (reasonError) {
+                            reasonError.textContent = "Rejection reason must be 500 characters or fewer.";
+                            reasonError.style.display = "block";
+                        }
+                        reasonInput?.focus();
+                        return false;
+                    }
+
+                    decideApplication("Rejected", rejectionReason);
+                    return true;
                 },
-                { okText: "Reject", cancelText: "Cancel", showCancel: true }
+                { okText: "Confirm Reject", cancelText: "Cancel", showCancel: true }
             );
+
+            window.setTimeout(() => {
+                const reasonInput = document.getElementById("rejectReasonInput");
+                reasonInput?.focus();
+            }, 0);
         });
     }
 });

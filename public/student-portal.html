@@ -402,40 +402,82 @@
               <form id="applicationForm">
                 <!-- STEP 1: Fill Out Details -->
                 <div id="step1Content">
-                  <h3 class="subsection-title">Personal Information</h3>
+                  <div class="personal-top-layout">
+                    <h3 class="subsection-title personal-top-title">
+                      Personal Information
+                    </h3>
+
+                    <div class="personal-top-fields">
+                      <div class="form-group">
+                        <label>Full Name (Last, First, M.I.)</label>
+                        <input
+                          type="text"
+                          id="appFullName"
+                          class="form-control"
+                          required
+                          placeholder="e.g. Dela Cruz, Juan D."
+                          oninput="validateStep1()"
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label>Date of Birth</label>
+                        <input
+                          type="date"
+                          id="appDob"
+                          class="form-control"
+                          required
+                          onchange="validateStep1()"
+                        />
+                      </div>
+                      <div class="form-group form-group--full">
+                        <label>Permanent Address</label>
+                        <textarea
+                          id="appAddress"
+                          class="form-control"
+                          rows="2"
+                          required
+                          placeholder="e.g. 123 Example St., Las Pinas City"
+                          oninput="validateStep1()"
+                        ></textarea>
+                      </div>
+                    </div>
+
+                    <div class="profile-photo-upload" aria-live="polite">
+                      <input
+                        type="file"
+                        id="filePhoto"
+                        accept=".jpg,.jpeg,.png"
+                        class="hidden"
+                      />
+                      <button
+                        type="button"
+                        id="profilePhotoTrigger"
+                        class="profile-photo-trigger"
+                        title="Upload 2x2 photo"
+                        aria-label="Upload 2x2 photo"
+                      >
+                        <img
+                          id="profilePhotoPreview"
+                          class="profile-photo-preview hidden"
+                          alt="Uploaded 2x2 profile"
+                        />
+                        <svg
+                          id="profilePhotoPlaceholder"
+                          class="profile-photo-placeholder"
+                          viewBox="0 0 120 120"
+                          aria-hidden="true"
+                        >
+                          <circle cx="60" cy="40" r="24"></circle>
+                          <path d="M16 100c12-23 31-34 44-34s32 11 44 34"></path>
+                        </svg>
+                      </button>
+                      <div id="profilePhotoError" class="profile-photo-error">
+                        2x2 photo is required.
+                      </div>
+                    </div>
+                  </div>
+
                   <div class="form-grid">
-                    <div class="form-group">
-                      <label>Full Name (Last, First, M.I.)</label>
-                      <input
-                        type="text"
-                        id="appFullName"
-                        class="form-control"
-                        required
-                        placeholder="e.g. Dela Cruz, Juan D."
-                        oninput="validateStep1()"
-                      />
-                    </div>
-                    <div class="form-group">
-                      <label>Date of Birth</label>
-                      <input
-                        type="date"
-                        id="appDob"
-                        class="form-control"
-                        required
-                        onchange="validateStep1()"
-                      />
-                    </div>
-                    <div class="form-group" style="grid-column: 1 / -1">
-                      <label>Permanent Address</label>
-                      <textarea
-                        id="appAddress"
-                        class="form-control"
-                        rows="2"
-                        required
-                        placeholder="e.g. 123 Example St., Las Pinas City"
-                        oninput="validateStep1()"
-                      ></textarea>
-                    </div>
                     <div class="form-group">
                       <label>Contact Number</label>
                       <input
@@ -701,20 +743,6 @@
                       >
                     </div>
 
-                    <div class="form-group">
-                      <label>Recent Photo</label>
-                      <input
-                        type="file"
-                        id="filePhoto"
-                        accept=".jpg,.jpeg,.png"
-                        class="form-control req-file"
-                        required
-                        onchange="validateStep2()"
-                      />
-                      <small class="help-text"
-                        >2x2 ID Picture with white background (JPG/PNG).</small
-                      >
-                    </div>
                   </div>
 
                   <div
@@ -813,7 +841,15 @@
                       <div>
                         <strong>Files Uploaded:</strong>
                         <span id="revFiles" style="color: var(--primary-maroon)"
-                          >0/6</span
+                          >0/5</span
+                        >
+                      </div>
+                      <div>
+                        <strong>2x2 Photo:</strong>
+                        <span
+                          id="revProfilePhoto"
+                          style="color: var(--primary-maroon)"
+                          >Not uploaded</span
                         >
                       </div>
                       <div style="grid-column: 1 / -1">
@@ -951,6 +987,74 @@
                     }
                   }
 
+                  function updateProfilePhotoUi(options = {}) {
+                    const showError = Boolean(options.showError);
+                    const input = document.getElementById("filePhoto");
+                    const trigger = document.getElementById("profilePhotoTrigger");
+                    const preview = document.getElementById("profilePhotoPreview");
+                    const placeholder = document.getElementById(
+                      "profilePhotoPlaceholder",
+                    );
+                    const fileNameEl = document.getElementById(
+                      "profilePhotoFileName",
+                    );
+                    const errorEl = document.getElementById("profilePhotoError");
+
+                    const file = input?.files?.[0] || null;
+                    const hasPhoto = Boolean(file);
+
+                    if (fileNameEl) {
+                      fileNameEl.textContent = hasPhoto
+                        ? file.name
+                        : "No 2x2 photo selected.";
+                    }
+
+                    if (errorEl) {
+                      errorEl.style.display = showError && !hasPhoto ? "block" : "none";
+                    }
+
+                    if (trigger) {
+                      trigger.classList.toggle("is-missing", showError && !hasPhoto);
+                      trigger.classList.toggle("has-photo", hasPhoto);
+                      trigger.title = hasPhoto
+                        ? "Click to remove uploaded 2x2 photo"
+                        : "Upload 2x2 photo";
+                      trigger.setAttribute(
+                        "aria-label",
+                        hasPhoto
+                          ? "Remove uploaded 2x2 photo"
+                          : "Upload 2x2 photo",
+                      );
+                    }
+
+                    if (preview && placeholder) {
+                      if (!hasPhoto) {
+                        preview.removeAttribute("src");
+                        preview.classList.add("hidden");
+                        placeholder.classList.remove("hidden");
+                      } else {
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                          preview.src = String(reader.result || "");
+                          preview.classList.remove("hidden");
+                          placeholder.classList.add("hidden");
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }
+
+                    return hasPhoto;
+                  }
+
+                  function clearSelectedProfilePhoto() {
+                    const profilePhotoInput = document.getElementById("filePhoto");
+                    if (!profilePhotoInput) return;
+
+                    profilePhotoInput.value = "";
+                    updateProfilePhotoUi({ showError: step1AttemptedNext });
+                    validateStep1();
+                  }
+
                   document.addEventListener("DOMContentLoaded", () => {
                     // Set maximum date of birth to exactly 18 years ago to prevent selecting underage dates.
                     const dobEl = document.getElementById("appDob");
@@ -1016,6 +1120,54 @@
                         }
                       });
                     }
+
+                    const profilePhotoInput = document.getElementById("filePhoto");
+                    const profilePhotoTrigger = document.getElementById(
+                      "profilePhotoTrigger",
+                    );
+                    const profilePhotoPreview = document.getElementById(
+                      "profilePhotoPreview",
+                    );
+
+                    if (profilePhotoTrigger && profilePhotoInput) {
+                      profilePhotoTrigger.addEventListener("click", () => {
+                        if (profilePhotoInput.files?.[0]) {
+                          if (typeof window.showModal === "function") {
+                            window.showModal(
+                              "Remove Photo",
+                              "Do you want to remove the selected 2x2 photo?",
+                              () => {
+                                clearSelectedProfilePhoto();
+                              },
+                              {
+                                okText: "Remove",
+                                cancelText: "Cancel",
+                                showCancel: true,
+                              },
+                            );
+                          } else {
+                            const wantsRemove = window.confirm(
+                              "Remove the selected 2x2 photo?",
+                            );
+                            if (!wantsRemove) return;
+
+                            clearSelectedProfilePhoto();
+                          }
+                          return;
+                        }
+
+                        profilePhotoInput.click();
+                      });
+                    }
+
+                    if (profilePhotoInput) {
+                      profilePhotoInput.addEventListener("change", () => {
+                        updateProfilePhotoUi({ showError: step1AttemptedNext });
+                        validateStep1();
+                      });
+                    }
+
+                    updateProfilePhotoUi();
 
                     validateStep1();
                   });
@@ -1136,8 +1288,12 @@
                       }
                     }
 
+                    const hasProfilePhoto = updateProfilePhotoUi({
+                      showError: showRequiredMessages,
+                    });
+
                     const isStep1Valid =
-                      allFilled && emailValid && gwaValid && ageValid;
+                      allFilled && emailValid && gwaValid && ageValid && hasProfilePhoto;
 
                     // Keep Next clickable for guided validation; gate progression via goToStep().
                     const btn = document.getElementById("btnNextStep1");
@@ -1178,7 +1334,7 @@
                     });
 
                     const revFiles = document.getElementById("revFiles");
-                    if (revFiles) revFiles.textContent = uploadCount + "/6";
+                    if (revFiles) revFiles.textContent = uploadCount + "/5";
 
                     const btn = document.getElementById("btnNextStep2");
                     const step3Btn = document.getElementById("step3Btn");
@@ -1276,6 +1432,14 @@
                         document.getElementById("appGpa").value || "--";
                       document.getElementById("revEmail").textContent =
                         document.getElementById("appEmail").value || "--";
+                      const photoInput = document.getElementById("filePhoto");
+                      const revProfilePhoto =
+                        document.getElementById("revProfilePhoto");
+                      if (revProfilePhoto) {
+                        revProfilePhoto.textContent = photoInput?.files?.[0]
+                          ? photoInput.files[0].name
+                          : "Not uploaded";
+                      }
                       document.getElementById("revEssay").textContent =
                         document.getElementById("appEssay").value || "--";
                     }
@@ -1348,6 +1512,7 @@
                 <th>Scholarship Title</th>
                 <th>Date Applied</th>
                 <th>Status</th>
+                <th>Remarks</th>
               </tr>
             </thead>
             <tbody id="trackerTableBody">
@@ -1383,7 +1548,6 @@
                   <li>Enrollment Proof (Reg Form/COE)</li>
                   <li>Proof of Income (ITR/Tax Exemption/Indigency)</li>
                   <li>Character Reference (Good Moral)</li>
-                  <li>Recent Photo (2x2 with white background)</li>
                 </ul>
               </div>
 

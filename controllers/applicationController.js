@@ -7,6 +7,7 @@ const SCHOLARSHIP_STATUSES = new Set(['draft', 'published', 'closed', 'archived'
 const APPLICATION_STATUSES = new Set(['Submitted', 'Pending', 'Eligible', 'Under Review', 'Approved', 'Rejected', 'Withdrawn']);
 const DEFAULT_STUDENT_PASSWORD_HASH = '$2b$10$3mY7wqf8mDlp0xRb0Bf0Iu7QPtAxeLfTsxJbt4ow3Q8ht7eA5msZe';
 const SCHOLARSHIP_MINIMUM_KEYS = ['min_gpa', 'min_gwa', 'minimum_gwa', 'required_gwa', 'required_gpa'];
+const APPLICATION_DECISION_NOTE_KEYS = ['decision_notes', 'rejection_reason', 'rejection_note', 'decline_reason'];
 const FINAL_APPLICATION_STATUSES = new Set(['approved', 'rejected', 'denied']);
 const DOCUMENT_UPLOAD_META_BY_CODE = new Map(DOCUMENT_UPLOAD_FIELDS.map((entry) => [entry.code, entry]));
 const REQUIRED_APPLICATION_DOCUMENT_COUNT = DOCUMENT_UPLOAD_FIELDS.length;
@@ -1480,9 +1481,14 @@ exports.getAllApplications = async (_req, res) => {
     try {
         const hasDetails = await tableExists(connection, 'application_details');
         const hasStudentDocuments = await tableExists(connection, 'student_documents');
+        const hasStatusHistory = await tableExists(connection, 'application_status_history');
         const appColumns = await getTableColumns(connection, 'applications');
+        const decisionNoteColumn = getFirstExistingColumn(appColumns, APPLICATION_DECISION_NOTE_KEYS);
         const docColumns = hasStudentDocuments
             ? await getTableColumns(connection, 'student_documents')
+            : new Set();
+        const statusHistoryColumns = hasStatusHistory
+            ? await getTableColumns(connection, 'application_status_history')
             : new Set();
 
         let detailsSelect = '';
@@ -1525,6 +1531,39 @@ exports.getAllApplications = async (_req, res) => {
             `;
         }
 
+        let rejectionHistoryJoin = '';
+        if (
+            hasStatusHistory &&
+            statusHistoryColumns.has('application_id') &&
+            statusHistoryColumns.has('new_status') &&
+            statusHistoryColumns.has('change_note') &&
+            statusHistoryColumns.has('changed_at')
+        ) {
+            rejectionHistoryJoin = `
+                LEFT JOIN (
+                    SELECT
+                        h.application_id,
+                        SUBSTRING_INDEX(
+                            GROUP_CONCAT(h.change_note ORDER BY h.changed_at DESC SEPARATOR '\\n'),
+                            '\\n',
+                            1
+                        ) AS latest_rejection_reason
+                    FROM application_status_history h
+                    WHERE h.new_status = 'Rejected'
+                    GROUP BY h.application_id
+                ) ash ON ash.application_id = a.id
+            `;
+        }
+
+        let rejectionReasonSelect = 'NULL AS rejection_reason';
+        if (decisionNoteColumn && rejectionHistoryJoin) {
+            rejectionReasonSelect = `COALESCE(NULLIF(TRIM(a.${decisionNoteColumn}), ''), NULLIF(TRIM(ash.latest_rejection_reason), '')) AS rejection_reason`;
+        } else if (decisionNoteColumn) {
+            rejectionReasonSelect = `NULLIF(TRIM(a.${decisionNoteColumn}), '') AS rejection_reason`;
+        } else if (rejectionHistoryJoin) {
+            rejectionReasonSelect = `NULLIF(TRIM(ash.latest_rejection_reason), '') AS rejection_reason`;
+        }
+
         const [rows] = await connection.query(`
             SELECT
                 a.id AS application_id,
@@ -1535,6 +1574,7 @@ exports.getAllApplications = async (_req, res) => {
                 a.gpa AS submitted_gpa,
                 sch.min_gpa,
                 a.status,
+                ${rejectionReasonSelect},
                 a.applied_at,
                 ${essaySelect}
                 ${detailsSelect}
@@ -1544,6 +1584,7 @@ exports.getAllApplications = async (_req, res) => {
             JOIN scholarships sch ON a.scholarship_id = sch.id
             ${detailsJoin}
             ${docsJoin}
+            ${rejectionHistoryJoin}
             ORDER BY
                 CASE a.status
                     WHEN 'Approved' THEN 1
@@ -1578,6 +1619,7 @@ exports.updateApplicationStatus = async (req, res) => {
     const id = Number(req.params.id);
     const requestedStatus = (req.body?.status || '').toString().trim();
     const status = requestedStatus.toLowerCase() === 'denied' ? 'Rejected' : requestedStatus;
+    const rejectionReason = (req.body?.rejection_reason || '').toString().trim();
 
     if (!Number.isInteger(id) || id <= 0) {
         return res.status(400).json({ error: 'Invalid application id.' });
@@ -1585,6 +1627,14 @@ exports.updateApplicationStatus = async (req, res) => {
 
     if (!APPLICATION_STATUSES.has(status)) {
         return res.status(400).json({ error: 'Invalid application status.' });
+    }
+
+    if (status === 'Rejected' && !rejectionReason) {
+        return res.status(400).json({ error: 'Rejection reason is required when rejecting an application.' });
+    }
+
+    if (rejectionReason.length > 500) {
+        return res.status(400).json({ error: 'Rejection reason must be 500 characters or fewer.' });
     }
 
     const connection = await db.getConnection();
@@ -1621,6 +1671,11 @@ exports.updateApplicationStatus = async (req, res) => {
         }
 
         const appColumns = await getTableColumns(connection, 'applications');
+        const decisionNoteColumn = getFirstExistingColumn(appColumns, APPLICATION_DECISION_NOTE_KEYS);
+        const hasStatusHistory = await tableExists(connection, 'application_status_history');
+        const statusHistoryColumns = hasStatusHistory
+            ? await getTableColumns(connection, 'application_status_history')
+            : new Set();
         const assignments = ['status = ?'];
         const values = [status];
 
@@ -1634,6 +1689,15 @@ exports.updateApplicationStatus = async (req, res) => {
             values.push(reviewerId);
         }
 
+        if (decisionNoteColumn) {
+            if (status === 'Rejected') {
+                assignments.push(`${decisionNoteColumn} = ?`);
+                values.push(rejectionReason);
+            } else {
+                assignments.push(`${decisionNoteColumn} = NULL`);
+            }
+        }
+
         values.push(id);
 
         const [result] = await connection.query(
@@ -1645,14 +1709,60 @@ exports.updateApplicationStatus = async (req, res) => {
             return res.status(404).json({ error: 'Application not found.' });
         }
 
+        const canWriteStatusHistoryReason =
+            hasStatusHistory &&
+            statusHistoryColumns.has('application_id') &&
+            statusHistoryColumns.has('new_status') &&
+            statusHistoryColumns.has('change_note');
+
+        if (status === 'Rejected' && rejectionReason && canWriteStatusHistoryReason) {
+            const historyOrderClause = statusHistoryColumns.has('changed_at')
+                ? 'ORDER BY changed_at DESC'
+                : (statusHistoryColumns.has('history_id') ? 'ORDER BY history_id DESC' : '');
+
+            const [historyUpdateResult] = await connection.query(
+                `UPDATE application_status_history
+                 SET change_note = ?
+                 WHERE application_id = ?
+                   AND new_status = 'Rejected'
+                 ${historyOrderClause}
+                 LIMIT 1`,
+                [rejectionReason, id]
+            );
+
+            if (Number(historyUpdateResult?.affectedRows || 0) === 0) {
+                const insertColumns = ['application_id', 'new_status', 'change_note'];
+                const insertValues = [id, 'Rejected', rejectionReason];
+
+                if (statusHistoryColumns.has('old_status')) {
+                    insertColumns.splice(1, 0, 'old_status');
+                    insertValues.splice(1, 0, previousStatus || null);
+                }
+
+                if (statusHistoryColumns.has('changed_by_admin_id')) {
+                    insertColumns.push('changed_by_admin_id');
+                    insertValues.push(parseFiniteNumber(req.body?.admin_id, null));
+                }
+
+                await connection.query(
+                    `INSERT INTO application_status_history (${insertColumns.join(', ')}) VALUES (${insertColumns.map(() => '?').join(', ')})`,
+                    insertValues
+                );
+            }
+        }
+
         if (changedStatus && becameFinalStatus && studentId) {
             if (!hasNativeTrigger) {
                 try {
+                    const rejectionSuffix = status === 'Rejected' && rejectionReason
+                        ? ` Rejection reason: ${rejectionReason}`
+                        : '';
+
                     await sendStudentNotification(connection, {
                         studentId,
                         notificationType: 'APPLICATION_STATUS',
                         title: `Application ${status}`,
-                        message: `Your application for "${scholarshipTitle}" has been ${status.toLowerCase()} by the admin.`,
+                        message: `Your application for "${scholarshipTitle}" has been ${status.toLowerCase()} by the admin.${rejectionSuffix}`,
                         referenceType: 'application',
                         referenceId: id,
                         notificationKey: `application_status:${id}:${status.toLowerCase()}`,
@@ -1663,10 +1773,14 @@ exports.updateApplicationStatus = async (req, res) => {
             }
 
             try {
+                const rejectionSuffix = status === 'Rejected' && rejectionReason
+                    ? ` Reason: ${rejectionReason}`
+                    : '';
+
                 await sendAdminNotification(connection, {
                     notificationType: 'APPLICATION_STATUS',
                     title: `Application #${id} ${status}`,
-                    message: `Application #${id} for "${scholarshipTitle}" has been ${status.toLowerCase()}.`,
+                    message: `Application #${id} for "${scholarshipTitle}" has been ${status.toLowerCase()}.${rejectionSuffix}`,
                     referenceType: 'application',
                     referenceId: id,
                     notificationKey: `application_decision:${id}:${status.toLowerCase()}`,
@@ -1676,7 +1790,11 @@ exports.updateApplicationStatus = async (req, res) => {
             }
         }
 
-        res.status(200).json({ message: 'Application updated successfully.', status });
+        res.status(200).json({
+            message: 'Application updated successfully.',
+            status,
+            rejection_reason: status === 'Rejected' ? rejectionReason : null,
+        });
     } catch (error) {
         console.error('Failed to update application status:', error);
         res.status(500).json({ error: 'Failed to update application status.' });
@@ -2055,6 +2173,12 @@ exports.getStudentApplications = async (req, res) => {
     const connection = await db.getConnection();
 
     try {
+        const appColumns = await getTableColumns(connection, 'applications');
+        const decisionNoteColumn = getFirstExistingColumn(appColumns, APPLICATION_DECISION_NOTE_KEYS);
+        const hasStatusHistory = await tableExists(connection, 'application_status_history');
+        const statusHistoryColumns = hasStatusHistory
+            ? await getTableColumns(connection, 'application_status_history')
+            : new Set();
         const hasStudentDocuments = await tableExists(connection, 'student_documents');
         const docColumns = hasStudentDocuments
             ? await getTableColumns(connection, 'student_documents')
@@ -2075,17 +2199,52 @@ exports.getStudentApplications = async (req, res) => {
             `;
         }
 
+        let rejectionHistoryJoin = '';
+        if (
+            hasStatusHistory &&
+            statusHistoryColumns.has('application_id') &&
+            statusHistoryColumns.has('new_status') &&
+            statusHistoryColumns.has('change_note') &&
+            statusHistoryColumns.has('changed_at')
+        ) {
+            rejectionHistoryJoin = `
+                LEFT JOIN (
+                    SELECT
+                        h.application_id,
+                        SUBSTRING_INDEX(
+                            GROUP_CONCAT(h.change_note ORDER BY h.changed_at DESC SEPARATOR '\\n'),
+                            '\\n',
+                            1
+                        ) AS latest_rejection_reason
+                    FROM application_status_history h
+                    WHERE h.new_status = 'Rejected'
+                    GROUP BY h.application_id
+                ) ash ON ash.application_id = a.id
+            `;
+        }
+
+        let rejectionReasonSelect = 'NULL AS rejection_reason';
+        if (decisionNoteColumn && rejectionHistoryJoin) {
+            rejectionReasonSelect = `COALESCE(NULLIF(TRIM(a.${decisionNoteColumn}), ''), NULLIF(TRIM(ash.latest_rejection_reason), '')) AS rejection_reason`;
+        } else if (decisionNoteColumn) {
+            rejectionReasonSelect = `NULLIF(TRIM(a.${decisionNoteColumn}), '') AS rejection_reason`;
+        } else if (rejectionHistoryJoin) {
+            rejectionReasonSelect = `NULLIF(TRIM(ash.latest_rejection_reason), '') AS rejection_reason`;
+        }
+
         const [rows] = await connection.query(`
             SELECT
                 a.id AS application_id,
                 a.scholarship_id,
                 COALESCE(sch.title, 'Scholarship Record') AS scholarship_title,
                 COALESCE(a.status, 'Pending') AS status,
+                ${rejectionReasonSelect},
                 ${docsSelect ? 'COALESCE(sd.document_count, 0) AS document_count,' : ''}
                 a.applied_at
             FROM applications a
             LEFT JOIN scholarships sch ON a.scholarship_id = sch.id
             ${docsJoin}
+            ${rejectionHistoryJoin}
             WHERE a.student_id = ?
             ORDER BY a.applied_at DESC, a.id DESC
         `, [studentId]);

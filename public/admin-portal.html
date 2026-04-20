@@ -152,6 +152,26 @@
       </div>
     </div>
 
+    <!-- Admin Dashboard Statistics Popup Modal -->
+    <div id="dashboardStatsModal" class="modal-overlay modal-overlay--pop hidden">
+      <div class="modal-content modal-content--scrollable dashboard-stats-modal-content">
+        <div class="dashboard-stats-modal-header">
+          <div>
+            <h3 id="dashboardStatsModalTitle">Dashboard List</h3>
+            <div id="dashboardStatsModalMeta" class="dashboard-stats-modal-meta"></div>
+          </div>
+          <button
+            id="dashboardStatsModalClose"
+            type="button"
+            class="btn btn-ghost btn-sm"
+          >
+            Close
+          </button>
+        </div>
+        <div id="dashboardStatsModalBody" class="dashboard-stats-modal-body"></div>
+      </div>
+    </div>
+
     <!-- Header -->
     <header class="app-header">
       <img src="pictures/uphsd.svg" alt="UPHSD Logo" />
@@ -362,23 +382,38 @@
                 class="dash-metrics dash-metrics--row"
                 aria-label="Key metrics"
               >
-                <div class="dash-metric">
+                <button
+                  type="button"
+                  class="dash-metric dash-metric-btn"
+                  data-dashboard-stat="total-applicants"
+                  aria-haspopup="dialog"
+                >
                   <div class="dash-metric-label">Total Applicants</div>
                   <div id="metricTotalApplicants" class="dash-metric-value">
                     —
                   </div>
                   <div class="dash-metric-sub">Unique student IDs</div>
-                </div>
+                </button>
 
-                <div class="dash-metric">
+                <button
+                  type="button"
+                  class="dash-metric dash-metric-btn"
+                  data-dashboard-stat="scholarships"
+                  aria-haspopup="dialog"
+                >
                   <div class="dash-metric-label">Scholarships</div>
                   <div id="metricTotalScholarships" class="dash-metric-value">
                     —
                   </div>
                   <div class="dash-metric-sub">Available programs</div>
-                </div>
+                </button>
 
-                <div class="dash-metric dash-metric--highlight">
+                <button
+                  type="button"
+                  class="dash-metric dash-metric-btn dash-metric--highlight"
+                  data-dashboard-stat="pending-review"
+                  aria-haspopup="dialog"
+                >
                   <div class="dash-metric-label">Pending Review</div>
                   <div id="metricPendingReview" class="dash-metric-value">
                     —
@@ -386,19 +421,29 @@
                   <div class="dash-metric-sub">
                     New submissions for initial check
                   </div>
-                </div>
+                </button>
 
-                <div class="dash-metric">
+                <button
+                  type="button"
+                  class="dash-metric dash-metric-btn"
+                  data-dashboard-stat="approved"
+                  aria-haspopup="dialog"
+                >
                   <div class="dash-metric-label">Approved</div>
                   <div id="metricApproved" class="dash-metric-value">—</div>
                   <div class="dash-metric-sub">Final count this cycle</div>
-                </div>
+                </button>
 
-                <div class="dash-metric">
+                <button
+                  type="button"
+                  class="dash-metric dash-metric-btn"
+                  data-dashboard-stat="rejected"
+                  aria-haspopup="dialog"
+                >
                   <div class="dash-metric-label">Rejected</div>
                   <div id="metricRejected" class="dash-metric-value">—</div>
                   <div class="dash-metric-sub">Final count this cycle</div>
-                </div>
+                </button>
               </div>
             </div>
           </div>

@@ -542,6 +542,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 scholarship: String(row.scholarship_title || row.scholarship || ""),
                 appliedAt: String(row.applied_at || row.appliedAt || row.created_at || ""),
                 status: normalizeStatus(row.status || row.application_status || row.autoVetStatus || "Pending"),
+                rejectionReason: String(row.rejection_reason || row.decision_notes || "").trim(),
                 scholarshipId: String(row.scholarship_id ?? row.scholarshipId ?? ""),
             }))
         );
@@ -736,6 +737,10 @@ document.addEventListener("DOMContentLoaded", () => {
         return "status-pending";
     }
 
+    function getRejectionReason(row) {
+        return String(row?.rejection_reason || row?.decision_notes || "").trim();
+    }
+
     function getScholarshipRowId(row) {
         if (!row) return null;
 
@@ -809,10 +814,17 @@ document.addEventListener("DOMContentLoaded", () => {
             const title = application.scholarship_title || application.scholarship || "Scholarship Record";
             const status = normalizeStatus(application.status || "Pending");
             const isEditable = canEditApplicationDocuments(status);
+            const rejectionReason = getRejectionReason(application);
+            const rejectionReasonText = rejectionReason || "Reason not provided yet.";
 
             const lockBanner = isEditable
                 ? ""
-                : `<div class="scholarship-doc-status-lock">Documents are locked because this application is ${escapeHtml(status)}.</div>`;
+                : `<div class="scholarship-doc-status-lock">
+                    Documents are locked because this application is ${escapeHtml(status)}.
+                    ${status === "Rejected"
+                        ? `<div class="scholarship-doc-reason">Reason: ${escapeHtml(rejectionReasonText)}</div>`
+                        : ""}
+                </div>`;
 
             return `
                 <article class="scholarship-doc-card" data-application-id="${escapeHtml(String(safeApplicationId))}">
@@ -915,13 +927,18 @@ document.addEventListener("DOMContentLoaded", () => {
         const applicationId = Number(application.application_id ?? application.id);
         const title = application.scholarship_title || application.scholarship || "Scholarship Record";
         const status = normalizeStatus(application.status || "Pending");
+        const rejectionReason = getRejectionReason(application);
+        const rejectionReasonText = rejectionReason || "Reason not provided yet.";
+        const reasonPart = status === "Rejected"
+            ? ` | Reason: ${rejectionReasonText}`
+            : "";
 
         if (studentDocumentsModalTitle) {
             studentDocumentsModalTitle.textContent = title;
         }
 
         if (studentDocumentsModalMeta) {
-            studentDocumentsModalMeta.textContent = `Application ID: ${applicationId} | Date Applied: ${formatDate(application.applied_at || application.appliedAt || application.created_at)} | Status: ${status}`;
+            studentDocumentsModalMeta.textContent = `Application ID: ${applicationId} | Date Applied: ${formatDate(application.applied_at || application.appliedAt || application.created_at)} | Status: ${status}${reasonPart}`;
         }
 
         if (studentDocumentsModalBody) {
@@ -1365,7 +1382,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             trackerTableBody.innerHTML = `
                 <tr>
-                    <td colspan="4" style="text-align: center; color: #6c757d;">Unable to load tracker because your account has no student identifier.</td>
+                    <td colspan="5" style="text-align: center; color: #6c757d;">Unable to load tracker because your account has no student identifier.</td>
                 </tr>
             `;
             updateTrackerSummary([]);
@@ -1402,7 +1419,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!list.length) {
                 trackerTableBody.innerHTML = `
                     <tr>
-                        <td colspan="4" style="text-align: center; color: #6c757d;">No applications submitted yet.</td>
+                        <td colspan="5" style="text-align: center; color: #6c757d;">No applications submitted yet.</td>
                     </tr>
                 `;
                 updateTrackerSummary([]);
@@ -1415,6 +1432,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     const scholarshipTitle = row.scholarship_title || row.scholarship || "Untitled Scholarship";
                     const appliedAt = row.applied_at || row.appliedAt || row.created_at || null;
                     const status = normalizeStatus(row.status || row.application_status || row.autoVetStatus || "Pending");
+                    const rejectionReason = getRejectionReason(row);
+                    const rejectionReasonText = rejectionReason || "Reason not provided yet.";
+                    const remarks = status === "Rejected"
+                        ? `<span class="tracker-reason-text">${escapeHtml(rejectionReasonText)}</span>`
+                        : '<span class="tracker-reason-empty">—</span>';
 
                     return `
                         <tr>
@@ -1422,6 +1444,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             <td>${escapeHtml(String(scholarshipTitle))}</td>
                             <td>${escapeHtml(formatDate(appliedAt))}</td>
                             <td><span class="status-badge ${statusClass(status)}">${escapeHtml(status)}</span></td>
+                            <td class="tracker-reason-cell">${remarks}</td>
                         </tr>
                     `;
                 })
@@ -1435,7 +1458,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!silent) {
                 trackerTableBody.innerHTML = `
                     <tr>
-                        <td colspan="4" style="text-align: center; color: #6c757d;">Unable to load tracker right now.</td>
+                        <td colspan="5" style="text-align: center; color: #6c757d;">Unable to load tracker right now.</td>
                     </tr>
                 `;
                 updateTrackerSummary([]);
