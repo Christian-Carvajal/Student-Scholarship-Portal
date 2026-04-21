@@ -1,0 +1,884 @@
+<?php
+require_once __DIR__ . '/../app/config.php';
+
+if (!defined('APP_ROOT')) {
+    http_response_code(500);
+    exit('Application not bootstrapped correctly.');
+}
+
+require APP_ROOT . '/app/views/includes/head.php';
+?>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Multi-device SVG Favicon Support -->
+    <link rel="icon" type="image/svg+xml" href="/pictures/uphsd.svg" />
+    <link rel="alternate icon" href="/pictures/uphsd.svg" />
+    <link rel="apple-touch-icon" href="/pictures/uphsd.svg" />
+    <link rel="mask-icon" href="/pictures/uphsd.svg" color="#7a1114" />
+    <meta name="theme-color" content="#7a1114" />
+
+    <title>Student Scholarship Portal | UPHSD</title>
+    <!-- Sophisticated UPHSD Typography Pairing -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Outfit:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <!-- Global Custom Modal -->
+    <div id="customModal" class="modal-overlay modal-overlay--pop">
+      <div class="modal-content">
+        <h3 id="modalTitle">Alert</h3>
+        <div id="modalBody" class="modal-body"></div>
+        <div class="modal-actions">
+          <button id="modalBtnCancel" class="btn btn-ghost hidden">
+            Cancel
+          </button>
+          <button id="modalBtnOk" class="btn btn-gold">OK</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Force Password Change Modal (Industry Standard) -->
+    <div
+      id="forcePasswordModal"
+      class="modal-overlay hidden"
+      style="backdrop-filter: blur(8px)"
+    >
+      <div
+        class="modal-content"
+        style="max-width: 450px; border-top: 5px solid var(--primary-maroon)"
+      >
+        <h3
+          style="
+            color: var(--primary-maroon);
+            border-bottom: none;
+            margin-bottom: 0.5rem;
+          "
+        >
+          Action Required
+        </h3>
+        <p
+          style="
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+          "
+        >
+          For your security, you must change your auto-generated temporary
+          password before accessing the portal.
+        </p>
+
+        <form id="forcePasswordForm">
+          <div class="form-group">
+            <label>New Password</label>
+            <input
+              type="password"
+              id="newPassword"
+              class="form-control"
+              required
+              placeholder="Enter new password"
+            />
+          </div>
+
+          <!-- Password Strength Meter -->
+          <div class="password-strength">
+            <div class="strength-bar-container">
+              <div id="strengthBar" class="strength-bar"></div>
+            </div>
+            <ul class="pwd-requirements">
+              <li id="reqLength" class="invalid">At least 8 characters</li>
+              <li id="reqUpper" class="invalid">
+                At least one uppercase letter
+              </li>
+              <li id="reqNum" class="invalid">At least one number</li>
+            </ul>
+          </div>
+
+          <div class="form-group" style="margin-top: 1rem">
+            <label>Confirm New Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              class="form-control"
+              required
+              placeholder="Re-enter new password"
+            />
+            <small
+              id="pwdMatchMsg"
+              style="color: #dc3545; display: none; margin-top: 5px"
+              >Passwords do not match.</small
+            >
+          </div>
+
+          <div class="modal-actions" style="margin-top: 2rem">
+            <button
+              type="submit"
+              id="btnSavePassword"
+              class="btn btn-gold"
+              style="width: 100%"
+              disabled
+            >
+              Secure Account & Continue
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Admin Submitted Documents Popup Modal -->
+    <div
+      id="adminDocumentsModal"
+      class="modal-overlay modal-overlay--pop hidden"
+    >
+      <div
+        class="modal-content modal-content--scrollable student-docs-modal-content"
+      >
+        <div class="student-docs-modal-header">
+          <div>
+            <h3 id="adminDocumentsModalTitle">Submitted Documents</h3>
+            <div
+              id="adminDocumentsModalMeta"
+              class="student-docs-modal-meta"
+            ></div>
+          </div>
+          <button
+            id="adminDocumentsModalClose"
+            type="button"
+            class="btn btn-ghost btn-sm"
+          >
+            Close
+          </button>
+        </div>
+        <div id="adminDocumentsModalBody" class="student-docs-modal-body"></div>
+      </div>
+    </div>
+
+    <!-- Admin Dashboard Statistics Popup Modal -->
+    <div id="dashboardStatsModal" class="modal-overlay modal-overlay--pop hidden">
+      <div class="modal-content modal-content--scrollable dashboard-stats-modal-content">
+        <div class="dashboard-stats-modal-header">
+          <div>
+            <h3 id="dashboardStatsModalTitle">Dashboard List</h3>
+            <div id="dashboardStatsModalMeta" class="dashboard-stats-modal-meta"></div>
+          </div>
+          <button
+            id="dashboardStatsModalClose"
+            type="button"
+            class="btn btn-ghost btn-sm"
+          >
+            Close
+          </button>
+        </div>
+        <div id="dashboardStatsModalBody" class="dashboard-stats-modal-body"></div>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header class="app-header">
+      <img src="/pictures/uphsd.svg" alt="UPHSD Logo" />
+      <h1>Student Scholarship <span>Portal</span></h1>
+
+      <div class="app-header-actions">
+        <!-- Notification Widget -->
+        <div class="notif-widget" id="notifWidget">
+          <button class="btn-icon" id="notifToggle" aria-label="Notifications">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"
+              />
+            </svg>
+            <span class="notif-badge" id="notifBadgeCount">1</span>
+          </button>
+
+          <div class="notif-dropdown hidden" id="notifDropdown">
+            <div class="notif-header">
+              <h3>Notifications</h3>
+              <div class="notif-filters">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="unread">Unread</button>
+              </div>
+            </div>
+            <div class="notif-body" id="notifBodyList">
+              <div class="notif-section-title">Earlier</div>
+
+              <div class="notif-item unread">
+                <div class="notif-icon system">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                    />
+                  </svg>
+                </div>
+                <div class="notif-content">
+                  <p>
+                    <strong>System Alert:</strong> General Merit Applications
+                    closing soon.
+                  </p>
+                  <span class="notif-time">2 days ago</span>
+                  <div class="notif-details">
+                    Heads up! The General Merit Scholarship tracking will
+                    automatically close on May 15, 2026. Please ensure all
+                    pending applications are reviewed before this date.
+                  </div>
+                </div>
+                <div class="notif-unread-dot"></div>
+              </div>
+
+              <div class="notif-item">
+                <div class="notif-icon update">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12zM7 9h10v2H7zM7 12h7v2H7z"
+                    />
+                  </svg>
+                </div>
+                <div class="notif-content">
+                  <p>
+                    <strong>Application Update:</strong> Engineering Excellence
+                    apps received.
+                  </p>
+                  <span class="notif-time">5 days ago</span>
+                  <div class="notif-details">
+                    You have 5 new applications in the Engineering Excellence
+                    category that require initial data verification.
+                  </div>
+                </div>
+                <div class="notif-unread-dot" style="display: none"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button id="navLogout" class="btn btn-ghost" type="button">
+          <svg
+            class="header-logout-icon"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path
+              fill="currentColor"
+              d="M16 13v-2H7V8l-5 4 5 4v-3zM20 3H11c-1.1 0-2 .9-2 2v4h2V5h9v14h-9v-4H9v4c0 1.1.9 2 2 2h9c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+            />
+          </svg>
+          Logout
+        </button>
+      </div>
+    </header>
+
+    <div class="app-container">
+      <!-- Sidebar Navigation -->
+      <aside class="app-sidebar">
+        <nav>
+          <a class="nav-link active" data-target="view-admin"
+            >Admin Dashboard</a
+          >
+          <a class="nav-link" data-target="view-review">Review Applications</a>
+          <a class="nav-link" data-target="view-add-scholarship"
+            >Add Scholarship</a
+          >
+          <a class="nav-link" data-target="view-remove-scholarship"
+            >Manage Scholarship</a
+          >
+        </nav>
+      </aside>
+
+      <!-- Main SPA Content Area -->
+      <main class="app-main">
+        <!-- 5. ADMIN DASHBOARD & DOC MGMT -->
+        <section id="view-admin">
+          <h2 class="section-title">Admin Dashboard</h2>
+
+          <div class="admin-dash">
+            <div class="dash-top">
+              <div class="dash-card dash-card--welcome">
+                <div class="dash-welcome">
+                  <div>
+                    <div class="dash-kicker">Cycle Overview</div>
+                    <div class="dash-title">Scholarship Review Dashboard</div>
+                    <div class="dash-subtitle">
+                      Track applicant volume, pending checks, and final
+                      outcomes.
+                    </div>
+                  </div>
+                  <div class="dash-now">
+                    <div class="dash-now-label">Today</div>
+                    <div id="metricNow" class="dash-now-value">—</div>
+                  </div>
+                </div>
+                <div id="dashboardDataNote" class="dash-note">
+                  Loading data…
+                </div>
+              </div>
+
+              <div class="dash-card">
+                <div class="dash-card-header">
+                  <div>
+                    <div class="dash-card-title">Application Status</div>
+                    <div class="dash-card-sub">
+                      Pending review vs final outcomes
+                    </div>
+                  </div>
+                </div>
+
+                <div class="dash-status">
+                  <div class="dash-donut" aria-label="Status breakdown chart">
+                    <svg
+                      id="statusDonutSvg"
+                      viewBox="0 0 140 140"
+                      width="140"
+                      height="140"
+                      role="img"
+                      aria-label="Application status donut chart"
+                    ></svg>
+                    <div class="dash-donut-center">
+                      <div id="statusDonutTotal" class="dash-donut-total">
+                        —
+                      </div>
+                      <div class="dash-donut-caption">Applications</div>
+                    </div>
+                  </div>
+
+                  <div class="dash-legend" aria-label="Status legend">
+                    <div class="dash-legend-row">
+                      <span class="dash-dot dash-dot--pending"></span>
+                      <span class="dash-legend-label">Pending Review</span>
+                      <span id="legendPending" class="dash-legend-value"
+                        >—</span
+                      >
+                    </div>
+                    <div class="dash-legend-row">
+                      <span class="dash-dot dash-dot--approved"></span>
+                      <span class="dash-legend-label">Approved</span>
+                      <span id="legendApproved" class="dash-legend-value"
+                        >—</span
+                      >
+                    </div>
+                    <div class="dash-legend-row">
+                      <span class="dash-dot dash-dot--rejected"></span>
+                      <span class="dash-legend-label">Rejected</span>
+                      <span id="legendRejected" class="dash-legend-value"
+                        >—</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="dash-main">
+              <div
+                class="dash-metrics dash-metrics--row"
+                aria-label="Key metrics"
+              >
+                <button
+                  type="button"
+                  class="dash-metric dash-metric-btn"
+                  data-dashboard-stat="total-applicants"
+                  aria-haspopup="dialog"
+                >
+                  <div class="dash-metric-label">Total Applicants</div>
+                  <div id="metricTotalApplicants" class="dash-metric-value">
+                    —
+                  </div>
+                  <div class="dash-metric-sub">Unique student IDs</div>
+                </button>
+
+                <button
+                  type="button"
+                  class="dash-metric dash-metric-btn"
+                  data-dashboard-stat="scholarships"
+                  aria-haspopup="dialog"
+                >
+                  <div class="dash-metric-label">Scholarships</div>
+                  <div id="metricTotalScholarships" class="dash-metric-value">
+                    —
+                  </div>
+                  <div class="dash-metric-sub">Available programs</div>
+                </button>
+
+                <button
+                  type="button"
+                  class="dash-metric dash-metric-btn dash-metric--highlight"
+                  data-dashboard-stat="pending-review"
+                  aria-haspopup="dialog"
+                >
+                  <div class="dash-metric-label">Pending Review</div>
+                  <div id="metricPendingReview" class="dash-metric-value">
+                    —
+                  </div>
+                  <div class="dash-metric-sub">
+                    New submissions for initial check
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  class="dash-metric dash-metric-btn"
+                  data-dashboard-stat="approved"
+                  aria-haspopup="dialog"
+                >
+                  <div class="dash-metric-label">Approved</div>
+                  <div id="metricApproved" class="dash-metric-value">—</div>
+                  <div class="dash-metric-sub">Final count this cycle</div>
+                </button>
+
+                <button
+                  type="button"
+                  class="dash-metric dash-metric-btn"
+                  data-dashboard-stat="rejected"
+                  aria-haspopup="dialog"
+                >
+                  <div class="dash-metric-label">Rejected</div>
+                  <div id="metricRejected" class="dash-metric-value">—</div>
+                  <div class="dash-metric-sub">Final count this cycle</div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- REVIEW LIST (formerly Auto-Ranked Leaderboard) -->
+        <section id="view-review" class="hidden">
+          <h2 class="section-title">Review Applications</h2>
+          <table
+            class="data-table data-table--justified"
+            style="margin-bottom: 2rem"
+          >
+            <thead>
+              <tr>
+                <th>Applicant</th>
+                <th>Scholarship Fund</th>
+                <th>Submitted GPA</th>
+                <th>Application Status</th>
+                <th>Review Progress</th>
+                <th>Admin Action</th>
+              </tr>
+            </thead>
+            <tbody id="adminReviewTableBody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </section>
+
+        <!-- REVIEW DETAILS (placeholder until SQL is wired) -->
+        <section id="view-review-detail" class="hidden">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-end;
+              gap: 1rem;
+              flex-wrap: wrap;
+            "
+          >
+            <h2 class="section-title" style="margin-bottom: 0">
+              Application Review
+            </h2>
+            <button class="btn btn-sm" type="button" id="btnBackToReview">
+              Back to Review
+            </button>
+          </div>
+
+          <div class="view-grid" style="margin-top: 2rem">
+            <div class="view-primary">
+              <div class="aside-card" style="margin-bottom: 1.5rem">
+                <div class="aside-title">Applicant Information</div>
+                <div class="kv">
+                  <div class="kv-k">Applicant</div>
+                  <div class="kv-v" id="reviewApplicantName">—</div>
+                </div>
+                <div class="kv">
+                  <div class="kv-k">Student ID</div>
+                  <div class="kv-v" id="reviewStudentId">—</div>
+                </div>
+                <div class="kv">
+                  <div class="kv-k">Scholarship</div>
+                  <div class="kv-v" id="reviewScholarship">—</div>
+                </div>
+                <div class="kv">
+                  <div class="kv-k">Submitted GPA</div>
+                  <div class="kv-v" id="reviewGpa">—</div>
+                </div>
+                <div class="kv">
+                  <div class="kv-k">Submitted</div>
+                  <div class="kv-v" id="reviewSubmittedAt">—</div>
+                </div>
+              </div>
+
+              <div class="aside-card">
+                <div class="aside-title">Essay / Letter of Intent</div>
+                <div
+                  class="aside-text"
+                  id="reviewEssay"
+                  style="white-space: pre-wrap"
+                >
+                  —
+                </div>
+              </div>
+            </div>
+
+            <aside class="view-aside">
+              <div class="aside-card">
+                <div class="aside-title">Submitted Documents</div>
+                <div style="margin-top: 0.85rem">
+                  <button
+                    class="btn btn-gold btn-sm"
+                    type="button"
+                    id="btnShowSubmittedDocs"
+                    data-action="show-submitted-docs"
+                    disabled
+                  >
+                    Show Submitted Documents
+                  </button>
+                </div>
+              </div>
+
+              <div class="aside-card aside-highlight">
+                <div class="aside-title">Admin Decision</div>
+                <div class="aside-text" style="margin-bottom: 1rem">
+                  Approve or reject after verifying the GPA, essay, and
+                  supporting documents.
+                </div>
+                <div style="display: flex; gap: 0.75rem; flex-wrap: wrap">
+                  <button
+                    class="btn btn-gold btn-sm"
+                    type="button"
+                    id="btnApproveApplication"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    class="btn btn-sm"
+                    type="button"
+                    id="btnRejectApplication"
+                  >
+                    Reject
+                  </button>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <!-- ADD SCHOLARSHIP (separate window) -->
+        <section id="view-add-scholarship" class="hidden">
+          <h2 class="section-title">Add Scholarship</h2>
+          <form id="addScholarshipForm">
+            <div class="form-group">
+              <label for="scholarshipTitle">Title</label>
+              <input
+                type="text"
+                id="scholarshipTitle"
+                name="title"
+                class="form-control"
+                required
+              />
+            </div>
+
+            <div class="form-row form-row--compact">
+              <div class="form-group form-group--amount">
+                <label for="scholarshipMinimumGwa">Minimum GWA</label>
+                <input
+                  type="number"
+                  id="scholarshipMinimumGwa"
+                  name="min_gpa"
+                  class="form-control"
+                  required
+                  min="1"
+                  max="5"
+                  step="0.01"
+                  inputmode="decimal"
+                  placeholder="e.g. 1.75"
+                />
+              </div>
+              <div class="form-group form-group--deadline">
+                <label for="scholarshipDeadline">Deadline</label>
+                <input
+                  type="date"
+                  id="scholarshipDeadline"
+                  name="deadline"
+                  class="form-control"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="scholarshipDescription"
+                >Scholarship Description</label
+              >
+              <textarea
+                id="scholarshipDescription"
+                name="description"
+                class="form-control"
+                rows="2"
+              ></textarea>
+            </div>
+            <button type="submit" class="btn">Publish Scholarship</button>
+          </form>
+
+          <p
+            style="
+              margin-top: 1.25rem;
+              color: var(--text-muted);
+              font-size: 0.95rem;
+            "
+          ></p>
+        </section>
+
+        <section id="view-remove-scholarship" class="hidden">
+          <h2 class="section-title">Remove Scholarship</h2>
+          <p
+            style="
+              margin-bottom: 1rem;
+              color: var(--text-muted);
+              font-size: 0.95rem;
+            "
+          >
+            Removing a scholarship also removes related applications so admin
+            and student trackers stay in sync.
+          </p>
+
+          <table class="data-table data-table--justified">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Minimum GWA</th>
+                <th>Status</th>
+                <th>Deadline</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="adminScholarshipTableBody">
+              <tr>
+                <td colspan="5" style="text-align: center; color: #6c757d">
+                  Loading scholarships...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- 7. DOCUMENTS (Standalone) -->
+        <section id="view-docs" class="hidden">
+          <h2 class="section-title">My Documents</h2>
+          <p
+            style="
+              margin-bottom: 2rem;
+              color: var(--text-muted);
+              font-size: 1.1rem;
+            "
+          >
+            Manage your securely uploaded files here. These are verified
+            automatically alongside your application.
+          </p>
+          <div style="display: flex; gap: 2rem">
+            <div
+              class="card"
+              style="
+                box-shadow: 4px 4px 0px rgba(122, 17, 20, 0.05);
+                border-radius: 0;
+              "
+            >
+              <h3 style="font-family: var(--font-sans); font-size: 1.25rem">
+                Transcript_v2.pdf
+              </h3>
+              <p style="font-size: 0.9rem">Uploaded: April 1, 2026</p>
+              <button
+                class="btn btn-gold btn-sm"
+                style="align-self: flex-start; padding: 0.5rem 1.5rem"
+              >
+                Download
+              </button>
+            </div>
+            <div
+              class="card"
+              style="
+                box-shadow: 4px 4px 0px rgba(122, 17, 20, 0.05);
+                border-radius: 0;
+              "
+            >
+              <h3 style="font-family: var(--font-sans); font-size: 1.25rem">
+                Student_ID_Scanned.png
+              </h3>
+              <p style="font-size: 0.9rem">Uploaded: April 1, 2026</p>
+              <button
+                class="btn btn-gold btn-sm"
+                style="align-self: flex-start; padding: 0.5rem 1.5rem"
+              >
+                Download
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 8. FAQ -->
+        <section id="view-faq" class="hidden">
+          <h2 class="section-title">Frequently Asked Questions</h2>
+          <div class="faq-list" id="faqAccordion">
+            <div class="faq-item">
+              <div class="faq-question">
+                How does the automated ranking work? <span>+</span>
+              </div>
+              <div class="faq-answer">
+                Rankings are calculated dynamically based on your cumulative GPA
+                compared against the minimum threshold set by the system
+                administrator.
+              </div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-question">
+                Can I apply for multiple scholarships? <span>+</span>
+              </div>
+              <div class="faq-answer">
+                Yes, as long as you meet the eligibility requirements for each
+                specific fund. Ensure your essays are tailored appropriately.
+              </div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-question">
+                Who is eligible for the UPHSD Gold Tier grant? <span>+</span>
+              </div>
+              <div class="faq-answer">
+                You must have completed at least 2 full semesters as a regular
+                student with no record of disciplinary action.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 9. CONTACT -->
+        <section id="view-contact" class="hidden">
+          <h2 class="section-title">Contact Support</h2>
+          <form id="contactForm" style="max-width: 600px">
+            <div class="form-group">
+              <label>Your Name</label>
+              <input
+                type="text"
+                name="name"
+                id="contactName"
+                class="form-control"
+                required
+                placeholder="e.g. Juan De La Cruz"
+              />
+            </div>
+            <div class="form-group">
+              <label>Email Address</label>
+              <input
+                type="email"
+                name="email"
+                id="contactEmail"
+                class="form-control"
+                required
+                placeholder="Where we will send the auto-reply"
+              />
+            </div>
+            <div class="form-group">
+              <label>Subject</label>
+              <input
+                type="text"
+                name="title"
+                id="contactSubject"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label>Message</label>
+              <textarea
+                name="message"
+                id="contactMessage"
+                class="form-control"
+                rows="5"
+                required
+              ></textarea>
+            </div>
+            <button type="submit" class="btn" id="btnSubmitContact">
+              Send via Email Support
+            </button>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <!-- EmailJS SDK -->
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"
+    ></script>
+    <script type="text/javascript">
+      (function () {
+        emailjs.init("eSRnEOEJEaoP8a_rj"); // Public Key
+      })();
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const contactForm = document.getElementById("contactForm");
+        const btnSubmitContact = document.getElementById("btnSubmitContact");
+
+        if (contactForm) {
+          contactForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const prevText = btnSubmitContact.innerText;
+            btnSubmitContact.innerText = "Sending...";
+            btnSubmitContact.disabled = true;
+
+            // Send the Admin Notification
+            emailjs
+              .sendForm("service_h0p6jys", "template_zwmmbp2", this)
+              .then(function () {
+                // Send the Auto-Reply to User
+                return emailjs.sendForm(
+                  "service_h0p6jys",
+                  "template_46i1e8g",
+                  contactForm,
+                );
+              })
+              .then(function () {
+                alert(
+                  "Message sent successfully! An auto-reply has been sent to your email.",
+                );
+                contactForm.reset();
+              })
+              .catch(function (error) {
+                console.error("FAILED...", error);
+                alert("Failed to send the message. Please try again later.");
+              })
+              .finally(function () {
+                btnSubmitContact.innerText = prevText;
+                btnSubmitContact.disabled = false;
+              });
+          });
+        }
+      });
+    </script>
+    <script src="/js/chatbot-widget.js"></script>
+    <script src="/js/admin.js"></script>
+  </body>
+</html>
+
+<?php
+require APP_ROOT . '/app/views/includes/footer.php';
+?>

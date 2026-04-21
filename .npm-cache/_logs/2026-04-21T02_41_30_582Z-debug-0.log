@@ -1,0 +1,450 @@
+0 verbose cli C:\Program Files\nodejs\node.exe C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js
+1 info using npm@11.12.1
+2 info using node@v24.15.0
+3 silly config load:file:C:\Program Files\nodejs\node_modules\npm\npmrc
+4 silly config load:file:C:\DBM_Project\.npmrc
+5 silly config load:file:C:\Users\chris\.npmrc
+6 silly config load:file:C:\Users\chris\AppData\Roaming\npm\etc\npmrc
+7 verbose title npm install
+8 verbose argv "install" "--cache" "C:\\DBM_Project\\.npm-cache"
+9 verbose logfile logs-max:10 dir:C:\DBM_Project\.npm-cache\_logs\2026-04-21T02_41_30_582Z-
+10 verbose logfile C:\DBM_Project\.npm-cache\_logs\2026-04-21T02_41_30_582Z-debug-0.log
+11 silly logfile done cleaning log files
+12 silly packumentCache heap:4496293888 maxSize:1124073472 maxEntrySize:562036736
+13 verbose shrinkwrap failed to load node_modules/.package-lock.json out of date, updated: node_modules
+14 silly idealTree buildDeps
+15 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\append-field' ]
+16 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\agent-base' ]
+17 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\base64-js' ]
+18 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\buffer-equal-constant-time' ]
+19 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\buffer-from' ]
+20 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\busboy' ]
+21 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\bignumber.js' ]
+22 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\concat-stream' ]
+23 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\data-uri-to-buffer' ]
+24 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\ecdsa-sig-formatter' ]
+25 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\extend' ]
+26 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\fetch-blob' ]
+27 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\formdata-polyfill' ]
+28 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\gcp-metadata' ]
+29 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\gaxios' ]
+30 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\google-auth-library' ]
+31 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\google-logging-utils' ]
+32 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\jwa' ]
+33 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\json-bigint' ]
+34 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\jws' ]
+35 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\https-proxy-agent' ]
+36 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\multer' ]
+37 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\node-fetch' ]
+38 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\node-domexception' ]
+39 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\p-retry' ]
+40 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\protobufjs' ]
+41 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\readable-stream' ]
+42 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\retry' ]
+43 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\safe-buffer' ]
+44 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\streamsearch' ]
+45 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\string_decoder' ]
+46 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\typedarray' ]
+47 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\util-deprecate' ]
+48 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\web-streams-polyfill' ]
+49 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\ws' ]
+50 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\@google\\genai' ]
+51 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\@protobufjs\\aspromise' ]
+52 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\@protobufjs\\base64' ]
+53 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\@protobufjs\\eventemitter' ]
+54 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\@protobufjs\\codegen' ]
+55 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\@protobufjs\\fetch' ]
+56 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\@protobufjs\\inquire' ]
+57 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\@protobufjs\\float' ]
+58 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\@protobufjs\\pool' ]
+59 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\@protobufjs\\path' ]
+60 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\@protobufjs\\utf8' ]
+61 silly reify moves {
+61 silly reify   'C:\\DBM_Project\\node_modules\\append-field': 'C:\\DBM_Project\\node_modules\\.append-field-irsquNHn',
+61 silly reify   'C:\\DBM_Project\\node_modules\\agent-base': 'C:\\DBM_Project\\node_modules\\.agent-base-YoAe7PS6',
+61 silly reify   'C:\\DBM_Project\\node_modules\\base64-js': 'C:\\DBM_Project\\node_modules\\.base64-js-x7NbTo8t',
+61 silly reify   'C:\\DBM_Project\\node_modules\\buffer-equal-constant-time': 'C:\\DBM_Project\\node_modules\\.buffer-equal-constant-time-NDX7Sohj',
+61 silly reify   'C:\\DBM_Project\\node_modules\\buffer-from': 'C:\\DBM_Project\\node_modules\\.buffer-from-ixtk0BVq',
+61 silly reify   'C:\\DBM_Project\\node_modules\\busboy': 'C:\\DBM_Project\\node_modules\\.busboy-roI4N2sB',
+61 silly reify   'C:\\DBM_Project\\node_modules\\bignumber.js': 'C:\\DBM_Project\\node_modules\\.bignumber.js-Yhk7NKyq',
+61 silly reify   'C:\\DBM_Project\\node_modules\\concat-stream': 'C:\\DBM_Project\\node_modules\\.concat-stream-NuLC45a6',
+61 silly reify   'C:\\DBM_Project\\node_modules\\data-uri-to-buffer': 'C:\\DBM_Project\\node_modules\\.data-uri-to-buffer-Z2ck1CnH',
+61 silly reify   'C:\\DBM_Project\\node_modules\\ecdsa-sig-formatter': 'C:\\DBM_Project\\node_modules\\.ecdsa-sig-formatter-D4Bpj4CG',
+61 silly reify   'C:\\DBM_Project\\node_modules\\extend': 'C:\\DBM_Project\\node_modules\\.extend-62CkZxYG',
+61 silly reify   'C:\\DBM_Project\\node_modules\\fetch-blob': 'C:\\DBM_Project\\node_modules\\.fetch-blob-10BDPifC',
+61 silly reify   'C:\\DBM_Project\\node_modules\\formdata-polyfill': 'C:\\DBM_Project\\node_modules\\.formdata-polyfill-Wda7WCSM',
+61 silly reify   'C:\\DBM_Project\\node_modules\\gcp-metadata': 'C:\\DBM_Project\\node_modules\\.gcp-metadata-d5Hvv4bt',
+61 silly reify   'C:\\DBM_Project\\node_modules\\gaxios': 'C:\\DBM_Project\\node_modules\\.gaxios-XxRFsXCR',
+61 silly reify   'C:\\DBM_Project\\node_modules\\google-auth-library': 'C:\\DBM_Project\\node_modules\\.google-auth-library-MrM0bzHz',
+61 silly reify   'C:\\DBM_Project\\node_modules\\google-logging-utils': 'C:\\DBM_Project\\node_modules\\.google-logging-utils-n0dUwzmP',
+61 silly reify   'C:\\DBM_Project\\node_modules\\jwa': 'C:\\DBM_Project\\node_modules\\.jwa-Kh3TeVZO',
+61 silly reify   'C:\\DBM_Project\\node_modules\\json-bigint': 'C:\\DBM_Project\\node_modules\\.json-bigint-30r8NwFz',
+61 silly reify   'C:\\DBM_Project\\node_modules\\jws': 'C:\\DBM_Project\\node_modules\\.jws-T9VBCHId',
+61 silly reify   'C:\\DBM_Project\\node_modules\\https-proxy-agent': 'C:\\DBM_Project\\node_modules\\.https-proxy-agent-kBKFxtOK',
+61 silly reify   'C:\\DBM_Project\\node_modules\\multer': 'C:\\DBM_Project\\node_modules\\.multer-nzY459Pk',
+61 silly reify   'C:\\DBM_Project\\node_modules\\node-fetch': 'C:\\DBM_Project\\node_modules\\.node-fetch-FKbfODdA',
+61 silly reify   'C:\\DBM_Project\\node_modules\\node-domexception': 'C:\\DBM_Project\\node_modules\\.node-domexception-S0lEndPz',
+61 silly reify   'C:\\DBM_Project\\node_modules\\p-retry': 'C:\\DBM_Project\\node_modules\\.p-retry-oQ7KyLLV',
+61 silly reify   'C:\\DBM_Project\\node_modules\\protobufjs': 'C:\\DBM_Project\\node_modules\\.protobufjs-aWfj6hW1',
+61 silly reify   'C:\\DBM_Project\\node_modules\\readable-stream': 'C:\\DBM_Project\\node_modules\\.readable-stream-GE7ufeRZ',
+61 silly reify   'C:\\DBM_Project\\node_modules\\retry': 'C:\\DBM_Project\\node_modules\\.retry-5fPCYk7h',
+61 silly reify   'C:\\DBM_Project\\node_modules\\safe-buffer': 'C:\\DBM_Project\\node_modules\\.safe-buffer-IaVpuCjh',
+61 silly reify   'C:\\DBM_Project\\node_modules\\streamsearch': 'C:\\DBM_Project\\node_modules\\.streamsearch-1BHDvr48',
+61 silly reify   'C:\\DBM_Project\\node_modules\\string_decoder': 'C:\\DBM_Project\\node_modules\\.string_decoder-KGp4uURd',
+61 silly reify   'C:\\DBM_Project\\node_modules\\typedarray': 'C:\\DBM_Project\\node_modules\\.typedarray-LKOUVfDZ',
+61 silly reify   'C:\\DBM_Project\\node_modules\\util-deprecate': 'C:\\DBM_Project\\node_modules\\.util-deprecate-2trxjV4z',
+61 silly reify   'C:\\DBM_Project\\node_modules\\web-streams-polyfill': 'C:\\DBM_Project\\node_modules\\.web-streams-polyfill-kbh6komz',
+61 silly reify   'C:\\DBM_Project\\node_modules\\ws': 'C:\\DBM_Project\\node_modules\\.ws-Irs3NjuX',
+61 silly reify   'C:\\DBM_Project\\node_modules\\@google\\genai': 'C:\\DBM_Project\\node_modules\\@google\\.genai-z41qm8Oh',
+61 silly reify   'C:\\DBM_Project\\node_modules\\@protobufjs\\aspromise': 'C:\\DBM_Project\\node_modules\\@protobufjs\\.aspromise-ymhnCVCw',
+61 silly reify   'C:\\DBM_Project\\node_modules\\@protobufjs\\base64': 'C:\\DBM_Project\\node_modules\\@protobufjs\\.base64-feV8cm2C',
+61 silly reify   'C:\\DBM_Project\\node_modules\\@protobufjs\\eventemitter': 'C:\\DBM_Project\\node_modules\\@protobufjs\\.eventemitter-XMSVVbR1',
+61 silly reify   'C:\\DBM_Project\\node_modules\\@protobufjs\\codegen': 'C:\\DBM_Project\\node_modules\\@protobufjs\\.codegen-ypTgdRjb',
+61 silly reify   'C:\\DBM_Project\\node_modules\\@protobufjs\\fetch': 'C:\\DBM_Project\\node_modules\\@protobufjs\\.fetch-fbPU9GBU',
+61 silly reify   'C:\\DBM_Project\\node_modules\\@protobufjs\\inquire': 'C:\\DBM_Project\\node_modules\\@protobufjs\\.inquire-RX3xbdXc',
+61 silly reify   'C:\\DBM_Project\\node_modules\\@protobufjs\\float': 'C:\\DBM_Project\\node_modules\\@protobufjs\\.float-Tm30IEy5',
+61 silly reify   'C:\\DBM_Project\\node_modules\\@protobufjs\\pool': 'C:\\DBM_Project\\node_modules\\@protobufjs\\.pool-0gVUQIrL',
+61 silly reify   'C:\\DBM_Project\\node_modules\\@protobufjs\\path': 'C:\\DBM_Project\\node_modules\\@protobufjs\\.path-bxiDmD7y',
+61 silly reify   'C:\\DBM_Project\\node_modules\\@protobufjs\\utf8': 'C:\\DBM_Project\\node_modules\\@protobufjs\\.utf8-zdkyxf61'
+61 silly reify }
+62 silly audit bulk request {
+62 silly audit   '@google/genai': [ '1.50.1' ],
+62 silly audit   '@protobufjs/aspromise': [ '1.1.2' ],
+62 silly audit   '@protobufjs/base64': [ '1.1.2' ],
+62 silly audit   '@protobufjs/codegen': [ '2.0.4' ],
+62 silly audit   '@protobufjs/eventemitter': [ '1.1.0' ],
+62 silly audit   '@protobufjs/fetch': [ '1.1.0' ],
+62 silly audit   '@protobufjs/float': [ '1.0.2' ],
+62 silly audit   '@protobufjs/inquire': [ '1.1.0' ],
+62 silly audit   '@protobufjs/path': [ '1.1.2' ],
+62 silly audit   '@protobufjs/pool': [ '1.1.0' ],
+62 silly audit   '@protobufjs/utf8': [ '1.1.0' ],
+62 silly audit   '@types/node': [ '25.6.0' ],
+62 silly audit   '@types/retry': [ '0.12.0' ],
+62 silly audit   accepts: [ '2.0.0' ],
+62 silly audit   'agent-base': [ '7.1.4' ],
+62 silly audit   'append-field': [ '1.0.0' ],
+62 silly audit   'aws-ssl-profiles': [ '1.1.2' ],
+62 silly audit   'base64-js': [ '1.5.1' ],
+62 silly audit   'bignumber.js': [ '9.3.1' ],
+62 silly audit   'body-parser': [ '2.2.2' ],
+62 silly audit   'buffer-equal-constant-time': [ '1.0.1' ],
+62 silly audit   'buffer-from': [ '1.1.2' ],
+62 silly audit   busboy: [ '1.6.0' ],
+62 silly audit   bytes: [ '3.1.2' ],
+62 silly audit   'call-bind-apply-helpers': [ '1.0.2' ],
+62 silly audit   'call-bound': [ '1.0.4' ],
+62 silly audit   'concat-stream': [ '2.0.0' ],
+62 silly audit   'content-disposition': [ '1.1.0' ],
+62 silly audit   'content-type': [ '1.0.5' ],
+62 silly audit   cookie: [ '0.7.2' ],
+62 silly audit   'cookie-signature': [ '1.2.2' ],
+62 silly audit   'data-uri-to-buffer': [ '4.0.1' ],
+62 silly audit   debug: [ '4.4.3' ],
+62 silly audit   denque: [ '2.1.0' ],
+62 silly audit   depd: [ '2.0.0' ],
+62 silly audit   dotenv: [ '17.4.1' ],
+62 silly audit   'dunder-proto': [ '1.0.1' ],
+62 silly audit   'ecdsa-sig-formatter': [ '1.0.11' ],
+62 silly audit   'ee-first': [ '1.1.1' ],
+62 silly audit   encodeurl: [ '2.0.0' ],
+62 silly audit   'es-define-property': [ '1.0.1' ],
+62 silly audit   'es-errors': [ '1.3.0' ],
+62 silly audit   'es-object-atoms': [ '1.1.1' ],
+62 silly audit   'escape-html': [ '1.0.3' ],
+62 silly audit   etag: [ '1.8.1' ],
+62 silly audit   express: [ '5.2.1' ],
+62 silly audit   extend: [ '3.0.2' ],
+62 silly audit   'fetch-blob': [ '3.2.0' ],
+62 silly audit   finalhandler: [ '2.1.1' ],
+62 silly audit   'formdata-polyfill': [ '4.0.10' ],
+62 silly audit   forwarded: [ '0.2.0' ],
+62 silly audit   fresh: [ '2.0.0' ],
+62 silly audit   'function-bind': [ '1.1.2' ],
+62 silly audit   gaxios: [ '7.1.4' ],
+62 silly audit   'gcp-metadata': [ '8.1.2' ],
+62 silly audit   'generate-function': [ '2.3.1' ],
+62 silly audit   'get-intrinsic': [ '1.3.0' ],
+62 silly audit   'get-proto': [ '1.0.1' ],
+62 silly audit   'google-auth-library': [ '10.6.2' ],
+62 silly audit   'google-logging-utils': [ '1.1.3' ],
+62 silly audit   gopd: [ '1.2.0' ],
+62 silly audit   'has-symbols': [ '1.1.0' ],
+62 silly audit   hasown: [ '2.0.2' ],
+62 silly audit   'http-errors': [ '2.0.1' ],
+62 silly audit   'https-proxy-agent': [ '7.0.6' ],
+62 silly audit   'iconv-lite': [ '0.7.2' ],
+62 silly audit   inherits: [ '2.0.4' ],
+62 silly audit   'ipaddr.js': [ '1.9.1' ],
+62 silly audit   'is-promise': [ '4.0.0' ],
+62 silly audit   'is-property': [ '1.0.2' ],
+62 silly audit   'json-bigint': [ '1.0.0' ],
+62 silly audit   jwa: [ '2.0.1' ],
+62 silly audit   jws: [ '4.0.1' ],
+62 silly audit   long: [ '5.3.2' ],
+62 silly audit   'lru.min': [ '1.1.4' ],
+62 silly audit   'math-intrinsics': [ '1.1.0' ],
+62 silly audit   'media-typer': [ '1.1.0', '0.3.0' ],
+62 silly audit   'merge-descriptors': [ '2.0.0' ],
+62 silly audit   'mime-db': [ '1.54.0', '1.52.0' ],
+62 silly audit   'mime-types': [ '3.0.2', '2.1.35' ],
+62 silly audit   ms: [ '2.1.3' ],
+62 silly audit   multer: [ '2.1.1' ],
+62 silly audit   'type-is': [ '1.6.18', '2.0.1' ],
+62 silly audit   mysql2: [ '3.21.1' ],
+62 silly audit   'named-placeholders': [ '1.1.6' ],
+62 silly audit   negotiator: [ '1.0.0' ],
+62 silly audit   'node-domexception': [ '1.0.0' ],
+62 silly audit   'node-fetch': [ '3.3.2' ],
+62 silly audit   'object-inspect': [ '1.13.4' ],
+62 silly audit   'on-finished': [ '2.4.1' ],
+62 silly audit   once: [ '1.4.0' ],
+62 silly audit   'p-retry': [ '4.6.2' ],
+62 silly audit   parseurl: [ '1.3.3' ],
+62 silly audit   'path-to-regexp': [ '8.4.2' ],
+62 silly audit   protobufjs: [ '7.5.5' ],
+62 silly audit   'proxy-addr': [ '2.0.7' ],
+62 silly audit   qs: [ '6.15.1' ],
+62 silly audit   'range-parser': [ '1.2.1' ],
+62 silly audit   'raw-body': [ '3.0.2' ],
+62 silly audit   'readable-stream': [ '3.6.2' ],
+62 silly audit   retry: [ '0.13.1' ],
+62 silly audit   router: [ '2.2.0' ],
+62 silly audit   'safe-buffer': [ '5.2.1' ],
+62 silly audit   'safer-buffer': [ '2.1.2' ],
+62 silly audit   send: [ '1.2.1' ],
+62 silly audit   'serve-static': [ '2.2.1' ],
+62 silly audit   setprototypeof: [ '1.2.0' ],
+62 silly audit   'side-channel': [ '1.1.0' ],
+62 silly audit   'side-channel-list': [ '1.0.1' ],
+62 silly audit   'side-channel-map': [ '1.0.1' ],
+62 silly audit   'side-channel-weakmap': [ '1.0.2' ],
+62 silly audit   'sql-escaper': [ '1.3.3' ],
+62 silly audit   statuses: [ '2.0.2' ],
+62 silly audit   streamsearch: [ '1.1.0' ],
+62 silly audit   string_decoder: [ '1.3.0' ],
+62 silly audit   toidentifier: [ '1.0.1' ],
+62 silly audit   typedarray: [ '0.0.6' ],
+62 silly audit   'undici-types': [ '7.19.2' ],
+62 silly audit   unpipe: [ '1.0.0' ],
+62 silly audit   'util-deprecate': [ '1.0.2' ],
+62 silly audit   vary: [ '1.1.2' ],
+62 silly audit   'web-streams-polyfill': [ '3.3.3' ],
+62 silly audit   wrappy: [ '1.0.2' ],
+62 silly audit   ws: [ '8.20.0' ]
+62 silly audit }
+63 http cache @types/retry@https://registry.npmjs.org/@types/retry/-/retry-0.12.0.tgz 1ms (cache hit)
+64 http cache @protobufjs/utf8@https://registry.npmjs.org/@protobufjs/utf8/-/utf8-1.1.0.tgz 0ms (cache hit)
+65 http cache @protobufjs/pool@https://registry.npmjs.org/@protobufjs/pool/-/pool-1.1.0.tgz 0ms (cache hit)
+66 http cache @protobufjs/float@https://registry.npmjs.org/@protobufjs/float/-/float-1.0.2.tgz 0ms (cache hit)
+67 http cache @protobufjs/path@https://registry.npmjs.org/@protobufjs/path/-/path-1.1.2.tgz 0ms (cache hit)
+68 http cache @protobufjs/fetch@https://registry.npmjs.org/@protobufjs/fetch/-/fetch-1.1.0.tgz 0ms (cache hit)
+69 http cache @protobufjs/inquire@https://registry.npmjs.org/@protobufjs/inquire/-/inquire-1.1.0.tgz 0ms (cache hit)
+70 http cache @protobufjs/codegen@https://registry.npmjs.org/@protobufjs/codegen/-/codegen-2.0.4.tgz 0ms (cache hit)
+71 http cache @protobufjs/base64@https://registry.npmjs.org/@protobufjs/base64/-/base64-1.1.2.tgz 0ms (cache hit)
+72 http cache @protobufjs/eventemitter@https://registry.npmjs.org/@protobufjs/eventemitter/-/eventemitter-1.1.0.tgz 0ms (cache hit)
+73 http cache @protobufjs/aspromise@https://registry.npmjs.org/@protobufjs/aspromise/-/aspromise-1.1.2.tgz 0ms (cache hit)
+74 http cache @google/genai@https://registry.npmjs.org/@google/genai/-/genai-1.50.1.tgz 0ms (cache hit)
+75 http cache ws@https://registry.npmjs.org/ws/-/ws-8.20.0.tgz 0ms (cache hit)
+76 http cache web-streams-polyfill@https://registry.npmjs.org/web-streams-polyfill/-/web-streams-polyfill-3.3.3.tgz 0ms (cache hit)
+77 http cache util-deprecate@https://registry.npmjs.org/util-deprecate/-/util-deprecate-1.0.2.tgz 0ms (cache hit)
+78 http cache string_decoder@https://registry.npmjs.org/string_decoder/-/string_decoder-1.3.0.tgz 0ms (cache hit)
+79 http cache typedarray@https://registry.npmjs.org/typedarray/-/typedarray-0.0.6.tgz 0ms (cache hit)
+80 http cache safe-buffer@https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.2.1.tgz 0ms (cache hit)
+81 http cache retry@https://registry.npmjs.org/retry/-/retry-0.13.1.tgz 0ms (cache hit)
+82 http cache streamsearch@https://registry.npmjs.org/streamsearch/-/streamsearch-1.1.0.tgz 0ms (cache hit)
+83 http cache p-retry@https://registry.npmjs.org/p-retry/-/p-retry-4.6.2.tgz 0ms (cache hit)
+84 http cache readable-stream@https://registry.npmjs.org/readable-stream/-/readable-stream-3.6.2.tgz 0ms (cache hit)
+85 http cache protobufjs@https://registry.npmjs.org/protobufjs/-/protobufjs-7.5.5.tgz 0ms (cache hit)
+86 http cache node-domexception@https://registry.npmjs.org/node-domexception/-/node-domexception-1.0.0.tgz 0ms (cache hit)
+87 http cache node-fetch@https://registry.npmjs.org/node-fetch/-/node-fetch-3.3.2.tgz 0ms (cache hit)
+88 http cache multer@https://registry.npmjs.org/multer/-/multer-2.1.1.tgz 0ms (cache hit)
+89 http cache https-proxy-agent@https://registry.npmjs.org/https-proxy-agent/-/https-proxy-agent-7.0.6.tgz 0ms (cache hit)
+90 http cache jws@https://registry.npmjs.org/jws/-/jws-4.0.1.tgz 0ms (cache hit)
+91 http cache jwa@https://registry.npmjs.org/jwa/-/jwa-2.0.1.tgz 0ms (cache hit)
+92 http cache json-bigint@https://registry.npmjs.org/json-bigint/-/json-bigint-1.0.0.tgz 0ms (cache hit)
+93 http cache google-logging-utils@https://registry.npmjs.org/google-logging-utils/-/google-logging-utils-1.1.3.tgz 0ms (cache hit)
+94 http cache gaxios@https://registry.npmjs.org/gaxios/-/gaxios-7.1.4.tgz 0ms (cache hit)
+95 http cache google-auth-library@https://registry.npmjs.org/google-auth-library/-/google-auth-library-10.6.2.tgz 0ms (cache hit)
+96 http cache formdata-polyfill@https://registry.npmjs.org/formdata-polyfill/-/formdata-polyfill-4.0.10.tgz 0ms (cache hit)
+97 http cache gcp-metadata@https://registry.npmjs.org/gcp-metadata/-/gcp-metadata-8.1.2.tgz 0ms (cache hit)
+98 http cache fetch-blob@https://registry.npmjs.org/fetch-blob/-/fetch-blob-3.2.0.tgz 0ms (cache hit)
+99 http cache extend@https://registry.npmjs.org/extend/-/extend-3.0.2.tgz 0ms (cache hit)
+100 http cache ecdsa-sig-formatter@https://registry.npmjs.org/ecdsa-sig-formatter/-/ecdsa-sig-formatter-1.0.11.tgz 0ms (cache hit)
+101 http cache concat-stream@https://registry.npmjs.org/concat-stream/-/concat-stream-2.0.0.tgz 0ms (cache hit)
+102 http cache bignumber.js@https://registry.npmjs.org/bignumber.js/-/bignumber.js-9.3.1.tgz 0ms (cache hit)
+103 http cache buffer-from@https://registry.npmjs.org/buffer-from/-/buffer-from-1.1.2.tgz 0ms (cache hit)
+104 http cache data-uri-to-buffer@https://registry.npmjs.org/data-uri-to-buffer/-/data-uri-to-buffer-4.0.1.tgz 0ms (cache hit)
+105 http cache buffer-equal-constant-time@https://registry.npmjs.org/buffer-equal-constant-time/-/buffer-equal-constant-time-1.0.1.tgz 0ms (cache hit)
+106 http cache base64-js@https://registry.npmjs.org/base64-js/-/base64-js-1.5.1.tgz 0ms (cache hit)
+107 http cache busboy@https://registry.npmjs.org/busboy/-/busboy-1.6.0.tgz 0ms (cache hit)
+108 http cache agent-base@https://registry.npmjs.org/agent-base/-/agent-base-7.1.4.tgz 0ms (cache hit)
+109 http cache type-is@https://registry.npmjs.org/type-is/-/type-is-1.6.18.tgz 0ms (cache hit)
+110 http cache mime-db@https://registry.npmjs.org/mime-db/-/mime-db-1.52.0.tgz 0ms (cache hit)
+111 http cache append-field@https://registry.npmjs.org/append-field/-/append-field-1.0.0.tgz 0ms (cache hit)
+112 http cache media-typer@https://registry.npmjs.org/media-typer/-/media-typer-0.3.0.tgz 0ms (cache hit)
+113 http cache mime-types@https://registry.npmjs.org/mime-types/-/mime-types-2.1.35.tgz 0ms (cache hit)
+114 silly tarball no local data for @types/retry@https://registry.npmjs.org/@types/retry/-/retry-0.12.0.tgz. Extracting by manifest.
+115 silly tarball no local data for @protobufjs/utf8@https://registry.npmjs.org/@protobufjs/utf8/-/utf8-1.1.0.tgz. Extracting by manifest.
+116 silly tarball no local data for @protobufjs/pool@https://registry.npmjs.org/@protobufjs/pool/-/pool-1.1.0.tgz. Extracting by manifest.
+117 silly tarball no local data for @protobufjs/float@https://registry.npmjs.org/@protobufjs/float/-/float-1.0.2.tgz. Extracting by manifest.
+118 silly tarball no local data for @protobufjs/path@https://registry.npmjs.org/@protobufjs/path/-/path-1.1.2.tgz. Extracting by manifest.
+119 silly tarball no local data for @protobufjs/fetch@https://registry.npmjs.org/@protobufjs/fetch/-/fetch-1.1.0.tgz. Extracting by manifest.
+120 silly tarball no local data for @protobufjs/inquire@https://registry.npmjs.org/@protobufjs/inquire/-/inquire-1.1.0.tgz. Extracting by manifest.
+121 silly tarball no local data for @protobufjs/codegen@https://registry.npmjs.org/@protobufjs/codegen/-/codegen-2.0.4.tgz. Extracting by manifest.
+122 silly tarball no local data for @protobufjs/base64@https://registry.npmjs.org/@protobufjs/base64/-/base64-1.1.2.tgz. Extracting by manifest.
+123 silly tarball no local data for @protobufjs/eventemitter@https://registry.npmjs.org/@protobufjs/eventemitter/-/eventemitter-1.1.0.tgz. Extracting by manifest.
+124 silly tarball no local data for @protobufjs/aspromise@https://registry.npmjs.org/@protobufjs/aspromise/-/aspromise-1.1.2.tgz. Extracting by manifest.
+125 silly tarball no local data for @google/genai@https://registry.npmjs.org/@google/genai/-/genai-1.50.1.tgz. Extracting by manifest.
+126 silly tarball no local data for ws@https://registry.npmjs.org/ws/-/ws-8.20.0.tgz. Extracting by manifest.
+127 silly tarball no local data for web-streams-polyfill@https://registry.npmjs.org/web-streams-polyfill/-/web-streams-polyfill-3.3.3.tgz. Extracting by manifest.
+128 silly tarball no local data for util-deprecate@https://registry.npmjs.org/util-deprecate/-/util-deprecate-1.0.2.tgz. Extracting by manifest.
+129 silly tarball no local data for string_decoder@https://registry.npmjs.org/string_decoder/-/string_decoder-1.3.0.tgz. Extracting by manifest.
+130 silly tarball no local data for typedarray@https://registry.npmjs.org/typedarray/-/typedarray-0.0.6.tgz. Extracting by manifest.
+131 silly tarball no local data for safe-buffer@https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.2.1.tgz. Extracting by manifest.
+132 silly tarball no local data for retry@https://registry.npmjs.org/retry/-/retry-0.13.1.tgz. Extracting by manifest.
+133 silly tarball no local data for streamsearch@https://registry.npmjs.org/streamsearch/-/streamsearch-1.1.0.tgz. Extracting by manifest.
+134 silly tarball no local data for p-retry@https://registry.npmjs.org/p-retry/-/p-retry-4.6.2.tgz. Extracting by manifest.
+135 silly tarball no local data for readable-stream@https://registry.npmjs.org/readable-stream/-/readable-stream-3.6.2.tgz. Extracting by manifest.
+136 silly tarball no local data for protobufjs@https://registry.npmjs.org/protobufjs/-/protobufjs-7.5.5.tgz. Extracting by manifest.
+137 silly tarball no local data for node-domexception@https://registry.npmjs.org/node-domexception/-/node-domexception-1.0.0.tgz. Extracting by manifest.
+138 silly tarball no local data for node-fetch@https://registry.npmjs.org/node-fetch/-/node-fetch-3.3.2.tgz. Extracting by manifest.
+139 silly tarball no local data for multer@https://registry.npmjs.org/multer/-/multer-2.1.1.tgz. Extracting by manifest.
+140 silly tarball no local data for https-proxy-agent@https://registry.npmjs.org/https-proxy-agent/-/https-proxy-agent-7.0.6.tgz. Extracting by manifest.
+141 silly tarball no local data for jws@https://registry.npmjs.org/jws/-/jws-4.0.1.tgz. Extracting by manifest.
+142 silly tarball no local data for jwa@https://registry.npmjs.org/jwa/-/jwa-2.0.1.tgz. Extracting by manifest.
+143 silly tarball no local data for json-bigint@https://registry.npmjs.org/json-bigint/-/json-bigint-1.0.0.tgz. Extracting by manifest.
+144 silly tarball no local data for google-logging-utils@https://registry.npmjs.org/google-logging-utils/-/google-logging-utils-1.1.3.tgz. Extracting by manifest.
+145 silly tarball no local data for gaxios@https://registry.npmjs.org/gaxios/-/gaxios-7.1.4.tgz. Extracting by manifest.
+146 silly tarball no local data for google-auth-library@https://registry.npmjs.org/google-auth-library/-/google-auth-library-10.6.2.tgz. Extracting by manifest.
+147 silly tarball no local data for formdata-polyfill@https://registry.npmjs.org/formdata-polyfill/-/formdata-polyfill-4.0.10.tgz. Extracting by manifest.
+148 silly tarball no local data for gcp-metadata@https://registry.npmjs.org/gcp-metadata/-/gcp-metadata-8.1.2.tgz. Extracting by manifest.
+149 silly tarball no local data for fetch-blob@https://registry.npmjs.org/fetch-blob/-/fetch-blob-3.2.0.tgz. Extracting by manifest.
+150 silly tarball no local data for extend@https://registry.npmjs.org/extend/-/extend-3.0.2.tgz. Extracting by manifest.
+151 silly tarball no local data for ecdsa-sig-formatter@https://registry.npmjs.org/ecdsa-sig-formatter/-/ecdsa-sig-formatter-1.0.11.tgz. Extracting by manifest.
+152 silly tarball no local data for concat-stream@https://registry.npmjs.org/concat-stream/-/concat-stream-2.0.0.tgz. Extracting by manifest.
+153 silly tarball no local data for bignumber.js@https://registry.npmjs.org/bignumber.js/-/bignumber.js-9.3.1.tgz. Extracting by manifest.
+154 silly tarball no local data for buffer-from@https://registry.npmjs.org/buffer-from/-/buffer-from-1.1.2.tgz. Extracting by manifest.
+155 silly tarball no local data for data-uri-to-buffer@https://registry.npmjs.org/data-uri-to-buffer/-/data-uri-to-buffer-4.0.1.tgz. Extracting by manifest.
+156 silly tarball no local data for buffer-equal-constant-time@https://registry.npmjs.org/buffer-equal-constant-time/-/buffer-equal-constant-time-1.0.1.tgz. Extracting by manifest.
+157 silly tarball no local data for base64-js@https://registry.npmjs.org/base64-js/-/base64-js-1.5.1.tgz. Extracting by manifest.
+158 silly tarball no local data for busboy@https://registry.npmjs.org/busboy/-/busboy-1.6.0.tgz. Extracting by manifest.
+159 silly tarball no local data for agent-base@https://registry.npmjs.org/agent-base/-/agent-base-7.1.4.tgz. Extracting by manifest.
+160 silly tarball no local data for type-is@https://registry.npmjs.org/type-is/-/type-is-1.6.18.tgz. Extracting by manifest.
+161 silly tarball no local data for mime-db@https://registry.npmjs.org/mime-db/-/mime-db-1.52.0.tgz. Extracting by manifest.
+162 silly tarball no local data for append-field@https://registry.npmjs.org/append-field/-/append-field-1.0.0.tgz. Extracting by manifest.
+163 silly tarball no local data for media-typer@https://registry.npmjs.org/media-typer/-/media-typer-0.3.0.tgz. Extracting by manifest.
+164 silly tarball no local data for mime-types@https://registry.npmjs.org/mime-types/-/mime-types-2.1.35.tgz. Extracting by manifest.
+165 http fetch POST 200 https://registry.npmjs.org/-/npm/v1/security/advisories/bulk 442ms
+166 silly audit report {}
+167 http fetch GET 200 https://registry.npmjs.org/@types/retry/-/retry-0.12.0.tgz 414ms (cache miss)
+168 http fetch GET 200 https://registry.npmjs.org/@protobufjs/base64/-/base64-1.1.2.tgz 408ms (cache miss)
+169 http fetch GET 200 https://registry.npmjs.org/@protobufjs/codegen/-/codegen-2.0.4.tgz 416ms (cache miss)
+170 http fetch GET 200 https://registry.npmjs.org/@protobufjs/pool/-/pool-1.1.0.tgz 422ms (cache miss)
+171 http fetch GET 200 https://registry.npmjs.org/@protobufjs/path/-/path-1.1.2.tgz 422ms (cache miss)
+172 http fetch GET 200 https://registry.npmjs.org/@protobufjs/aspromise/-/aspromise-1.1.2.tgz 417ms (cache miss)
+173 http fetch GET 200 https://registry.npmjs.org/@protobufjs/eventemitter/-/eventemitter-1.1.0.tgz 418ms (cache miss)
+174 http fetch GET 200 https://registry.npmjs.org/@protobufjs/fetch/-/fetch-1.1.0.tgz 423ms (cache miss)
+175 http fetch GET 200 https://registry.npmjs.org/util-deprecate/-/util-deprecate-1.0.2.tgz 432ms (cache miss)
+176 http fetch GET 200 https://registry.npmjs.org/p-retry/-/p-retry-4.6.2.tgz 455ms (cache miss)
+177 http fetch GET 200 https://registry.npmjs.org/string_decoder/-/string_decoder-1.3.0.tgz 467ms (cache miss)
+178 http fetch GET 200 https://registry.npmjs.org/jwa/-/jwa-2.0.1.tgz 469ms (cache miss)
+179 http fetch GET 200 https://registry.npmjs.org/@protobufjs/float/-/float-1.0.2.tgz 511ms (cache miss)
+180 http fetch GET 200 https://registry.npmjs.org/concat-stream/-/concat-stream-2.0.0.tgz 497ms (cache miss)
+181 http fetch GET 200 https://registry.npmjs.org/typedarray/-/typedarray-0.0.6.tgz 515ms (cache miss)
+182 http fetch GET 200 https://registry.npmjs.org/buffer-from/-/buffer-from-1.1.2.tgz 505ms (cache miss)
+183 http fetch GET 200 https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.2.1.tgz 528ms (cache miss)
+184 http fetch GET 200 https://registry.npmjs.org/base64-js/-/base64-js-1.5.1.tgz 513ms (cache miss)
+185 http fetch GET 200 https://registry.npmjs.org/media-typer/-/media-typer-0.3.0.tgz 511ms (cache miss)
+186 http fetch GET 200 https://registry.npmjs.org/mime-types/-/mime-types-2.1.35.tgz 515ms (cache miss)
+187 http fetch GET 200 https://registry.npmjs.org/buffer-equal-constant-time/-/buffer-equal-constant-time-1.0.1.tgz 526ms (cache miss)
+188 http fetch GET 200 https://registry.npmjs.org/streamsearch/-/streamsearch-1.1.0.tgz 547ms (cache miss)
+189 http fetch GET 200 https://registry.npmjs.org/data-uri-to-buffer/-/data-uri-to-buffer-4.0.1.tgz 534ms (cache miss)
+190 http fetch GET 200 https://registry.npmjs.org/@protobufjs/utf8/-/utf8-1.1.0.tgz 570ms (cache miss)
+191 http fetch GET 200 https://registry.npmjs.org/type-is/-/type-is-1.6.18.tgz 537ms (cache miss)
+192 http fetch GET 200 https://registry.npmjs.org/json-bigint/-/json-bigint-1.0.0.tgz 549ms (cache miss)
+193 http fetch GET 200 https://registry.npmjs.org/@protobufjs/inquire/-/inquire-1.1.0.tgz 569ms (cache miss)
+194 http fetch GET 200 https://registry.npmjs.org/ecdsa-sig-formatter/-/ecdsa-sig-formatter-1.0.11.tgz 545ms (cache miss)
+195 http fetch GET 200 https://registry.npmjs.org/retry/-/retry-0.13.1.tgz 566ms (cache miss)
+196 http fetch GET 200 https://registry.npmjs.org/fetch-blob/-/fetch-blob-3.2.0.tgz 556ms (cache miss)
+197 http fetch GET 200 https://registry.npmjs.org/append-field/-/append-field-1.0.0.tgz 553ms (cache miss)
+198 http fetch GET 200 https://registry.npmjs.org/formdata-polyfill/-/formdata-polyfill-4.0.10.tgz 603ms (cache miss)
+199 http fetch GET 200 https://registry.npmjs.org/extend/-/extend-3.0.2.tgz 602ms (cache miss)
+200 http fetch GET 200 https://registry.npmjs.org/jws/-/jws-4.0.1.tgz 608ms (cache miss)
+201 http fetch GET 200 https://registry.npmjs.org/mime-db/-/mime-db-1.52.0.tgz 618ms (cache miss)
+202 http fetch GET 200 https://registry.npmjs.org/https-proxy-agent/-/https-proxy-agent-7.0.6.tgz 636ms (cache miss)
+203 http fetch GET 200 https://registry.npmjs.org/gcp-metadata/-/gcp-metadata-8.1.2.tgz 634ms (cache miss)
+204 http fetch GET 200 https://registry.npmjs.org/multer/-/multer-2.1.1.tgz 641ms (cache miss)
+205 http fetch GET 200 https://registry.npmjs.org/agent-base/-/agent-base-7.1.4.tgz 640ms (cache miss)
+206 http fetch GET 200 https://registry.npmjs.org/bignumber.js/-/bignumber.js-9.3.1.tgz 664ms (cache miss)
+207 http fetch GET 200 https://registry.npmjs.org/ws/-/ws-8.20.0.tgz 699ms (cache miss)
+208 http fetch GET 200 https://registry.npmjs.org/google-logging-utils/-/google-logging-utils-1.1.3.tgz 687ms (cache miss)
+209 http fetch GET 200 https://registry.npmjs.org/node-fetch/-/node-fetch-3.3.2.tgz 702ms (cache miss)
+210 http fetch GET 200 https://registry.npmjs.org/busboy/-/busboy-1.6.0.tgz 705ms (cache miss)
+211 http fetch GET 200 https://registry.npmjs.org/readable-stream/-/readable-stream-3.6.2.tgz 749ms (cache miss)
+212 http fetch GET 200 https://registry.npmjs.org/node-domexception/-/node-domexception-1.0.0.tgz 765ms (cache miss)
+213 warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+214 http fetch GET 200 https://registry.npmjs.org/gaxios/-/gaxios-7.1.4.tgz 1113ms (cache miss)
+215 http fetch GET 200 https://registry.npmjs.org/protobufjs/-/protobufjs-7.5.5.tgz 1141ms (cache miss)
+216 http fetch GET 200 https://registry.npmjs.org/@google/genai/-/genai-1.50.1.tgz 1197ms (cache miss)
+217 http fetch GET 200 https://registry.npmjs.org/google-auth-library/-/google-auth-library-10.6.2.tgz 1188ms (cache miss)
+218 http fetch GET 200 https://registry.npmjs.org/web-streams-polyfill/-/web-streams-polyfill-3.3.3.tgz 1370ms (cache miss)
+219 info run protobufjs@7.5.5 postinstall node_modules/protobufjs node scripts/postinstall
+220 info run protobufjs@7.5.5 postinstall { code: 0, signal: null }
+221 silly ADD node_modules/@types/retry
+222 silly CHANGE node_modules/@protobufjs/utf8
+223 silly CHANGE node_modules/@protobufjs/path
+224 silly CHANGE node_modules/@protobufjs/pool
+225 silly CHANGE node_modules/@protobufjs/float
+226 silly CHANGE node_modules/@protobufjs/inquire
+227 silly CHANGE node_modules/@protobufjs/fetch
+228 silly CHANGE node_modules/@protobufjs/codegen
+229 silly CHANGE node_modules/@protobufjs/eventemitter
+230 silly CHANGE node_modules/@protobufjs/base64
+231 silly CHANGE node_modules/@protobufjs/aspromise
+232 silly CHANGE node_modules/@google/genai
+233 silly CHANGE node_modules/ws
+234 silly CHANGE node_modules/web-streams-polyfill
+235 silly CHANGE node_modules/util-deprecate
+236 silly CHANGE node_modules/typedarray
+237 silly CHANGE node_modules/string_decoder
+238 silly CHANGE node_modules/streamsearch
+239 silly CHANGE node_modules/safe-buffer
+240 silly CHANGE node_modules/retry
+241 silly CHANGE node_modules/readable-stream
+242 silly CHANGE node_modules/protobufjs
+243 silly CHANGE node_modules/p-retry
+244 silly CHANGE node_modules/node-domexception
+245 silly CHANGE node_modules/node-fetch
+246 silly CHANGE node_modules/multer
+247 silly CHANGE node_modules/multer/node_modules/type-is
+248 silly CHANGE node_modules/multer/node_modules/mime-db
+249 silly CHANGE node_modules/multer/node_modules/mime-types
+250 silly CHANGE node_modules/multer/node_modules/media-typer
+251 silly CHANGE node_modules/https-proxy-agent
+252 silly CHANGE node_modules/jws
+253 silly CHANGE node_modules/json-bigint
+254 silly CHANGE node_modules/jwa
+255 silly CHANGE node_modules/google-logging-utils
+256 silly CHANGE node_modules/google-auth-library
+257 silly CHANGE node_modules/gaxios
+258 silly CHANGE node_modules/gcp-metadata
+259 silly CHANGE node_modules/formdata-polyfill
+260 silly CHANGE node_modules/fetch-blob
+261 silly CHANGE node_modules/extend
+262 silly CHANGE node_modules/ecdsa-sig-formatter
+263 silly CHANGE node_modules/data-uri-to-buffer
+264 silly CHANGE node_modules/concat-stream
+265 silly CHANGE node_modules/bignumber.js
+266 silly CHANGE node_modules/busboy
+267 silly CHANGE node_modules/buffer-from
+268 silly CHANGE node_modules/buffer-equal-constant-time
+269 silly CHANGE node_modules/base64-js
+270 silly CHANGE node_modules/agent-base
+271 silly CHANGE node_modules/append-field
+272 verbose cwd C:\DBM_Project
+273 verbose os Windows_NT 10.0.26200
+274 verbose node v24.15.0
+275 verbose npm  v11.12.1
+276 verbose exit 0
+277 info ok

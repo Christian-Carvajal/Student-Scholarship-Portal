@@ -1,0 +1,569 @@
+<?php
+require_once __DIR__ . '/../app/config.php';
+
+if (!defined('APP_ROOT')) {
+    http_response_code(500);
+    exit('Application not bootstrapped correctly.');
+}
+
+require APP_ROOT . '/app/views/includes/head.php';
+?>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Multi-device SVG Favicon Support -->
+    <link rel="icon" type="image/svg+xml" href="/pictures/uphsd.svg" />
+    <link rel="alternate icon" href="/pictures/uphsd.svg" />
+    <link rel="apple-touch-icon" href="/pictures/uphsd.svg" />
+    <link rel="mask-icon" href="/pictures/uphsd.svg" color="#7a1114" />
+    <meta name="theme-color" content="#7a1114" />
+
+    <title>Login | Student Scholarship Portal</title>
+    <!-- Sophisticated UPHSD Typography Pairing -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Outfit:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/style.css" />
+    <style>
+      /* Page-scoped login overrides requested for 70/30 split and larger left branding */
+      .login-page .login-left {
+        flex: 0 0 70%;
+        padding: 4rem 3rem;
+      }
+
+      .login-page .login-right {
+        flex: 0 0 30%;
+      }
+
+      .login-page .login-left .login-logo {
+        max-width: 320px;
+        margin-bottom: 2.5rem;
+      }
+
+      .login-page .login-left .login-headline {
+        font-size: clamp(3.2rem, 4.5vw, 4.2rem);
+        line-height: 1.15;
+      }
+
+      .login-page .login-back-btn {
+        position: absolute;
+        top: 1.5rem;
+        left: 1.5rem;
+        z-index: 6;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.85rem 1.45rem;
+        border: 2px solid #fdbb11;
+        border-radius: 999px;
+        color: #ffffff;
+        text-decoration: none;
+        font-family: var(--font-sans);
+        font-weight: 700;
+        font-size: 1.08rem;
+        letter-spacing: 0.01em;
+        background: linear-gradient(135deg, #7a1114 0%, #5c0d10 100%);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+        transition:
+          background 0.2s ease,
+          border-color 0.2s ease,
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      .login-page .login-back-btn .login-back-icon {
+        display: inline-block;
+        font-size: 1.06rem;
+        line-height: 1;
+        transform: rotate(180deg);
+      }
+
+      .login-page .login-back-btn:hover {
+        background: linear-gradient(135deg, #8e161a 0%, #691014 100%);
+        border-color: #ffd45e;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.45);
+        transform: translateX(-2px);
+      }
+
+      .login-page .login-back-btn:active {
+        transform: translateX(0);
+      }
+
+      .login-page .login-back-btn:focus-visible {
+        outline: 3px solid #ffffff;
+        outline-offset: 3px;
+      }
+
+      @media (max-width: 992px) {
+        .login-page .login-container {
+          flex-direction: column;
+        }
+
+        .login-page .login-left,
+        .login-page .login-right {
+          flex: 1 1 auto;
+          width: 100%;
+        }
+
+        .login-page .login-left {
+          min-height: 44vh;
+          padding: 4.25rem 1.5rem 2.5rem;
+        }
+
+        .login-page .login-left .login-logo {
+          max-width: 230px;
+          margin-bottom: 1.5rem;
+        }
+
+        .login-page .login-left .login-headline {
+          font-size: clamp(2.1rem, 7vw, 2.8rem);
+        }
+
+        .login-page .login-back-btn {
+          top: 1rem;
+          left: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body class="login-page">
+    <div class="login-container">
+      <!-- Left Side -->
+      <div class="login-left bg-maroon">
+        <a
+          href="/index.html"
+          class="login-back-btn"
+          aria-label="Back to home page"
+        >
+          <span class="login-back-icon" aria-hidden="true">➤</span> Back
+        </a>
+        <img src="/pictures/uphsd.svg" alt="UPHSD Logo" class="login-logo" />
+        <h1 class="login-headline">Student Scholarship<br />Portal</h1>
+      </div>
+
+      <!-- Right Side -->
+      <div class="login-right">
+        <div class="login-panel">
+          <div class="login-toggle">
+            <button id="btnStudentRole" class="toggle-btn active">
+              Student
+            </button>
+            <button id="btnAdminRole" class="toggle-btn">Admin</button>
+          </div>
+
+          <div id="authPanelBody" class="auth-panel-body">
+            <h2 id="loginTitle" class="form-title">Student Login</h2>
+            <form id="authForm">
+              <!-- Registration Fields (Only visible for students sometimes, but let's implement login/register tabs inside) -->
+              <div class="form-tabs" id="studentTabs">
+                <a href="#" id="tabLogin" class="active">Login</a>
+                <a href="#" id="tabRegister">Register</a>
+              </div>
+
+              <div class="form-group" id="groupStudentId">
+                <label id="lblUsername">Student ID</label>
+                <input
+                  type="text"
+                  id="username"
+                  class="form-control"
+                  required
+                  placeholder="Ex. 12345678"
+                />
+              </div>
+
+              <div class="form-group" style="position: relative">
+                <label>Password</label>
+                <input
+                  type="password"
+                  id="password"
+                  class="form-control"
+                  required
+                  placeholder="••••••••"
+                  style="padding-right: 40px"
+                />
+                <span
+                  id="togglePassword"
+                  style="
+                    position: absolute;
+                    right: 12px;
+                    top: 40px;
+                    cursor: pointer;
+                    color: #666;
+                  "
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="feather feather-eye"
+                  >
+                    <path
+                      d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                    ></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </span>
+                <a href="#" class="forgot-pass">Forgot Password?</a>
+              </div>
+
+              <button
+                type="submit"
+                id="btnSubmitAuth"
+                class="btn btn-gold btn-full"
+              >
+                Login
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="customModal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <h3 id="modalTitle">Alert</h3>
+        <div id="modalBody" class="modal-body"></div>
+        <div class="modal-actions">
+          <button id="modalBtnOk" class="btn btn-gold">OK</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Register Modal (Student) -->
+    <div
+      id="registerModal"
+      class="modal-overlay modal-overlay--pop"
+      aria-hidden="true"
+      style="backdrop-filter: blur(8px)"
+    >
+      <div
+        class="modal-content modal-content--scrollable"
+        style="max-width: 520px; border-top: 6px solid var(--secondary-gold)"
+      >
+        <h3 style="text-align: center">Create Student Account</h3>
+        <p
+          style="
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            line-height: 1.5;
+          "
+        >
+          Register your student account to apply for scholarships.
+        </p>
+
+        <form id="registerForm">
+          <div class="form-group">
+            <label>Student ID</label>
+            <input
+              type="text"
+              id="regStudentId"
+              class="form-control"
+              required
+              placeholder="Ex. 12345678"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              id="regPassword"
+              class="form-control"
+              required
+              placeholder="Create a password"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Full Name</label>
+            <input
+              type="text"
+              id="regName"
+              class="form-control"
+              placeholder="Juan Dela Cruz"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Email Address</label>
+            <input
+              type="email"
+              id="regEmail"
+              class="form-control"
+              required
+              placeholder="For account recovery"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Program / Major</label>
+            <input
+              type="text"
+              id="regProgram"
+              class="form-control"
+              placeholder="BS Computer Science"
+            />
+          </div>
+
+          <div
+            class="modal-actions"
+            style="margin-top: 1.75rem; display: flex; gap: 1rem"
+          >
+            <button
+              type="button"
+              id="btnCancelRegister"
+              class="btn btn-ghost"
+              style="flex: 1"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              id="btnSubmitRegister"
+              class="btn btn-gold"
+              style="flex: 1"
+            >
+              Create Account
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Force Password Change Modal (Industry Standard) -->
+    <div
+      id="forcePasswordModal"
+      class="modal-overlay hidden"
+      style="backdrop-filter: blur(8px)"
+    >
+      <div
+        class="modal-content"
+        style="max-width: 450px; border-top: 5px solid var(--primary-maroon)"
+      >
+        <h3
+          style="
+            color: var(--primary-maroon);
+            border-bottom: none;
+            margin-bottom: 0.5rem;
+          "
+        >
+          Action Required
+        </h3>
+        <p
+          style="
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+          "
+        >
+          For your security, you must change your auto-generated temporary
+          password before accessing the portal.
+        </p>
+
+        <form id="forcePasswordForm">
+          <div class="form-group">
+            <label>New Password</label>
+            <input
+              type="password"
+              id="newPassword"
+              class="form-control"
+              required
+              placeholder="Enter new password"
+            />
+          </div>
+
+          <!-- Password Strength Meter -->
+          <div class="password-strength">
+            <div class="strength-bar-container">
+              <div id="strengthBar" class="strength-bar"></div>
+            </div>
+            <ul class="pwd-requirements">
+              <li id="reqLength" class="invalid">At least 8 characters</li>
+              <li id="reqUpper" class="invalid">
+                At least one uppercase letter
+              </li>
+              <li id="reqNum" class="invalid">At least one number</li>
+            </ul>
+          </div>
+
+          <div class="form-group" style="margin-top: 1rem">
+            <label>Confirm New Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              class="form-control"
+              required
+              placeholder="Re-enter new password"
+            />
+            <small
+              id="pwdMatchMsg"
+              style="color: #dc3545; display: none; margin-top: 5px"
+              >Passwords do not match.</small
+            >
+          </div>
+
+          <div class="modal-actions" style="margin-top: 2rem">
+            <button
+              type="submit"
+              id="btnSavePassword"
+              class="btn btn-gold"
+              style="width: 100%"
+              disabled
+            >
+              Secure Account & Continue
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div
+      id="forgotPasswordModal"
+      class="modal-overlay modal-overlay--pop"
+      aria-hidden="true"
+      style="backdrop-filter: blur(8px)"
+    >
+      <div
+        class="modal-content"
+        style="max-width: 400px; border-top: 5px solid #fdbb11"
+      >
+        <h3
+          style="
+            color: var(--primary-maroon);
+            margin-bottom: 0.5rem;
+            text-align: center;
+          "
+        >
+          Reset Password
+        </h3>
+        <p
+          style="
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            line-height: 1.5;
+          "
+        >
+          Enter the email address associated with your account to receive a
+          secure reset link.
+        </p>
+        <form id="forgotPasswordForm">
+          <div class="form-group">
+            <label>Email Address</label>
+            <input
+              type="email"
+              id="forgotEmail"
+              class="form-control"
+              required
+              placeholder="Ex. student@example.com"
+            />
+          </div>
+          <div
+            class="modal-actions"
+            style="margin-top: 1.5rem; display: flex; gap: 1rem"
+          >
+            <button
+              type="button"
+              id="btnCancelForgot"
+              class="btn btn-ghost"
+              style="flex: 1"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              id="btnSubmitForgot"
+              class="btn btn-gold"
+              style="flex: 1"
+            >
+              Send Link
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Create New Password Modal (For Reset) -->
+    <div
+      id="createNewPasswordModal"
+      class="modal-overlay hidden"
+      style="backdrop-filter: blur(8px)"
+    >
+      <div
+        class="modal-content"
+        style="max-width: 450px; border-top: 5px solid #fdbb11"
+      >
+        <h3
+          style="
+            color: var(--primary-maroon);
+            margin-bottom: 0.5rem;
+            text-align: center;
+          "
+        >
+          Create New Password
+        </h3>
+        <p
+          style="
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            line-height: 1.5;
+          "
+        >
+          Please enter your new password below.
+        </p>
+        <form id="createNewPasswordForm">
+          <div class="form-group">
+            <label>New Password</label>
+            <input
+              type="password"
+              id="resetNewPassword"
+              class="form-control"
+              required
+              placeholder="Enter new password"
+            />
+          </div>
+          <div class="modal-actions" style="margin-top: 1.5rem">
+            <button type="submit" class="btn btn-gold" style="width: 100%">
+              Update Password
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- EmailJS SDK -->
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"
+    ></script>
+    <script type="text/javascript">
+      (function () {
+        emailjs.init("3ENDmMFjlA89kQgvO"); // Public Key for Forgot Password Account
+      })();
+    </script>
+    <script src="/js/auth.js"></script>
+  </body>
+</html>
+
+<?php
+require APP_ROOT . '/app/views/includes/footer.php';
+?>

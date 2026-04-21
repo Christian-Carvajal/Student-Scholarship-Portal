@@ -1,0 +1,135 @@
+0 verbose cli C:\Program Files\nodejs\node.exe C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js
+1 info using npm@11.12.1
+2 info using node@v24.15.0
+3 silly config load:file:C:\Program Files\nodejs\node_modules\npm\npmrc
+4 silly config load:file:C:\DBM_Project\.npmrc
+5 silly config load:file:C:\Users\chris\.npmrc
+6 silly config load:file:C:\Users\chris\AppData\Roaming\npm\etc\npmrc
+7 verbose title npm install
+8 verbose argv "install" "--cache" ".npm-cache"
+9 verbose logfile logs-max:10 dir:C:\DBM_Project\.npm-cache\_logs\2026-04-21T02_40_59_627Z-
+10 verbose logfile C:\DBM_Project\.npm-cache\_logs\2026-04-21T02_40_59_627Z-debug-0.log
+11 silly logfile done cleaning log files
+12 http fetch GET https://registry.npmjs.org/npm attempt 1 failed with ECONNREFUSED
+13 silly packumentCache heap:4496293888 maxSize:1124073472 maxEntrySize:562036736
+14 silly idealTree buildDeps
+15 verbose shrinkwrap failed to load node_modules/.package-lock.json out of date, updated: node_modules
+16 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\append-field' ]
+17 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\agent-base' ]
+18 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\base64-js' ]
+19 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\bignumber.js' ]
+20 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\buffer-equal-constant-time' ]
+21 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\buffer-from' ]
+22 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\busboy' ]
+23 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\concat-stream' ]
+24 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\data-uri-to-buffer' ]
+25 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\ecdsa-sig-formatter' ]
+26 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\extend' ]
+27 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\formdata-polyfill' ]
+28 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\fetch-blob' ]
+29 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\gaxios' ]
+30 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\gcp-metadata' ]
+31 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\google-auth-library' ]
+32 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\google-logging-utils' ]
+33 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\https-proxy-agent' ]
+34 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\json-bigint' ]
+35 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\jwa' ]
+36 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\jws' ]
+37 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\multer' ]
+38 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\node-domexception' ]
+39 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\node-fetch' ]
+40 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\p-retry' ]
+41 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\protobufjs' ]
+42 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\readable-stream' ]
+43 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\retry' ]
+44 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\safe-buffer' ]
+45 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\streamsearch' ]
+46 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\string_decoder' ]
+47 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\typedarray' ]
+48 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\web-streams-polyfill' ]
+49 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\util-deprecate' ]
+50 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\@google\\genai' ]
+51 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\ws' ]
+52 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\@protobufjs\\aspromise' ]
+53 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\@protobufjs\\base64' ]
+54 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\@protobufjs\\eventemitter' ]
+55 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\@protobufjs\\fetch' ]
+56 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\@protobufjs\\inquire' ]
+57 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\@protobufjs\\path' ]
+58 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\@protobufjs\\pool' ]
+59 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\@protobufjs\\utf8' ]
+60 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\@protobufjs\\float' ]
+61 silly reify mark retired [ 'C:\\DBM_Project\\node_modules\\@protobufjs\\codegen' ]
+62 silly reify moves {
+62 silly reify   'C:\\DBM_Project\\node_modules\\append-field': 'C:\\DBM_Project\\node_modules\\.append-field-irsquNHn',
+62 silly reify   'C:\\DBM_Project\\node_modules\\agent-base': 'C:\\DBM_Project\\node_modules\\.agent-base-YoAe7PS6',
+62 silly reify   'C:\\DBM_Project\\node_modules\\base64-js': 'C:\\DBM_Project\\node_modules\\.base64-js-x7NbTo8t',
+62 silly reify   'C:\\DBM_Project\\node_modules\\bignumber.js': 'C:\\DBM_Project\\node_modules\\.bignumber.js-Yhk7NKyq',
+62 silly reify   'C:\\DBM_Project\\node_modules\\buffer-equal-constant-time': 'C:\\DBM_Project\\node_modules\\.buffer-equal-constant-time-NDX7Sohj',
+62 silly reify   'C:\\DBM_Project\\node_modules\\buffer-from': 'C:\\DBM_Project\\node_modules\\.buffer-from-ixtk0BVq',
+62 silly reify   'C:\\DBM_Project\\node_modules\\busboy': 'C:\\DBM_Project\\node_modules\\.busboy-roI4N2sB',
+62 silly reify   'C:\\DBM_Project\\node_modules\\concat-stream': 'C:\\DBM_Project\\node_modules\\.concat-stream-NuLC45a6',
+62 silly reify   'C:\\DBM_Project\\node_modules\\data-uri-to-buffer': 'C:\\DBM_Project\\node_modules\\.data-uri-to-buffer-Z2ck1CnH',
+62 silly reify   'C:\\DBM_Project\\node_modules\\ecdsa-sig-formatter': 'C:\\DBM_Project\\node_modules\\.ecdsa-sig-formatter-D4Bpj4CG',
+62 silly reify   'C:\\DBM_Project\\node_modules\\extend': 'C:\\DBM_Project\\node_modules\\.extend-62CkZxYG',
+62 silly reify   'C:\\DBM_Project\\node_modules\\formdata-polyfill': 'C:\\DBM_Project\\node_modules\\.formdata-polyfill-Wda7WCSM',
+62 silly reify   'C:\\DBM_Project\\node_modules\\fetch-blob': 'C:\\DBM_Project\\node_modules\\.fetch-blob-10BDPifC',
+62 silly reify   'C:\\DBM_Project\\node_modules\\gaxios': 'C:\\DBM_Project\\node_modules\\.gaxios-XxRFsXCR',
+62 silly reify   'C:\\DBM_Project\\node_modules\\gcp-metadata': 'C:\\DBM_Project\\node_modules\\.gcp-metadata-d5Hvv4bt',
+62 silly reify   'C:\\DBM_Project\\node_modules\\google-auth-library': 'C:\\DBM_Project\\node_modules\\.google-auth-library-MrM0bzHz',
+62 silly reify   'C:\\DBM_Project\\node_modules\\google-logging-utils': 'C:\\DBM_Project\\node_modules\\.google-logging-utils-n0dUwzmP',
+62 silly reify   'C:\\DBM_Project\\node_modules\\https-proxy-agent': 'C:\\DBM_Project\\node_modules\\.https-proxy-agent-kBKFxtOK',
+62 silly reify   'C:\\DBM_Project\\node_modules\\json-bigint': 'C:\\DBM_Project\\node_modules\\.json-bigint-30r8NwFz',
+62 silly reify   'C:\\DBM_Project\\node_modules\\jwa': 'C:\\DBM_Project\\node_modules\\.jwa-Kh3TeVZO',
+62 silly reify   'C:\\DBM_Project\\node_modules\\jws': 'C:\\DBM_Project\\node_modules\\.jws-T9VBCHId',
+62 silly reify   'C:\\DBM_Project\\node_modules\\multer': 'C:\\DBM_Project\\node_modules\\.multer-nzY459Pk',
+62 silly reify   'C:\\DBM_Project\\node_modules\\node-domexception': 'C:\\DBM_Project\\node_modules\\.node-domexception-S0lEndPz',
+62 silly reify   'C:\\DBM_Project\\node_modules\\node-fetch': 'C:\\DBM_Project\\node_modules\\.node-fetch-FKbfODdA',
+62 silly reify   'C:\\DBM_Project\\node_modules\\p-retry': 'C:\\DBM_Project\\node_modules\\.p-retry-oQ7KyLLV',
+62 silly reify   'C:\\DBM_Project\\node_modules\\protobufjs': 'C:\\DBM_Project\\node_modules\\.protobufjs-aWfj6hW1',
+62 silly reify   'C:\\DBM_Project\\node_modules\\readable-stream': 'C:\\DBM_Project\\node_modules\\.readable-stream-GE7ufeRZ',
+62 silly reify   'C:\\DBM_Project\\node_modules\\retry': 'C:\\DBM_Project\\node_modules\\.retry-5fPCYk7h',
+62 silly reify   'C:\\DBM_Project\\node_modules\\safe-buffer': 'C:\\DBM_Project\\node_modules\\.safe-buffer-IaVpuCjh',
+62 silly reify   'C:\\DBM_Project\\node_modules\\streamsearch': 'C:\\DBM_Project\\node_modules\\.streamsearch-1BHDvr48',
+62 silly reify   'C:\\DBM_Project\\node_modules\\string_decoder': 'C:\\DBM_Project\\node_modules\\.string_decoder-KGp4uURd',
+62 silly reify   'C:\\DBM_Project\\node_modules\\typedarray': 'C:\\DBM_Project\\node_modules\\.typedarray-LKOUVfDZ',
+62 silly reify   'C:\\DBM_Project\\node_modules\\web-streams-polyfill': 'C:\\DBM_Project\\node_modules\\.web-streams-polyfill-kbh6komz',
+62 silly reify   'C:\\DBM_Project\\node_modules\\util-deprecate': 'C:\\DBM_Project\\node_modules\\.util-deprecate-2trxjV4z',
+62 silly reify   'C:\\DBM_Project\\node_modules\\@google\\genai': 'C:\\DBM_Project\\node_modules\\@google\\.genai-z41qm8Oh',
+62 silly reify   'C:\\DBM_Project\\node_modules\\ws': 'C:\\DBM_Project\\node_modules\\.ws-Irs3NjuX',
+62 silly reify   'C:\\DBM_Project\\node_modules\\@protobufjs\\aspromise': 'C:\\DBM_Project\\node_modules\\@protobufjs\\.aspromise-ymhnCVCw',
+62 silly reify   'C:\\DBM_Project\\node_modules\\@protobufjs\\base64': 'C:\\DBM_Project\\node_modules\\@protobufjs\\.base64-feV8cm2C',
+62 silly reify   'C:\\DBM_Project\\node_modules\\@protobufjs\\eventemitter': 'C:\\DBM_Project\\node_modules\\@protobufjs\\.eventemitter-XMSVVbR1',
+62 silly reify   'C:\\DBM_Project\\node_modules\\@protobufjs\\fetch': 'C:\\DBM_Project\\node_modules\\@protobufjs\\.fetch-fbPU9GBU',
+62 silly reify   'C:\\DBM_Project\\node_modules\\@protobufjs\\inquire': 'C:\\DBM_Project\\node_modules\\@protobufjs\\.inquire-RX3xbdXc',
+62 silly reify   'C:\\DBM_Project\\node_modules\\@protobufjs\\path': 'C:\\DBM_Project\\node_modules\\@protobufjs\\.path-bxiDmD7y',
+62 silly reify   'C:\\DBM_Project\\node_modules\\@protobufjs\\pool': 'C:\\DBM_Project\\node_modules\\@protobufjs\\.pool-0gVUQIrL',
+62 silly reify   'C:\\DBM_Project\\node_modules\\@protobufjs\\utf8': 'C:\\DBM_Project\\node_modules\\@protobufjs\\.utf8-zdkyxf61',
+62 silly reify   'C:\\DBM_Project\\node_modules\\@protobufjs\\float': 'C:\\DBM_Project\\node_modules\\@protobufjs\\.float-Tm30IEy5',
+62 silly reify   'C:\\DBM_Project\\node_modules\\@protobufjs\\codegen': 'C:\\DBM_Project\\node_modules\\@protobufjs\\.codegen-ypTgdRjb'
+62 silly reify }
+63 verbose stack Error: EPERM: operation not permitted, rmdir 'C:\DBM_Project\node_modules\append-field'
+64 error code EPERM
+65 error syscall rmdir
+66 error path C:\DBM_Project\node_modules\append-field
+67 error errno -4048
+68 error [Error: EPERM: operation not permitted, rmdir 'C:\DBM_Project\node_modules\append-field'] {
+68 error   errno: -4048,
+68 error   code: 'EPERM',
+68 error   syscall: 'rmdir',
+68 error   path: 'C:\\DBM_Project\\node_modules\\append-field'
+68 error }
+69 error
+69 error The operation was rejected by your operating system.
+69 error It's possible that the file was already in use (by a text editor or antivirus), or that you lack permissions to access it.
+69 error
+69 error If you believe this might be a permissions issue, please double-check the permissions of the file and its containing directories, or try running the command again as root/Administrator.
+70 silly unfinished npm timer reify 1776739260290
+71 silly unfinished npm timer reify:retireShallow 1776739260397
+72 verbose cwd C:\DBM_Project
+73 verbose os Windows_NT 10.0.26200
+74 verbose node v24.15.0
+75 verbose npm  v11.12.1
+76 verbose exit -4048
+77 verbose code -4048
+78 error A complete log of this run can be found in: C:\DBM_Project\.npm-cache\_logs\2026-04-21T02_40_59_627Z-debug-0.log
